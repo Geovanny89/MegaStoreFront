@@ -30,7 +30,7 @@ export default function Navbar() {
         {/* Links */}
         <ul className="hidden md:flex items-center gap-6 text-gray-700">
           <li className="hover:text-red-600 cursor-pointer">Inicio</li>
-           <Link to="/productos">
+           <Link to="#">
     <li className="hover:text-red-600 cursor-pointer">Productos</li>
   </Link>
           <li className="hover:text-red-600 cursor-pointer">Categorías</li>
@@ -38,9 +38,11 @@ export default function Navbar() {
         </ul>
 
         {/* Login */}
+        <Link to="/login">
         <button className="ml-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 hidden md:block">
           Iniciar sesión
         </button>
+        </Link>
 
         {/* Menu mobile */}
         <button className="md:hidden text-gray-700">
