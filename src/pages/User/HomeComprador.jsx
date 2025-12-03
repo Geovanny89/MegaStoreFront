@@ -11,12 +11,12 @@ export default function HomeComprador() {
           </h1>
         </div>
       </div>
+      
 
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Productos destacados</h2>
       <Products />
 
-      
-     
+           
     </>
   );
 }

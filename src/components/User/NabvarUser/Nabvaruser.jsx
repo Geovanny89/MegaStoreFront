@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import logo from "../../../assets/logo2.png";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, LogOut, ChevronDown, Heart } from "lucide-react";
 
-export default function NavbarUser({ name = "Usuario", categorias = [] }) {
+export default function NavbarUser({ name , categorias = [] }) {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [openCat, setOpenCat] = useState(false);
+  const [openUser, setOpenUser] = useState(false);
+
+  const userRef = useRef();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
+
+  // Cerrar dropdown al hacer click fuera
+  useEffect(() => {
+    const handler = (e) => {
+      if (userRef.current && !userRef.current.contains(e.target)) {
+        setOpenUser(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <nav
@@ -24,54 +38,48 @@ export default function NavbarUser({ name = "Usuario", categorias = [] }) {
         to-blue-300
       "
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-9 py-4 flex items-center justify-between">
 
         {/* LOGO */}
-        <div className="flex items-center gap-3 flex-shrink-0 cursor-pointer"
-             onClick={() => navigate("/homeUser")}
+        <div
+          className="flex items-center gap-3 flex-shrink-0 cursor-pointer"
+          onClick={() => navigate("/homeUser")}
         >
           <img src={logo} className="h-10" alt="Logo" />
         </div>
 
-        {/* SEARCH BAR */}
+        {/* SEARCH */}
         <div className="flex-1 mx-6">
           <input
-  type="text"
-  placeholder="Buscar productos..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter" && search.trim() !== "") {
-      navigate(`/user/product/${search.trim()}`);
-      setSearch("");
-    }
-  }}
-  className="
-    w-full px-4 py-2 
-    bg-white/90 
-    rounded-xl 
-    focus:ring-2 
-    focus:ring-blue-300 
-    outline-none
-  "
-/>
+            type="text"
+            placeholder="Buscar productos..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && search.trim() !== "") {
+                navigate(`/user/product/${search.trim()}`);
+                setSearch("");
+              }
+            }}
+            className="
+              w-full px-4 py-2 
+              bg-white/90 
+              rounded-xl 
+              focus:ring-2 
+              focus:ring-blue-300 
+              outline-none
+            "
+          />
         </div>
 
         {/* MENU DESKTOP */}
-        <div className="hidden md:flex items-center gap-6 text-white font-medium">
+        <div className="hidden md:flex items-center gap-10 text-white font-medium">
 
-          {/* INICIO */}
-          <Link to="/homeUser">
-            <span className="hover:text-yellow-200 transition cursor-pointer">
-              Inicio
-            </span>
+          <Link to="/homeUser" className="hover:text-yellow-200 transition">
+            Inicio
           </Link>
-
-          {/* PRODUCTOS */}
-          <Link to="/user/productos">
-            <span className="hover:text-yellow-200 transition cursor-pointer">
-              Productos
-            </span>
+          <Link to="/user/productos" className="hover:text-yellow-200 transition">
+            Productos
           </Link>
 
           {/* CATEGORÍAS */}
@@ -106,40 +114,65 @@ export default function NavbarUser({ name = "Usuario", categorias = [] }) {
           </div>
 
           {/* FAVORITOS */}
-          <Link
-            to="/favorito/all"
-            className="flex items-center gap-1 hover:text-yellow-200 transition"
-          >
+          <Link to="/favorito/all" className="flex items-center gap-1 hover:text-yellow-200">
             <Heart size={20} /> Favoritos
           </Link>
 
           {/* CARRITO */}
-          <Link
-            to="/user/carAll"
-            className="flex items-center gap-1 hover:text-yellow-200 transition"
-          >
+          <Link to="/user/carAll" className="flex items-center gap-1 hover:text-yellow-200">
             <ShoppingCart size={20} /> Carrito
           </Link>
 
-          {/* USER */}
-          <span className="font-semibold">
-            Bienvenido, <span className="text-yellow-300">{name}</span>
-          </span>
+            <Link to="/orders" className="flex items-center gap-1 hover:text-yellow-200">
+  <ShoppingCart size={20} /> Mis Órdenes
+</Link>
+          {/* MENÚ DEL USUARIO */}
+          <div className="relative" ref={userRef}>
+            <button
+              onClick={() => setOpenUser(!openUser)}
+              className="flex items-center gap-2 hover:bg-green-700/20 px-3 py-2 rounded-lg"
+            >
+              <img
+                src="https://ui-avatars.com/api/?name=User"
+                alt="avatar"
+                className="w-10 h-10 rounded-full"
+              />
+              <span className="text-yellow-300 font-bold">{name}</span>
+            </button>
 
-          {/* LOGOUT */}
-          <button
-            onClick={handleLogout}
-            className="
-              flex items-center gap-2 
-              bg-white 
-              text-green-700 
-              hover:bg-green-100 
-              px-4 py-2 rounded-xl 
-              transition
-            "
-          >
-            <LogOut size={18} /> Cerrar sesión
-          </button>
+            {/* DROPDOWN USER */}
+            {openUser && (
+              <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-lg p-5 z-50 animate-fadeIn">
+
+                <div className="flex items-center gap-3 pb-4 border-b">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <p className="font-bold text-lg">{name}</p>
+                    <p className="text-sm text-gray-500">
+                      {localStorage.getItem("email")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="py-3 flex flex-col gap-3 text-gray-700">
+                  <button className="text-left hover:bg-gray-100 p-2 rounded">Mi Perfil</button>
+                  <button className="text-left hover:bg-gray-100 p-2 rounded">Configuración</button>
+                  <button className="text-left hover:bg-gray-100 p-2 rounded">Preferencias</button>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="mt-2 w-full bg-red-500 text-white rounded-lg py-2 hover:bg-red-600"
+                >
+                  <LogOut size={18} className="inline-block mr-2" />
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* MENU MOBILE */}
@@ -152,11 +185,7 @@ export default function NavbarUser({ name = "Usuario", categorias = [] }) {
             strokeWidth={1.5}
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 5h16.5M3.75 12h16.5M3.75 19h16.5"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5h16.5M3.75 12h16.5M3.75 19h16.5"/>
           </svg>
         </button>
 

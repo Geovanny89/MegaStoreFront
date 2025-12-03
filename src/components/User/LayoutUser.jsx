@@ -7,14 +7,15 @@ import api from "../../api/axios";
 export default function LayoutUser() {
   const [categorias, setCategorias] = useState([]);
 
-  const nombre = localStorage.getItem("name") || "Usuario";
+const nombre = localStorage.getItem("userName") || "Usuario";
+
 
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
         const res = await api.get("/user/categorias");
         setCategorias(res.data);
-        console.log(res);
+        console.log("Soy las respuestas",res);
       } catch (error) {
         console.log(error);
         setCategorias([]);
@@ -29,6 +30,7 @@ export default function LayoutUser() {
 
       {/* NAVBAR */}
       <NavbarUser name={nombre} categorias={categorias} />
+
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-10 py-8">

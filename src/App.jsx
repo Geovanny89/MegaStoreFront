@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
+import PrivateRoute from "./utils/PrivateRoute";
 import Home from "./pages/Home";
 import Register from "./pages/Login/Register";
 import Layout from "./components/layout/Layout";
@@ -11,6 +12,8 @@ import Categorie from "./components/User/Categoria/Categorie";
 import BuscarProducto from "./components/User/ProductoNombre/BuscarProducto";
 
 import Favoritos from "./components/User/Favoritos/Favoritos";
+// import OrderDetails from "./components/User/Ordenes/OrderDetails";
+import Orders from "./components/User/Ordenes/Orders";
 
 export default function AppRouter() {
   return (
@@ -20,6 +23,7 @@ export default function AppRouter() {
       <Route path="/register" element={<Register />} />
 
       {/* TODAS las rutas del usuario dentro de un solo LayoutUser */}
+      <Route element={<PrivateRoute />}>
       <Route element={<LayoutUser />}>
         <Route path="/homeUser" element={<HomeComprador />} />
         <Route path="/user/carAll" element={<Carrito />} />
@@ -27,12 +31,14 @@ export default function AppRouter() {
         <Route path="/user/categorias/:id" element={<Categorie />} />
         <Route path="/user/product/:name" element={<BuscarProducto />} />
          <Route path="/favorito/all" element={<Favoritos />} />
+         <Route path="/orders" element={<Orders />} />
         
+      </Route>
       </Route>
 
       {/* Layout Admin o general */}
       <Route element={<Layout />}>
-       
+     
       </Route>
     </Routes>
   );

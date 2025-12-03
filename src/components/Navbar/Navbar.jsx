@@ -1,5 +1,5 @@
 
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo3.png";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
@@ -13,9 +13,7 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <img src={logo} className="h-10" />
-          <span className="text-2xl font-bold text-red-600 tracking-wide">
-            MiTienda
-          </span>
+          
         </div>
 
         {/* Buscador */}
@@ -30,7 +28,7 @@ export default function Navbar() {
         {/* Links */}
         <ul className="hidden md:flex items-center gap-6 text-gray-700">
           <li className="hover:text-red-600 cursor-pointer">Inicio</li>
-           <Link to="#">
+           <Link to="/user/productos">
     <li className="hover:text-red-600 cursor-pointer">Productos</li>
   </Link>
           <li className="hover:text-red-600 cursor-pointer">Categorías</li>

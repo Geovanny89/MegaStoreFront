@@ -19,6 +19,11 @@ export default function Login() {
     try {
       const res = await api.post("/login", { email, password });
       localStorage.setItem("token", res.data.token);
+localStorage.setItem("userId", res.data.user._id);
+localStorage.setItem("userName", res.data.user.name);
+localStorage.setItem("lastName", res.data.user.lastName);
+localStorage.setItem("email", res.data.user.email);
+localStorage.setItem("rol", res.data.user.rol);
 
       alert("Login exitoso");
       navigate("/homeUser");
