@@ -14,6 +14,7 @@ import BuscarProducto from "./components/User/ProductoNombre/BuscarProducto";
 import Favoritos from "./components/User/Favoritos/Favoritos";
 // import OrderDetails from "./components/User/Ordenes/OrderDetails";
 import Orders from "./components/User/Ordenes/Orders";
+import Success from "./pages/Success";
 
 export default function AppRouter() {
   return (
@@ -24,21 +25,23 @@ export default function AppRouter() {
 
       {/* TODAS las rutas del usuario dentro de un solo LayoutUser */}
       <Route element={<PrivateRoute />}>
-      <Route element={<LayoutUser />}>
-        <Route path="/homeUser" element={<HomeComprador />} />
-        <Route path="/user/carAll" element={<Carrito />} />
-        <Route path="/user/productos" element={<Products />} />
-        <Route path="/user/categorias/:id" element={<Categorie />} />
-        <Route path="/user/product/:name" element={<BuscarProducto />} />
-         <Route path="/favorito/all" element={<Favoritos />} />
-         <Route path="/orders" element={<Orders />} />
-        
-      </Route>
+        <Route element={<LayoutUser />}>
+          <Route path="/homeUser" element={<HomeComprador />} />
+          <Route path="/user/carAll" element={<Carrito />} />
+          <Route path="/user/productos" element={<Products />} />
+          <Route path="/user/categorias/:id" element={<Categorie />} />
+          <Route path="/user/product/:name" element={<BuscarProducto />} />
+          <Route path="/favorito/all" element={<Favoritos />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/success" element={<Success/>}/>
+
+
+        </Route>
       </Route>
 
       {/* Layout Admin o general */}
       <Route element={<Layout />}>
-     
+
       </Route>
     </Routes>
   );
