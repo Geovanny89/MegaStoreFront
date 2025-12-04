@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import Logo from "../../assets/logo3.png";
+import Logo from "../../assets/Logo3.png";
 
 export default function Login() {
   const navigate = useNavigate();
