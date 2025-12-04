@@ -15,7 +15,7 @@ const nombre = localStorage.getItem("userName") || "Usuario";
       try {
         const res = await api.get("/user/categorias");
         setCategorias(res.data);
-        console.log("Soy las respuestas",res);
+        // console.log("Soy las respuestas",res);
       } catch (error) {
         console.log(error);
         setCategorias([]);
