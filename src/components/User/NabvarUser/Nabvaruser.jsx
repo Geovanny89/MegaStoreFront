@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import logo from "../../../assets/logo2.png";
+import logo from "../../../assets/Logo2.png";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, LogOut, ChevronDown, Heart } from "lucide-react";
 
