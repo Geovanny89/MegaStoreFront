@@ -19,14 +19,25 @@ export default function Login() {
     try {
       const res = await api.post("/login", { email, password });
       localStorage.setItem("token", res.data.token);
-localStorage.setItem("userId", res.data.user._id);
-localStorage.setItem("userName", res.data.user.name);
-localStorage.setItem("lastName", res.data.user.lastName);
-localStorage.setItem("email", res.data.user.email);
-localStorage.setItem("rol", res.data.user.rol);
+      localStorage.setItem("userId", res.data.user._id);
+      localStorage.setItem("userName", res.data.user.name);
+      localStorage.setItem("lastName", res.data.user.lastName);
+      localStorage.setItem("email", res.data.user.email);
+      localStorage.setItem("rol", res.data.user.rol);
+
+      const role = res.data.user.rol;
+
+      if (role === "user") {
+        navigate("/homeUser");
+      } else if (role === "seller") {
+        navigate("/Homevendedor");
+      } else if (role === "admin") {
+        navigate("/HomeAdmin");
+      } else {
+        navigate("/unauthorized");
+      }
 
       alert("Login exitoso");
-      navigate("/homeUser");
 
     } catch (error) {
       alert("Correo o contraseña incorrectos ❌");
@@ -58,16 +69,16 @@ localStorage.setItem("rol", res.data.user.rol);
           ✕
         </Link>
         <div className="flex justify-center mb-4">
-      <img
-        src={Logo}  // <- Ruta de tu logo
-        alt="Logo"
-        className="h-24 w-auto sm:h-32 md:h-36 lg:h-40 object-contain"
-      />
-    </div>
-       
+          <img
+            src={Logo}  // <- Ruta de tu logo
+            alt="Logo"
+            className="h-24 w-auto sm:h-32 md:h-36 lg:h-40 object-contain"
+          />
+        </div>
+
         {/* Formulario */}
         <form className="mt-6 space-y-4" onSubmit={handleLogin}>
-          
+
           {/* Email */}
           <div>
             <label className="text-gray-700 font-medium">Correo</label>
