@@ -15,8 +15,8 @@ import Favoritos from "./components/User/Favoritos/Favoritos";
 // import OrderDetails from "./components/User/Ordenes/OrderDetails";
 import Orders from "./components/User/Ordenes/Orders";
 import Success from "./pages/Success";
-import Perfil from "./components/Vendedor/PerfilVendedor";
-import EditarPerfil from "./components/Vendedor/EditarPerfil";
+import Perfil from "./components/User/Perfil/Perfil";
+
 import ChangePassword from "./components/User/Contraseñas/ChangePassword";
 import Unauthorized from "./utils/Unauthorized";
 import LayoutSeller from "./components/Vendedor/LayautSeller";
@@ -27,6 +27,12 @@ import VerProductos from "./components/Vendedor/Productos/VerProductos";
 import CrearProductos from "./components/Vendedor/Productos/CrearProductos";
 import EditarProducto from "./components/Vendedor/Productos/EditarProducto";
 import SellerOrders from "./components/Vendedor/Ordenes/SellerOrdes";
+import EditarPerfilUser from "./components/User/Perfil/EditarPerfilUser";
+import LayoutAdmin from "./components/Admin/layaoutAdmin";
+import HomeAdmin from "./pages/Admin/HomeAdmin";
+import Dashboard from "./components/Admin/Dashboard";
+import CategoriasAdmin from "./components/Admin/CategoriasAdmin";
+import AdminUser from "./components/Admin/Users/AdminUser";
 
 export default function AppRouter() {
   return (
@@ -36,6 +42,20 @@ export default function AppRouter() {
       <Route path="/register" element={<Register />} />
 
       <Route path="/unauthorized" element={<Unauthorized />} />
+
+ {/* TODAS las rutas del admin dentro de un solo LayoutUser */}
+   <Route element={<PrivateRoute rol={["admin"]} />}>
+    <Route element={<LayoutAdmin />}>
+          <Route path="/homeAdmin" element={<HomeAdmin />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin/usuarios" element={<HomeAdmin />} />
+          <Route path="/admin/Categorias" element={<CategoriasAdmin />} />
+          <Route path="/admin/editarUsuario" element={<AdminUser />} />
+    
+    </Route>
+   </Route>
+
+
       {/* TODAS las rutas del usuario dentro de un solo LayoutUser */}
       <Route element={<PrivateRoute rol={["user"]} />}>
         <Route element={<LayoutUser />}>
@@ -48,7 +68,7 @@ export default function AppRouter() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/success" element={<Success />} />
           <Route path="/perfil" element={<Perfil />} />
-          <Route path="/perfil/editar" element={<EditarPerfil />} />
+          <Route path="/perfil/editar" element={<EditarPerfilUser />} />
           <Route path="/cambiar-password" element={<ChangePassword />} />
         </Route>
       </Route>

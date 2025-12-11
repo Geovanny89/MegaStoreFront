@@ -15,6 +15,7 @@ export default function Perfil() {
                 const res = await api.get(`/user/user`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
+                console.log(res)
                 setUser(res.data);
             } catch (error) {
                 console.error("ERROR OBTENIENDO USUARIO:", error);
