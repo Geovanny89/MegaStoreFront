@@ -68,9 +68,10 @@ export default function Login() {
         >
           ✕
         </Link>
+
         <div className="flex justify-center mb-4">
           <img
-            src={Logo}  // <- Ruta de tu logo
+            src={Logo}
             alt="Logo"
             className="h-24 w-auto sm:h-32 md:h-36 lg:h-40 object-contain"
           />
@@ -112,6 +113,16 @@ export default function Login() {
             </div>
           </div>
 
+          {/* 🔵 Recuperar contraseña */}
+          <div className="text-right mt-1">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
+
           {/* Botón Login */}
           <button
             type="submit"
@@ -146,6 +157,7 @@ export default function Login() {
             Crear cuenta
           </Link>
         </p>
+        
       </div>
     </div>
   );

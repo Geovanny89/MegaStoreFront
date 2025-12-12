@@ -1,5 +1,5 @@
 import Products from "../../components/Products/products.jsx";
-
+import ListaVendedores from "../../components/User/Tiendas/ListaVendedores.jsx";
 
 export default function HomeComprador() {
   return (
@@ -11,12 +11,12 @@ export default function HomeComprador() {
           </h1>
         </div>
       </div>
-      
 
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Productos destacados</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">Tiendas disponibles</h2>
+      <ListaVendedores />
+
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 mt-10">Productos destacados</h2>
       <Products />
-
-           
     </>
   );
 }

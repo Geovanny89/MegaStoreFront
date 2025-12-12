@@ -1,8 +1,15 @@
 import React from "react";
-import { Menu, X, Home, User, Package, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Menu, X, Home, User, Package, Settings, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SidebarAdmin({ open, setOpen }) {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("token"); // elimina el token
+    navigate("/login"); // redirige al login
+  };
+
   return (
     <div
       className={`h-screen bg-gray-900 text-white transition-all duration-300 flex flex-col border-r border-gray-700 ${
@@ -30,7 +37,15 @@ export default function SidebarAdmin({ open, setOpen }) {
 
       {/* FOOTER */}
       <div className="p-4 border-t border-gray-700">
-        {open && <p className="text-sm text-gray-400">Panel Administrativo</p>}
+        <button
+          onClick={logout}
+          className="flex items-center gap-3 w-full p-3 rounded hover:bg-red-600/20 transition text-red-400"
+        >
+          <LogOut size={20} />
+          {open && <span className="text-sm">Cerrar sesión</span>}
+        </button>
+
+        {open && <p className="text-xs text-gray-500 mt-3">Panel Administrativo</p>}
       </div>
     </div>
   );

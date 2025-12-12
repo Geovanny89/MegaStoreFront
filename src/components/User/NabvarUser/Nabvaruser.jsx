@@ -9,6 +9,7 @@ import {
   Menu,
   X
 } from "lucide-react";
+import api from "../../../api/axios"; // <- asegúrate que la ruta sea correcta
 
 export default function NavbarUser({ name, categorias = [] }) {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function NavbarUser({ name, categorias = [] }) {
   const [openCat, setOpenCat] = useState(false);
   const [openUser, setOpenUser] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   const userRef = useRef();
   const catRef = useRef();
@@ -24,6 +26,48 @@ export default function NavbarUser({ name, categorias = [] }) {
     localStorage.removeItem("token");
     navigate("/");
   };
+
+  // --- Mueve la función arriba para que esté disponible al primer useEffect ---
+  const fetchCartCount = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setCartCount(0);
+        return;
+      }
+
+      const res = await api.get("/user/carAll", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setCartCount(res.data.items?.length || 0);
+    } catch (error) {
+      console.error("Error obteniendo carrito:", error);
+      setCartCount(0);
+    }
+  };
+
+  // Llamada inicial para cargar el contador
+  useEffect(() => {
+    fetchCartCount();
+  }, []);
+
+  // Escuchar actualizaciones: storage (otras pestañas) + evento custom (misma pestaña)
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === "updateCart") fetchCartCount();
+    };
+
+    const onCartUpdated = () => fetchCartCount();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("cartUpdated", onCartUpdated);
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("cartUpdated", onCartUpdated);
+    };
+  }, []);
 
   // Cerrar dropdown de usuario al hacer click fuera
   useEffect(() => {
@@ -142,8 +186,22 @@ export default function NavbarUser({ name, categorias = [] }) {
               <Heart size={20} /> Favoritos
             </Link>
 
-            <Link to="/user/carAll" className="flex items-center gap-1 hover:text-yellow-200">
+            <Link to="/user/carAll" className="relative flex items-center gap-1 hover:text-yellow-200">
               <ShoppingCart size={20} /> Carrito
+
+              {cartCount > 0 && (
+                <span
+                  className="
+                    absolute -top-2 -right-3
+                    bg-red-600 text-white
+                    text-xs font-bold
+                    w-5 h-5 rounded-full
+                    flex items-center justify-center
+                  "
+                >
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             <Link to="/orders" className="flex items-center gap-1 hover:text-yellow-200">
@@ -292,8 +350,18 @@ export default function NavbarUser({ name, categorias = [] }) {
             Favoritos
           </Link>
 
-          <Link to="/user/carAll" onClick={() => setMobileMenu(false)}>
+          <Link to="/user/carAll" onClick={() => setMobileMenu(false)} className="relative">
             Carrito
+            {cartCount > 0 && (
+              <span
+                className="
+                  ml-2 bg-red-600 text-white text-xs font-bold
+                  w-5 h-5 rounded-full inline-flex items-center justify-center
+                "
+              >
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           <Link to="/orders" onClick={() => setMobileMenu(false)}>
@@ -336,7 +404,6 @@ export default function NavbarUser({ name, categorias = [] }) {
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[998]"
           onClick={() => {
-            console.log("BACKDROP CLOSE");
             setMobileMenu(false);
           }}
         ></div>

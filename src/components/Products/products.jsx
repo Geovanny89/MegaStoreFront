@@ -31,6 +31,7 @@ export default function Products() {
     const fetchProductos = async () => {
       try {
         const res = await api.get("/user/allProducts");
+
         setProductos(res.data);
       } catch (error) {
         console.log(error);
@@ -69,7 +70,7 @@ export default function Products() {
     try {
       setLoadingId(product._id);
       const isFav = favorites.some((f) => f._id === product._id);
- 
+
       if (isFav) {
         await api.delete(`/favoriteDelete/${product._id}`);
         removeFavorite(product._id);
@@ -91,7 +92,7 @@ export default function Products() {
 
       const res = await api.get(`/product/${id}`);
       setSelectedProduct(res.data);
-
+      console.log("soy el producto ", res.data)
       if (res.data.image?.length > 0) {
         setSelectedImg(res.data.image[0]);
       }
@@ -262,8 +263,8 @@ export default function Products() {
                       src={img}
                       onClick={() => setSelectedImg(img)}
                       className={`w-24 h-24 rounded-xl object-cover cursor-pointer border ${selectedImg === img
-                          ? "border-blue-500"
-                          : "border-gray-200"
+                        ? "border-blue-500"
+                        : "border-gray-200"
                         }`}
                     />
                   ))}
@@ -285,17 +286,18 @@ export default function Products() {
 
                 <p className="text-gray-500 mt-1">
                   Marca: {selectedProduct.brand}
+
                 </p>
 
                 <p className="text-gray-500">
-                  Categoría: {selectedProduct.tipo?.name}
+                  Categoría: <span className="font-semibold">{selectedProduct?.tipo?.name}</span>
                 </p>
-
                 <p className="text-gray-600 mt-1">
                   Vendido por:{" "}
-                  <span className="font-semibold">
-                    {selectedProduct.vendedor?.storeName}
+                  <span className="font-bold uppercase">
+                    {selectedProduct?.vendedor?.storeName}
                   </span>
+
                 </p>
 
 

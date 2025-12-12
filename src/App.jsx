@@ -33,6 +33,10 @@ import HomeAdmin from "./pages/Admin/HomeAdmin";
 import Dashboard from "./components/Admin/Dashboard";
 import CategoriasAdmin from "./components/Admin/CategoriasAdmin";
 import AdminUser from "./components/Admin/Users/AdminUser";
+import ProductosTienda from "./pages/ProductosTienda";
+import Productosvendedor from "./components/User/Tiendas/ProductoVendedor";
+import RecuperarContraseña from "./pages/Login/RecuperarContraseña";
+import RestablecerContraseña from "./pages/Login/RestablecerContraseña";
 
 export default function AppRouter() {
   return (
@@ -40,6 +44,13 @@ export default function AppRouter() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/productos" element={<ProductosTienda />} />
+
+      {/* --- RUTAS DE RECUPERAR CONTRASEÑA --- */}
+      <Route path="/forgot-password" element={<RecuperarContraseña />} />
+      <Route path="/reset-password/:token" element={<RestablecerContraseña />} />
+      
+
 
       <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -70,6 +81,10 @@ export default function AppRouter() {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/perfil/editar" element={<EditarPerfilUser />} />
           <Route path="/cambiar-password" element={<ChangePassword />} />
+          <Route path="/user/tienda/:vendedorId" element={<Productosvendedor />} />
+
+
+          
         </Route>
       </Route>
 
@@ -82,6 +97,7 @@ export default function AppRouter() {
           <Route path="/crearProductos" element={<CrearProductos />}/>
           <Route path="/actualizarProductos" element={<EditarProducto />}/>
           <Route path="/pedidosVendedor" element={<SellerOrders />}/>
+          
 
 
           
