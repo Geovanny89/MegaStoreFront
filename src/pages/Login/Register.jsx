@@ -26,11 +26,16 @@ export default function Register() {
     ]
   });
 
+  const [storeLogo, setStoreLogo] = useState(null);
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [planes, setPlanes] = useState([]);
 
-  // Obtener planes
+  // 🛠️ Estilos comunes de Tailwind
+  const inputStyle = "p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500";
+  const labelStyle = "font-medium mb-1";
+
+  // 🔹 Obtener planes
   useEffect(() => {
     const fetchPlanes = async () => {
       try {
@@ -40,11 +45,10 @@ export default function Register() {
         console.log("Error cargando planes:", error);
       }
     };
-
     fetchPlanes();
   }, []);
 
-  // Manejo de inputs
+  // 🔹 Inputs normales
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -52,6 +56,7 @@ export default function Register() {
     });
   };
 
+  // 🔹 Dirección
   const handleAddressChange = (e) => {
     setForm({
       ...form,
@@ -64,14 +69,50 @@ export default function Register() {
     });
   };
 
+  // 🔹 Registro
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await api.post("/register", form);
+      const formData = new FormData();
+
+      // campos base
+      formData.append("name", form.name);
+      formData.append("lastName", form.lastName);
+      formData.append("identity", form.identity);
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("phone", form.phone);
+      formData.append("rol", form.rol);
+
+      // dirección
+      formData.append("addresses[0][street]", form.addresses[0].street);
+      formData.append("addresses[0][city]", form.addresses[0].city);
+      formData.append("addresses[0][country]", form.addresses[0].country);
+
+      // seller
+      if (form.rol === "seller") {
+        formData.append("storeName", form.storeName);
+        formData.append("planId", form.planId);
+
+        if (!storeLogo) {
+          alert("Debes subir el logo de la tienda");
+          setLoading(false);
+          return;
+        }
+        formData.append("image", storeLogo); // 👈 backend espera "image"
+      }
+
+      await api.post("/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
       alert("Registro exitoso ✔");
       navigate("/login");
+
     } catch (error) {
       alert(error.response?.data?.error || "Error en el registro ❌");
     } finally {
@@ -85,7 +126,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-
+      
       <div className="w-full max-w-3xl p-10 bg-white shadow-lg rounded-2xl relative">
 
         {/* Botón cerrar */}
@@ -105,79 +146,49 @@ export default function Register() {
 
         {/* FORMULARIO */}
         <form onSubmit={handleRegister} className="mt-8">
-
+          
           {/* GRID GENERAL */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Nombre */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Nombre</label>
-              <input
-                name="name"
-                type="text"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-              />
+              <label className={labelStyle}>Nombre</label>
+              <input name="name" type="text" required className={inputStyle} onChange={handleChange} />
             </div>
 
             {/* Apellido */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Apellido</label>
-              <input
-                name="lastName"
-                type="text"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-              />
+              <label className={labelStyle}>Apellido</label>
+              <input name="lastName" type="text" required className={inputStyle} onChange={handleChange} />
             </div>
 
             {/* Documento */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Documento</label>
-              <input
-                name="identity"
-                type="text"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-              />
+              <label className={labelStyle}>Documento</label>
+              <input name="identity" type="text" required className={inputStyle} onChange={handleChange} />
             </div>
 
             {/* Teléfono */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Teléfono</label>
-              <input
-                name="phone"
-                type="text"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-              />
+              <label className={labelStyle}>Teléfono</label>
+              <input name="phone" type="text" required className={inputStyle} onChange={handleChange} />
             </div>
 
             {/* Email */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Correo</label>
-              <input
-                name="email"
-                type="email"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-              />
+              <label className={labelStyle}>Correo</label>
+              <input name="email" type="email" required className={inputStyle} onChange={handleChange} />
             </div>
 
             {/* Contraseña */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Contraseña</label>
+              <label className={labelStyle}>Contraseña</label>
               <div className="relative">
                 <input
                   name="password"
                   type={showPass ? "text" : "password"}
                   required
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className={`w-full ${inputStyle}`}
                   onChange={handleChange}
                 />
                 <button
@@ -192,50 +203,47 @@ export default function Register() {
 
             {/* Dirección */}
             <div className="flex flex-col col-span-2">
-              <label className="font-medium mb-1">Dirección</label>
-              <input
-                name="street"
+              <label className={labelStyle}>Dirección</label>
+              <input 
+                name="street" 
                 type="text"
                 placeholder="Calle / Número"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleAddressChange}
+                required 
+                className={inputStyle} 
+                onChange={handleAddressChange} 
               />
             </div>
 
-            {/* Ciudad y País bonitos */}
+            {/* Ciudad */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Ciudad</label>
-              <input
-                name="city"
+              <label className={labelStyle}>Ciudad</label>
+              <input 
+                name="city" 
                 type="text"
                 placeholder="Ej: Bogotá"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleAddressChange}
+                required 
+                className={inputStyle} 
+                onChange={handleAddressChange} 
               />
             </div>
 
+            {/* País */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">País</label>
-              <input
-                name="country"
+              <label className={labelStyle}>País</label>
+              <input 
+                name="country" 
                 type="text"
                 placeholder="Ej: Colombia"
-                required
-                className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                onChange={handleAddressChange}
+                required 
+                className={inputStyle} 
+                onChange={handleAddressChange} 
               />
             </div>
 
-            {/* Tipo de usuario */}
+            {/* Tipo de usuario (Rol) */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Tipo de usuario</label>
-              <select
-                name="rol"
-                className="p-3 border border-gray-300 rounded-xl"
-                onChange={handleChange}
-              >
+              <label className={labelStyle}>Tipo de usuario</label>
+              <select name="rol" className={inputStyle} onChange={handleChange}>
                 <option value="user">Cliente</option>
                 <option value="seller">Vendedor</option>
               </select>
@@ -245,38 +253,43 @@ export default function Register() {
             {form.rol === "seller" && (
               <>
                 <div className="flex flex-col">
-                  <label className="font-medium mb-1">Nombre de la tienda</label>
-                  <input
-                    name="storeName"
-                    type="text"
-                    required
-                    className="p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                    onChange={handleChange}
-                  />
+                  <label className={labelStyle}>Nombre de la tienda</label>
+                  <input name="storeName" type="text" required className={inputStyle} onChange={handleChange} />
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="font-medium mb-1">Plan</label>
-                  <select
-                    name="planId"
-                    required
-                    className="p-3 border border-gray-300 rounded-xl"
-                    onChange={handleChange}
-                  >
+                  <label className={labelStyle}>Plan</label>
+                  <select name="planId" required className={inputStyle} onChange={handleChange}>
                     <option value="">Selecciona un plan</option>
-                    {planes.map((p) => (
+                    {planes.map(p => (
                       <option key={p._id} value={p._id}>
                         {p.name} — {p.precio} USD
                       </option>
                     ))}
                   </select>
                 </div>
+
+                <div className="flex flex-col col-span-2">
+                  <label className={labelStyle}>Logo de la tienda</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    required
+                    className={`block w-full text-sm text-gray-500
+                               file:mr-4 file:py-2 file:px-4
+                               file:rounded-full file:border-0
+                               file:text-sm file:font-semibold
+                               file:bg-blue-50 file:text-blue-700
+                               hover:file:bg-blue-100`}
+                    onChange={(e) => setStoreLogo(e.target.files[0])}
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Formato: PNG, JPG o JPEG (máx. 2MB)</p>
+                </div>
               </>
             )}
-
           </div>
 
-          {/* Botón */}
+          {/* Botón de registro */}
           <button
             type="submit"
             disabled={loading}
@@ -297,7 +310,7 @@ export default function Register() {
         {/* Google */}
         <button
           onClick={loginWithGoogle}
-          className="w-full py-3 flex items-center justify-center gap-3 border rounded-xl hover:bg-gray-100"
+          className="w-full py-3 flex items-center justify-center gap-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition"
         >
           <FcGoogle size={24} />
           <span className="font-medium text-gray-700">Registrarse con Google</span>

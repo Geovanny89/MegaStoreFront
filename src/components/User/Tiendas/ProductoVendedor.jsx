@@ -31,6 +31,7 @@ export default function Productosvendedor({ user }) {
         const { data } = await api.get(`/vendedor/${vendedorId}`);
         setVendedor(data.vendedor);
         setProductos(data.productos || []);
+        console.log(data.productos)
       } catch (error) {
         console.error(error);
         alert("Error al cargar productos del vendedor");
@@ -111,10 +112,14 @@ export default function Productosvendedor({ user }) {
       {/* Info del vendedor */}
       <div className="flex items-center gap-4 mb-6">
         <img
-          src={vendedor.storeLogo}
-          alt="logo"
-          className="h-20 w-20 object-contain rounded-full border"
-        />
+  src={
+    vendedor.image ||
+    "https://ui-avatars.com/api/?name=" +
+      encodeURIComponent(vendedor.storeName)
+  }
+  alt={vendedor.storeName}
+  className="h-20 w-20 object-contain rounded-full border bg-white p-2"
+/>
         <h1 className="text-3xl font-bold">{vendedor.storeName}</h1>
       </div>
 

@@ -225,12 +225,15 @@ export default function CrearProductos() {
         {/* Imágenes */}
         <div>
           <label className="font-medium text-gray-700">Imágenes</label>
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="w-full border px-3 py-2 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500"
-          />
+         <input
+  type="file"
+  name="image"          // ✅ CLAVE
+  multiple
+  accept="image/*"
+  onChange={handleImageChange}
+  className="w-full border px-3 py-2 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500"
+/>
+
 
           {preview.length > 0 && (
             <div className="flex gap-2 mt-2 flex-wrap">

@@ -10,6 +10,7 @@ export default function ListaVendedores() {
     const fetchVendedores = async () => {
       try {
         const { data } = await api.get("/vendedor/all");
+        console.log("VENDEDORES:", data);
         setVendedores(data);
         
       } catch (error) {
@@ -22,6 +23,7 @@ export default function ListaVendedores() {
 
   const verProductos = (vendedorId) => {
     navigate(`/user/tienda/${vendedorId}`);
+    console.log(vendedorId)
   };
 
   return (
@@ -33,7 +35,7 @@ export default function ListaVendedores() {
         >
           <div className="flex flex-col items-center p-4">
             <img
-              src={v.storeLogo || "https://via.placeholder.com/100"}
+              src={v.image || "https://via.placeholder.com/100"}
               alt={v.storeName}
               className="h-24 w-24 rounded-full mb-4 object-contain border-2 border-gray-200"
             />
