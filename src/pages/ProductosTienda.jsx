@@ -107,7 +107,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       {/* Info del vendedor */}
       <div className="flex items-center gap-4 mb-6">
         <img
-          src={vendedor.storeLogo}
+          src={vendedor.image}
           alt="logo"
           className="h-20 w-20 object-contain rounded-full border"
         />

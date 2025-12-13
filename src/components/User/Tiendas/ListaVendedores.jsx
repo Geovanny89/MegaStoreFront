@@ -10,7 +10,7 @@ export default function ListaVendedores() {
     const fetchVendedores = async () => {
       try {
         const { data } = await api.get("/vendedor/all");
-        console.log("VENDEDORES:", data);
+     
         setVendedores(data);
         
       } catch (error) {
@@ -23,7 +23,7 @@ export default function ListaVendedores() {
 
   const verProductos = (vendedorId) => {
     navigate(`/user/tienda/${vendedorId}`);
-    console.log(vendedorId)
+
   };
 
   return (
