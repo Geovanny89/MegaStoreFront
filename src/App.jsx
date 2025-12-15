@@ -37,6 +37,7 @@ import ProductosTienda from "./pages/ProductosTienda";
 import Productosvendedor from "./components/User/Tiendas/ProductoVendedor";
 import RecuperarContraseña from "./pages/Login/RecuperarContraseña";
 import RestablecerContraseña from "./pages/Login/RestablecerContraseña";
+import SellerNotifications from "./pages/Vendedor/SellerNotifications";
 
 export default function AppRouter() {
   return (
@@ -97,6 +98,7 @@ export default function AppRouter() {
           <Route path="/crearProductos" element={<CrearProductos />}/>
           <Route path="/actualizarProductos" element={<EditarProducto />}/>
           <Route path="/pedidosVendedor" element={<SellerOrders />}/>
+           <Route path="/notificaciones" element={<SellerNotifications />} />
           
 
 
