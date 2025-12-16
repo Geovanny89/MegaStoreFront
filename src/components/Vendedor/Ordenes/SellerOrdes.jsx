@@ -22,7 +22,7 @@ export default function SellerOrders() {
     } finally {
       setLoading(false);
     }
-  };
+  }; 
 
   useEffect(() => {
     fetchOrders();
@@ -39,6 +39,7 @@ export default function SellerOrders() {
           : `/seller/orders/${orderId}/shipped`;
 
       await api.put(endpoint);
+      console.log("soy la compra",endpoint)
       await fetchOrders();
       setUpdatingId(null);
     } catch (err) {

@@ -38,6 +38,18 @@ export default function Orders() {
     fetchOrders();
   }, []);
 
+  // ================= CONFIRMAR RECIBIDO =================
+  const confirmReceived = async (orderId) => {
+    try {
+      await api.put(`/orders/${orderId}/received`);
+      await fetchOrders();
+      setSelectedOrder(null);
+    } catch (error) {
+      console.error("Error confirmando recepción:", error);
+      alert("No se pudo confirmar la recepción");
+    }
+  };
+
   // ================= PAGINADO =================
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -96,7 +108,6 @@ export default function Orders() {
                       </p>
                     </div>
 
-                    {/* BOTÓN VER */}
                     <button
                       onClick={() =>
                         setSelectedOrder(JSON.parse(JSON.stringify(order)))
@@ -111,7 +122,7 @@ export default function Orders() {
             })}
           </div>
 
-          {/* ================= PAGINACIÓN ================= */}
+          {/* PAGINACIÓN */}
           {orders.length > ordersPerPage && (
             <div className="flex justify-center items-center gap-4 mt-8">
               <button
@@ -119,12 +130,11 @@ export default function Orders() {
                   setCurrentPage((prev) => Math.max(prev - 1, 1))
                 }
                 disabled={currentPage === 1}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium
-                  ${
-                    currentPage === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white hover:bg-gray-50"
-                  }`}
+                className={`px-4 py-2 rounded-lg border text-sm font-medium ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
               >
                 Anterior
               </button>
@@ -141,12 +151,11 @@ export default function Orders() {
                   )
                 }
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium
-                  ${
-                    currentPage === totalPages
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white hover:bg-gray-50"
-                  }`}
+                className={`px-4 py-2 rounded-lg border text-sm font-medium ${
+                  currentPage === totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white hover:bg-gray-50"
+                }`}
               >
                 Siguiente
               </button>
@@ -159,7 +168,6 @@ export default function Orders() {
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
-            {/* CERRAR */}
             <button
               onClick={() => setSelectedOrder(null)}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -188,7 +196,6 @@ export default function Orders() {
                   key={item._id}
                   className="py-4 flex items-start justify-between gap-4"
                 >
-                  {/* INFO PRODUCTO */}
                   <div className="flex-1">
                     <p className="text-base font-semibold text-gray-900">
                       {item.product?.name ||
@@ -205,7 +212,6 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  {/* SUBTOTAL */}
                   <div className="text-right">
                     <p className="text-sm text-gray-500">Subtotal</p>
                     <p className="text-lg font-bold text-gray-900">
@@ -217,6 +223,16 @@ export default function Orders() {
               ))}
             </ul>
 
+            {/* BOTÓN CONFIRMAR RECIBIDO */}
+            {selectedOrder.status === "shipped" && (
+              <button
+                onClick={() => confirmReceived(selectedOrder._id)}
+                className="w-full mb-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
+              >
+                Confirmar pedido recibido
+              </button>
+            )}
+
             <div className="border-t pt-4 flex justify-between items-center">
               <span className="text-lg font-semibold">Total pagado</span>
               <span className="text-2xl font-bold text-blue-600">
@@ -226,7 +242,6 @@ export default function Orders() {
           </div>
         </div>
       )}
-      {/* =============== FIN MODAL =============== */}
     </div>
   );
 }

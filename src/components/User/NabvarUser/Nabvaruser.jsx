@@ -7,9 +7,10 @@ import {
   ChevronDown,
   Heart,
   Menu,
-  X
+  X,
 } from "lucide-react";
 import api from "../../../api/axios"; // <- asegúrate que la ruta sea correcta
+import { Bell } from "lucide-react";
 
 export default function NavbarUser({ name, categorias = [] }) {
   const navigate = useNavigate();
@@ -18,6 +19,10 @@ export default function NavbarUser({ name, categorias = [] }) {
   const [openUser, setOpenUser] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [highlightNotification, setHighlightNotification] = useState(false);
+
+
 
   const userRef = useRef();
   const catRef = useRef();
@@ -26,6 +31,39 @@ export default function NavbarUser({ name, categorias = [] }) {
     localStorage.removeItem("token");
     navigate("/");
   };
+  const fetchNotificationCount = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setNotificationCount(0);
+        return;
+      }
+
+      const res = await api.get("/user/notifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const unread = res.data.filter((n) => !n.isRead).length;
+      setNotificationCount(unread);
+    } catch (error) {
+      setNotificationCount(0);
+    }
+  };
+  useEffect(() => {
+    const onNotificationsUpdated = () => fetchNotificationCount();
+
+    window.addEventListener(
+      "notificationsUpdated",
+      onNotificationsUpdated
+    );
+
+    return () => {
+      window.removeEventListener(
+        "notificationsUpdated",
+        onNotificationsUpdated
+      );
+    };
+  }, []);
 
   // --- Mueve la función arriba para que esté disponible al primer useEffect ---
   const fetchCartCount = async () => {
@@ -50,7 +88,9 @@ export default function NavbarUser({ name, categorias = [] }) {
   // Llamada inicial para cargar el contador
   useEffect(() => {
     fetchCartCount();
+    fetchNotificationCount(); // 👈 AÑADIR
   }, []);
+
 
   // Escuchar actualizaciones: storage (otras pestañas) + evento custom (misma pestaña)
   useEffect(() => {
@@ -90,6 +130,18 @@ export default function NavbarUser({ name, categorias = [] }) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+useEffect(() => {
+  if (notificationCount > 0) {
+    setHighlightNotification(true);
+
+    const timer = setTimeout(() => {
+      setHighlightNotification(false);
+    }, 1200); // duración del efecto
+
+    return () => clearTimeout(timer);
+  }
+}, [notificationCount]);
+
 
   return (
     <>
@@ -105,7 +157,6 @@ export default function NavbarUser({ name, categorias = [] }) {
         "
       >
         <div className="max-w-7xl mx-auto px-4 md:px-9 py-4 flex items-center justify-between">
-
           {/* LOGO */}
           <div
             className="flex items-center gap-3 flex-shrink-0 cursor-pointer"
@@ -140,12 +191,14 @@ export default function NavbarUser({ name, categorias = [] }) {
 
           {/* MENU DESKTOP */}
           <div className="hidden md:flex items-center gap-10 text-white font-medium">
-
             <Link to="/homeUser" className="hover:text-yellow-200 transition">
               Inicio
             </Link>
 
-            <Link to="/user/productos" className="hover:text-yellow-200 transition">
+            <Link
+              to="/user/productos"
+              className="hover:text-yellow-200 transition"
+            >
               Productos
             </Link>
 
@@ -182,13 +235,18 @@ export default function NavbarUser({ name, categorias = [] }) {
               )}
             </div>
 
-            <Link to="/favorito/all" className="flex items-center gap-1 hover:text-yellow-200">
+            <Link
+              to="/favorito/all"
+              className="flex items-center gap-1 hover:text-yellow-200"
+            >
               <Heart size={20} /> Favoritos
             </Link>
 
-            <Link to="/user/carAll" className="relative flex items-center gap-1 hover:text-yellow-200">
+            <Link
+              to="/user/carAll"
+              className="relative flex items-center gap-1 hover:text-yellow-200"
+            >
               <ShoppingCart size={20} /> Carrito
-
               {cartCount > 0 && (
                 <span
                   className="
@@ -204,7 +262,10 @@ export default function NavbarUser({ name, categorias = [] }) {
               )}
             </Link>
 
-            <Link to="/orders" className="flex items-center gap-1 hover:text-yellow-200">
+            <Link
+              to="/orders"
+              className="flex items-center gap-1 hover:text-yellow-200"
+            >
               <ShoppingCart size={20} /> Mis Órdenes
             </Link>
 
@@ -224,10 +285,11 @@ export default function NavbarUser({ name, categorias = [] }) {
 
               {openUser && (
                 <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-lg p-5 z-50 animate-fadeIn">
-
                   <div className="flex items-center gap-3 pb-4 border-b">
                     <img
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`}
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        name
+                      )}`}
                       className="w-12 h-12 rounded-full"
                     />
                     <div>
@@ -259,9 +321,17 @@ export default function NavbarUser({ name, categorias = [] }) {
                       Cambiar Contraseña
                     </button>
 
-                    <button className="text-left hover:bg-gray-100 p-2 rounded">
-                      Preferencias
-                    </button>
+                    <Link
+                      to="/user/notificaciones"
+                      className="relative flex items-center gap-1"
+                    >
+                      <Bell size={20} />Notificaciones
+                      {notificationCount > 0 && (
+                        <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                          {notificationCount}
+                        </span>
+                      )}
+                    </Link>
                   </div>
 
                   <button
@@ -283,7 +353,6 @@ export default function NavbarUser({ name, categorias = [] }) {
           >
             <Menu size={30} />
           </button>
-
         </div>
       </nav>
 
@@ -305,7 +374,6 @@ export default function NavbarUser({ name, categorias = [] }) {
         </div>
 
         <div className="flex flex-col text-gray-700 mt-5 px-4 gap-4">
-
           <Link to="/homeUser" onClick={() => setMobileMenu(false)}>
             Inicio
           </Link>
@@ -350,7 +418,11 @@ export default function NavbarUser({ name, categorias = [] }) {
             Favoritos
           </Link>
 
-          <Link to="/user/carAll" onClick={() => setMobileMenu(false)} className="relative">
+          <Link
+            to="/user/carAll"
+            onClick={() => setMobileMenu(false)}
+            className="relative"
+          >
             Carrito
             {cartCount > 0 && (
               <span
@@ -389,7 +461,22 @@ export default function NavbarUser({ name, categorias = [] }) {
           >
             Cambiar Contraseña
           </button>
-
+          <div className="flex flex-col gap-4 p-4">
+            {/* 🔔 NOTIFICACIONES MOBILE */}
+            <Link
+              to="/user/notificaciones"
+              className="relative flex items-center gap-2"
+              onClick={() => setMobileMenu(false)}
+            >
+              <Bell size={18} />
+              Notificaciones
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {notificationCount}
+                </span>
+              )}
+            </Link>
+          </div>
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white p-2 rounded mt-4"
