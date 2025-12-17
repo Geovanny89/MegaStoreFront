@@ -40,6 +40,7 @@ import RestablecerContraseña from "./pages/Login/RestablecerContraseña";
 import SellerNotifications from "./pages/Vendedor/SellerNotifications";
 import Notificacion from "./components/User/Notificaciones/Notificacion";
 import SellerQuestions from "./components/Vendedor/Questions/SellerQuestions";
+import DashboardSeller from "./pages/Vendedor/DashboardSeller";
 
 export default function AppRouter() {
   return (
@@ -95,7 +96,7 @@ export default function AppRouter() {
 
       <Route element={<PrivateRoute rol={["seller"]} />}>
         <Route element={<LayoutSeller />}>
-          <Route path="/HomeVendedor" element={<HomeVendedor />} />
+          <Route path="/HomeVendedor" element={<DashboardSeller />} />
           <Route path="/PerfilVendedor" element={<PerfilVendedor />} />
           <Route path="/editarVendedor" element={<EditarPerfilVendedor />} />
           <Route path="/vendedorProductos" element={<VerProductos />} />

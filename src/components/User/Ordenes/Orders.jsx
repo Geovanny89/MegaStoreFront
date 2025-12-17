@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import api from "../../../api/axios";
 import { Eye, X } from "lucide-react";
+import ReviewForm from "../../User/Calificaciones/ReviewForm";
+
+/* ================= MAPA DE ESTADOS ================= */
+const ORDER_STATUS_LABELS = {
+  pending: "Pendiente",
+  paid: "Pagada",
+  processing: "En preparación",
+  shipped: "Enviada",
+  delivered: "Entregada",
+  cancelled: "Cancelada"
+};
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -22,7 +33,7 @@ export default function Orders() {
       }
 
       const response = await api.get("/order/my-orders", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       setOrders(response.data || []);
@@ -77,7 +88,7 @@ export default function Orders() {
                   month: "2-digit",
                   year: "numeric",
                   hour: "2-digit",
-                  minute: "2-digit",
+                  minute: "2-digit"
                 }
               );
 
@@ -95,7 +106,7 @@ export default function Orders() {
                       <p className="text-gray-600 mt-1">
                         Estado:
                         <span className="ml-2 font-bold text-orange-600">
-                          {order.status}
+                          {ORDER_STATUS_LABELS[order.status] || order.status}
                         </span>
                       </p>
 
@@ -166,78 +177,98 @@ export default function Orders() {
 
       {/* ================= MODAL ================= */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh] relative">
             <button
               onClick={() => setSelectedOrder(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 z-10"
             >
               <X size={24} />
             </button>
 
-            <h3 className="text-2xl font-bold mb-4">
-              Detalles de la orden #{selectedOrder._id.slice(-6)}
-            </h3>
+            <div className="p-6 overflow-y-auto">
+              <h3 className="text-2xl font-bold mb-4 pr-8">
+                Orden #{selectedOrder._id.slice(-6)}
+              </h3>
 
-            <p className="text-gray-600 mb-2">
-              Estado: <strong>{selectedOrder.status}</strong>
-            </p>
+              <p className="text-gray-600 mb-2">
+                Estado:{" "}
+                <strong>
+                  {ORDER_STATUS_LABELS[selectedOrder.status] ||
+                    selectedOrder.status}
+                </strong>
+              </p>
 
-            <p className="text-gray-600 mb-4">
-              Fecha:{" "}
-              {new Date(selectedOrder.createdAt).toLocaleString("es-ES")}
-            </p>
+              <p className="text-gray-600 mb-4">
+                Fecha:{" "}
+                {new Date(selectedOrder.createdAt).toLocaleString("es-ES")}
+              </p>
 
-            <h4 className="text-lg font-semibold mb-3">Productos</h4>
+              <h4 className="text-lg font-semibold mb-3 border-b pb-2">
+                Productos
+              </h4>
 
-            <ul className="divide-y divide-gray-200 mb-6">
-              {selectedOrder.products.map((item) => (
-                <li
-                  key={item._id}
-                  className="py-4 flex items-start justify-between gap-4"
-                >
-                  <div className="flex-1">
-                    <p className="text-base font-semibold text-gray-900">
-                      {item.product?.name ||
-                        item.productName ||
-                        "Producto no disponible"}
-                    </p>
+              <ul className="divide-y divide-gray-200 mb-6">
+                {selectedOrder.products.map((item) => (
+                  <li key={item._id} className="py-4 flex flex-col gap-3">
+                    <div className="flex justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-base font-semibold text-gray-900">
+                          {item.product?.name ||
+                            item.productName ||
+                            "Producto no disponible"}
+                        </p>
+                        <div className="mt-1 text-sm text-gray-600">
+                          <p>Cantidad: {item.quantity}</p>
+                          <p>
+                            Unitario: ${item.price.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
 
-                    <div className="mt-1 text-sm text-gray-600 space-y-1">
-                      <p>Cantidad: {item.quantity}</p>
-                      <p>
-                        Precio unitario: $
-                        {item.price.toLocaleString()}
-                      </p>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-gray-900">
+                          ${(item.price * item.quantity).toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">Subtotal</p>
-                    <p className="text-lg font-bold text-gray-900">
-                      $
-                      {(item.price * item.quantity).toLocaleString()}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    {selectedOrder.status === "delivered" &&
+                      !item.reviewed && (
+                        <div className="bg-gray-50 p-3 rounded-lg mt-2">
+                          <ReviewForm
+                            orderId={selectedOrder._id}
+                            productId={item.product?._id}
+                            sellerId={item.seller}
+                            onSuccess={fetchOrders}
+                          />
+                        </div>
+                      )}
 
-            {/* BOTÓN CONFIRMAR RECIBIDO */}
-            {selectedOrder.status === "shipped" && (
-              <button
-                onClick={() => confirmReceived(selectedOrder._id)}
-                className="w-full mb-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
-              >
-                Confirmar pedido recibido
-              </button>
-            )}
+                    {item.reviewed && (
+                      <p className="text-sm text-green-600 font-medium">
+                        ✔ Ya calificaste este producto
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
 
-            <div className="border-t pt-4 flex justify-between items-center">
-              <span className="text-lg font-semibold">Total pagado</span>
-              <span className="text-2xl font-bold text-blue-600">
-                ${selectedOrder.total.toLocaleString()}
-              </span>
+              {selectedOrder.status === "shipped" && (
+                <button
+                  onClick={() => confirmReceived(selectedOrder._id)}
+                  className="w-full mb-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
+                >
+                  Confirmar pedido recibido
+                </button>
+              )}
+
+              <div className="border-t pt-4 flex justify-between items-center sticky bottom-0 bg-white">
+                <span className="text-lg font-semibold">Total pagado</span>
+                <span className="text-2xl font-bold text-blue-600">
+                  ${selectedOrder.total.toLocaleString()}
+                </span>
+              </div>
             </div>
           </div>
         </div>

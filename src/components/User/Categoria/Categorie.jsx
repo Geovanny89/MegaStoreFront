@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import api from "../../../api/axios";
 import { Heart } from "lucide-react";
 import { useFavorites } from "../../../context/FavoriteContext";
+import ProductQuestions from "../../Questions/ProductQuestions";
+import ProductReviews from "../Calificaciones/ProductReviews";
+import RatingStars from "../../Ratings/RatingStars";
 
 export default function Categorie() {
   const { id } = useParams();
@@ -169,99 +172,162 @@ export default function Categorie() {
       </div>
 
       {/* MODAL REUTILIZADO */}
-      {modalOpen && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-5xl w-full relative shadow-xl">
-            <button
-              onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-black text-2xl"
-            >
-              ✖
-            </button>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* Miniaturas */}
-              <div className="flex gap-4">
-                <div className="flex flex-col gap-3 w-24">
-                  {selectedProduct.image.slice(0, 5).map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      onClick={() => setSelectedImg(img)}
-                      className={`w-24 h-24 rounded-xl object-cover cursor-pointer border ${
-                        selectedImg === img
-                          ? "border-blue-500"
-                          : "border-gray-200"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex-1">
-                  <img
-                    src={selectedImg}
-                    className="w-full h-[400px] rounded-xl object-contain bg-gray-50 p-4 border"
-                  />
-                </div>
-              </div>
-
-              {/* Información producto */}
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800">
-                  {selectedProduct.name}
-                </h2>
-
-                <p className="text-gray-500 mt-1">Marca: {selectedProduct.brand}</p>
-                <p className="text-gray-500">Precio: {selectedProduct.price}</p>
-                <p className="text-gray-500 mt-2">Stock: {selectedProduct.stock}</p>
-
-                {/* Cantidad */}
-                <div className="mt-6">
-                  <label className="block text-gray-700 font-medium mb-1">
-                    Cantidad:
-                  </label>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                      className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-                    >
-                      -
-                    </button>
-
-                    <input
-                      type="number"
-                      min="1"
-                      value={cantidad}
-                      onChange={(e) =>
-                        setCantidad(Math.max(1, Number(e.target.value)))
-                      }
-                      className="w-20 text-center border rounded-lg py-2"
-                    />
-
-                    <button
-                      onClick={() => setCantidad(cantidad + 1)}
-                      className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                {/* Agregar */}
-                <button
-                  onClick={() =>
-                    agregarAlCarrito(selectedProduct._id, cantidad)
-                  }
-                  className="w-full mt-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition text-lg"
-                >
-                  Agregar al carrito
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+     {modalOpen && selectedProduct && (
+       <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
+         <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden">
+     
+           {/* HEADER */}
+           <div className="flex items-center justify-between px-4 py-3 border-b">
+             <h3 className="text-base font-semibold text-gray-800 truncate">
+               {selectedProduct.name}
+             </h3>
+             <button
+               onClick={() => setModalOpen(false)}
+               className="text-gray-400 hover:text-black text-lg"
+             >
+               ✖
+             </button>
+           </div>
+     
+           {/* CUERPO */}
+           <div className="max-h-[80vh] overflow-y-auto">
+     
+             {/* PRODUCTO */}
+             <div className="p-4 border-b">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+     
+                 {/* IMÁGENES */}
+                 <div>
+                   <div className="bg-gray-50 border rounded-lg h-[320px] flex items-center justify-center">
+                     <img
+                       src={selectedImg}
+                       alt={selectedProduct.name}
+                       className="object-contain max-h-full"
+                     />
+                   </div>
+     
+                   <div className="grid grid-cols-4 gap-2 mt-3">
+                     {selectedProduct.image.slice(0, 4).map((img, i) => (
+                       <img
+                         key={i}
+                         src={img}
+                         onClick={() => setSelectedImg(img)}
+                         className={`h-16 rounded-md object-cover cursor-pointer border ${
+                           selectedImg === img
+                             ? "border-blue-500 ring-2 ring-blue-500"
+                             : "border-gray-200"
+                         }`}
+                       />
+                     ))}
+                   </div>
+                 </div>
+     
+                 {/* INFO */}
+                 <div>
+                   <h2 className="text-xl font-bold text-gray-900">
+                     {selectedProduct.name}
+                   </h2>
+     
+                   <div className="mt-1">Calificación
+                     {selectedProduct.rating?.count > 0 ? (
+                       <RatingStars
+                         value={selectedProduct.rating.average}
+                         count={selectedProduct.rating.count}
+                         size="text-base"
+                       />
+                     ) : (
+                       <p className="text-xs text-gray-400">
+                         Sin calificaciones
+                       </p>
+                     )}
+                   </div>
+     
+                   <p className="text-2xl font-bold text-blue-600 mt-3">Precio: $
+                     {selectedProduct.price}
+                   </p>
+     
+                   <div className="mt-3 text-sm text-gray-600 space-y-1">
+                     <p>Marca: <span className="font-medium">{selectedProduct.brand}</span></p>
+     
+                     <p className="flex items-center gap-2">
+                       Vendido por{" "}
+                       <span className="font-bold uppercase">
+                         {selectedProduct?.vendedor?.storeName}
+                       </span>
+                       {selectedProduct?.vendedor?.sellerRating?.count > 0 && (
+                         <RatingStars
+                           value={selectedProduct.vendedor.sellerRating.average}
+                           count={selectedProduct.vendedor.sellerRating.count}
+                           size="text-xs"
+                         />
+                       )}
+                     </p>
+     
+                     <p>
+                       Stock:{" "} 
+                       <span className="font-semibold">
+                         {selectedProduct.stock}
+                       </span>
+                     </p>
+                   </div>
+     
+                   {/* CANTIDAD */}
+                   <div className="mt-4">
+                     <label className="text-sm font-medium">Cantidad</label>
+                     <div className="flex items-center gap-2 mt-1">
+                       <button
+                         onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                         className="w-9 h-9 rounded bg-gray-200"
+                       >
+                         −
+                       </button>
+     
+                       <input
+                         type="number"
+                         value={cantidad}
+                         min="1"
+                         onChange={(e) =>
+                           setCantidad(Math.max(1, Number(e.target.value)))
+                         }
+                         className="w-14 text-center border rounded"
+                       />
+     
+                       <button
+                         onClick={() => setCantidad(cantidad + 1)}
+                         className="w-9 h-9 rounded bg-gray-200"
+                       >
+                         +
+                       </button>
+                     </div>
+                   </div>
+     
+                   <button
+                     onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
+                     className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold"
+                   >
+                     Agregar al carrito
+                   </button>
+                 </div>
+               </div>
+             </div>
+     
+             {/* REVIEWS */}
+             <div className="p-4 border-b">
+               <h3 className="text-lg font-semibold mb-3">
+                 Opiniones
+               </h3>
+               <ProductReviews productId={selectedProduct._id} />
+             </div>
+     
+             {/* PREGUNTAS */}
+             <div className="p-4">
+               <ProductQuestions productId={selectedProduct._id} />
+             </div>
+     
+           </div>
+         </div>
+       </div>
+     )}
     </div>
   );
 }
