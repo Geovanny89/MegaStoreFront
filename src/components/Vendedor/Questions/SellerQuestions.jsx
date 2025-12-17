@@ -9,7 +9,7 @@ export default function SellerQuestions() {
     const res = await api.get("/seller/questions");
     setQuestions(res.data);
   };
-console.log("QUESTIONS STATE:", questions);
+
   const handleAnswer = async (questionId) => {
     if (!answer[questionId]?.trim()) return;
 

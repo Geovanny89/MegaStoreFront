@@ -93,7 +93,7 @@ export default function Products() {
 
       const res = await api.get(`/product/${id}`);
       setSelectedProduct(res.data);
-      console.log("soy el producto ", res.data)
+    
       if (res.data.image?.length > 0) {
         setSelectedImg(res.data.image[0]);
       }

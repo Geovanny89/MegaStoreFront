@@ -24,7 +24,7 @@ export default function Sidebar({ open, setOpen }) {
     try {
       const res = await api.get("/seller/notificacion");
       const unread = res.data.notifications.filter(n => !n.isRead).length;
-      console.log("estas son las preguntas ",)
+ 
       setUnreadNotifications(unread);
     } catch (error) {
       console.error("Error obteniendo notificaciones", error);
