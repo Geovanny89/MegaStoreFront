@@ -39,6 +39,7 @@ import RecuperarContraseña from "./pages/Login/RecuperarContraseña";
 import RestablecerContraseña from "./pages/Login/RestablecerContraseña";
 import SellerNotifications from "./pages/Vendedor/SellerNotifications";
 import Notificacion from "./components/User/Notificaciones/Notificacion";
+import SellerQuestions from "./components/Vendedor/Questions/SellerQuestions";
 
 export default function AppRouter() {
   return (
@@ -51,22 +52,22 @@ export default function AppRouter() {
       {/* --- RUTAS DE RECUPERAR CONTRASEÑA --- */}
       <Route path="/forgot-password" element={<RecuperarContraseña />} />
       <Route path="/reset-password/:token" element={<RestablecerContraseña />} />
-      
+
 
 
       <Route path="/unauthorized" element={<Unauthorized />} />
 
- {/* TODAS las rutas del admin dentro de un solo LayoutUser */}
-   <Route element={<PrivateRoute rol={["admin"]} />}>
-    <Route element={<LayoutAdmin />}>
+      {/* TODAS las rutas del admin dentro de un solo LayoutUser */}
+      <Route element={<PrivateRoute rol={["admin"]} />}>
+        <Route element={<LayoutAdmin />}>
           <Route path="/homeAdmin" element={<HomeAdmin />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin/usuarios" element={<HomeAdmin />} />
           <Route path="/admin/Categorias" element={<CategoriasAdmin />} />
           <Route path="/admin/editarUsuario" element={<AdminUser />} />
-    
-    </Route>
-   </Route>
+
+        </Route>
+      </Route>
 
 
       {/* TODAS las rutas del usuario dentro de un solo LayoutUser */}
@@ -88,29 +89,31 @@ export default function AppRouter() {
 
 
 
-          
+
         </Route>
       </Route>
 
       <Route element={<PrivateRoute rol={["seller"]} />}>
         <Route element={<LayoutSeller />}>
-          <Route path="/HomeVendedor" element={<HomeVendedor />}/>
-          <Route path="/PerfilVendedor" element={<PerfilVendedor />}/>
-          <Route path="/editarVendedor" element={<EditarPerfilVendedor />}/>
-          <Route path="/vendedorProductos" element={<VerProductos />}/>
-          <Route path="/crearProductos" element={<CrearProductos />}/>
-          <Route path="/actualizarProductos" element={<EditarProducto />}/>
-          <Route path="/pedidosVendedor" element={<SellerOrders />}/>
-           <Route path="/notificaciones" element={<SellerNotifications />} />
-          
-
-
-          
-          
+          <Route path="/HomeVendedor" element={<HomeVendedor />} />
+          <Route path="/PerfilVendedor" element={<PerfilVendedor />} />
+          <Route path="/editarVendedor" element={<EditarPerfilVendedor />} />
+          <Route path="/vendedorProductos" element={<VerProductos />} />
+          <Route path="/crearProductos" element={<CrearProductos />} />
+          <Route path="/actualizarProductos" element={<EditarProducto />} />
+          <Route path="/pedidosVendedor" element={<SellerOrders />} />
+          <Route path="/notificaciones" element={<SellerNotifications />} />
+          <Route path="/questions" element={<SellerQuestions />} />
 
 
 
-          
+
+
+
+
+
+
+
         </Route>
       </Route>
       <Route element={<Layout />}></Route>
