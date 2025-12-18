@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: "http://localhost:3001/api",
-  baseURL: "https://megastoreback.onrender.com",
+  baseURL: "https://megastoreback.onrender.com/api",
 });
 
 // 🔹 Interceptor de REQUEST (ya lo tienes)
