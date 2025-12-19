@@ -10,15 +10,17 @@ export default function EditarPerfilVendedor() {
     storeName: ""
   });
 
+  const [nequiQR, setNequiQR] = useState(null);
+  const [daviplataQR, setDaviplataQR] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Cargar datos actuales del vendedor
+  // Cargar datos actuales
   const fetchVendedor = async () => {
     try {
       const res = await api.get("/vendedor/perfil");
       setForm(res.data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -38,14 +40,33 @@ export default function EditarPerfilVendedor() {
     setLoading(true);
 
     try {
-      await api.put("/vendedor/update", form);
-      alert("Perfil actualizado correctamente");
-    } catch (err) {
-      console.log(err);
-      alert("Error al actualizar");
-    }
+      const formData = new FormData();
 
-    setLoading(false);
+      // Campos normales
+      Object.entries(form).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value);
+        }
+      });
+
+      // Archivos QR
+      if (nequiQR) formData.append("nequiQR", nequiQR);
+      if (daviplataQR) formData.append("daviplataQR", daviplataQR);
+
+      await api.put("/vendedor/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      alert("Perfil actualizado correctamente");
+      fetchVendedor();
+    } catch (err) {
+      console.error(err);
+      alert("Error al actualizar perfil");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,7 +80,7 @@ export default function EditarPerfilVendedor() {
           name="name"
           placeholder="Nombre"
           className="w-full border p-2 rounded"
-          value={form.name}
+          value={form.name || ""}
           onChange={handleChange}
         />
 
@@ -68,7 +89,7 @@ export default function EditarPerfilVendedor() {
           name="lastName"
           placeholder="Apellido"
           className="w-full border p-2 rounded"
-          value={form.lastName}
+          value={form.lastName || ""}
           onChange={handleChange}
         />
 
@@ -77,7 +98,7 @@ export default function EditarPerfilVendedor() {
           name="email"
           placeholder="Correo"
           className="w-full border p-2 rounded"
-          value={form.email}
+          value={form.email || ""}
           onChange={handleChange}
         />
 
@@ -86,7 +107,7 @@ export default function EditarPerfilVendedor() {
           name="phone"
           placeholder="Teléfono"
           className="w-full border p-2 rounded"
-          value={form.phone}
+          value={form.phone || ""}
           onChange={handleChange}
         />
 
@@ -95,13 +116,38 @@ export default function EditarPerfilVendedor() {
           name="storeName"
           placeholder="Nombre de la tienda"
           className="w-full border p-2 rounded"
-          value={form.storeName}
+          value={form.storeName || ""}
           onChange={handleChange}
         />
 
+        {/* ================= QR NEQUI ================= */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            QR Nequi
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setNequiQR(e.target.files[0])}
+          />
+        </div>
+
+        {/* ================= QR DAVIPLATA ================= */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            QR Daviplata
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setDaviplataQR(e.target.files[0])}
+          />
+        </div>
+
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded w-full disabled:opacity-50"
         >
           {loading ? "Guardando..." : "Guardar Cambios"}
         </button>

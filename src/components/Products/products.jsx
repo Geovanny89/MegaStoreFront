@@ -61,6 +61,7 @@ export default function Products() {
     try {
       setLoadingId(productId);
       await api.post("/user/car", { productId, quantity });
+      window.dispatchEvent(new Event("cartUpdated"));
       alert("Producto agregado al carrito ✔");
     } catch (error) {
       console.error(error);

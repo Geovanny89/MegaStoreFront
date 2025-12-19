@@ -41,6 +41,8 @@ import SellerNotifications from "./pages/Vendedor/SellerNotifications";
 import Notificacion from "./components/User/Notificaciones/Notificacion";
 import SellerQuestions from "./components/Vendedor/Questions/SellerQuestions";
 import DashboardSeller from "./pages/Vendedor/DashboardSeller";
+import UserMessages from "./components/User/messages/UserMessages";
+import SellerMessages from "./components/Vendedor/messages/SellerMessages";
 
 export default function AppRouter() {
   return (
@@ -87,6 +89,7 @@ export default function AppRouter() {
           <Route path="/cambiar-password" element={<ChangePassword />} />
           <Route path="/user/tienda/:vendedorId" element={<Productosvendedor />} />
           <Route path="/user/notificaciones" element={<Notificacion />} />
+          <Route path="/orders/:orderId/messages" element={<UserMessages />} />
 
 
 
@@ -105,6 +108,8 @@ export default function AppRouter() {
           <Route path="/pedidosVendedor" element={<SellerOrders />} />
           <Route path="/notificaciones" element={<SellerNotifications />} />
           <Route path="/questions" element={<SellerQuestions />} />
+          <Route path="/pedidos/:orderId/messages" element={<SellerMessages />}/>
+
 
 
 

@@ -1,274 +1,339 @@
 import React, { useEffect, useState } from "react";
 import api from "../../../api/axios";
-import { Eye, X } from "lucide-react";
+import {
+  X, Package, Truck, CheckCircle2, Clock, 
+  ChevronRight, Receipt, Info, UploadCloud, Calendar, Store
+} from "lucide-react";
 import ReviewForm from "../../User/Calificaciones/ReviewForm";
+import UserMessages from "../../User/messages/UserMessages.jsx";
 
-/* ================= MAPA DE ESTADOS ================= */
-const ORDER_STATUS_LABELS = {
-  pending: "Pendiente",
-  paid: "Pagada",
-  processing: "En preparación",
-  shipped: "Enviada",
-  delivered: "Entregada",
-  cancelled: "Cancelada"
+/* ================= ESTILOS POR ESTADO ================= */
+const STATUS_THEME = {
+  pending: { label: "Pendiente", color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200", accent: "border-l-amber-500", icon: <Clock size={18} className="animate-pulse" /> },
+  processing: { label: "En preparación", color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-200", accent: "border-l-blue-500", icon: <Package size={18} /> },
+  shipped: { label: "En camino / Listo", color: "text-indigo-700", bg: "bg-indigo-50", border: "border-indigo-200", accent: "border-l-indigo-500", icon: <Truck size={18} /> },
+  delivered: { label: "Entregado", color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200", accent: "border-l-emerald-500", icon: <CheckCircle2 size={18} /> },
+  cancelled: { label: "Cancelado", color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-200", accent: "border-l-rose-500", icon: <X size={18} /> }
+};
+
+const PAYMENT_LABELS = {
+  pending: "Esperando pago",
+  sent: "Pago enviado",
+  confirmed: "Pago aprobado",
+  rejected: "Pago rechazado",
+  cash_on_delivery: "Efectivo al recibir"
+};
+
+const formatOrderDate = (dateString) => {
+  if (!dateString) return { date: "S/F", time: "" };
+  const dateObj = new Date(dateString);
+  const date = dateObj.toLocaleDateString("es-CO", { day: '2-digit', month: 'short', year: 'numeric' });
+  const time = dateObj.toLocaleTimeString("es-CO", { hour: '2-digit', minute: '2-digit', hour12: true });
+  return { date, time };
 };
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
-
-  // PAGINADO
+  const [showChatModal, setShowChatModal] = useState(false); 
   const [currentPage, setCurrentPage] = useState(1);
-  const ordersPerPage = 5;
+  const ordersPerPage = 6;
+  const [proofFile, setProofFile] = useState(null);
+  const [uploadingProof, setUploadingProof] = useState(false);
+
+  const token = localStorage.getItem("token");
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setOrders([]);
-        setLoading(false);
-        return;
-      }
-
-      const response = await api.get("/order/my-orders", {
+      if (!token) return;
+      const res = await api.get("/order/my-orders", {
         headers: { Authorization: `Bearer ${token}` }
       });
-
-      setOrders(response.data || []);
-    } catch (error) {
-      console.error("Error obteniendo órdenes:", error);
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
+      setOrders(res.data || []);
+      if (selectedOrder) {
+        const updated = res.data.find(o => o._id === selectedOrder._id);
+        if (updated) setSelectedOrder(updated);
+      }
+    } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  useEffect(() => { fetchOrders(); }, []);
 
-  // ================= CONFIRMAR RECIBIDO =================
   const confirmReceived = async (orderId) => {
+    if (!window.confirm("¿Confirmas que has recibido el pedido satisfactoriamente?")) return;
     try {
-      await api.put(`/orders/${orderId}/received`);
-      await fetchOrders();
-      setSelectedOrder(null);
-    } catch (error) {
-      console.error("Error confirmando recepción:", error);
-      alert("No se pudo confirmar la recepción");
-    }
+      await api.put(`/orders/${orderId}/received`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      alert("¡Pedido finalizado con éxito!");
+      fetchOrders();
+    } catch (error) { alert("Error al confirmar entrega."); }
   };
 
-  // ================= PAGINADO =================
+  const uploadPaymentProof = async (orderId) => {
+    if (!proofFile) return alert("Selecciona una imagen.");
+    try {
+      setUploadingProof(true);
+      const formData = new FormData();
+      formData.append("image", proofFile);
+      await api.put(`/buyer/orders/${orderId}/payment-proof`, formData, {
+        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` }
+      });
+      alert("¡Comprobante enviado!");
+      setProofFile(null);
+      fetchOrders();
+    } catch (error) { alert("Error al subir el archivo."); } finally { setUploadingProof(false); }
+  };
+
   const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const currentOrders = orders.slice(indexOfLastOrder - ordersPerPage, indexOfLastOrder);
   const totalPages = Math.ceil(orders.length / ordersPerPage);
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
-      <h2 className="text-3xl font-bold mb-6">Mis órdenes</h2>
+    <div className="min-h-screen bg-[#FBFDFF] py-10 px-4 font-sans text-slate-900">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* CABECERA */}
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h2 className="text-3xl font-black tracking-tight">Mis Compras</h2>
+            <p className="text-slate-500 text-sm font-medium">Historial de pedidos y seguimiento</p>
+          </div>
+          <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-sm flex items-center gap-2">
+            <Package size={18} className="text-blue-600" />
+            <span className="font-bold text-sm">{orders.length} pedidos</span>
+          </div>
+        </div>
 
-      {loading && <p className="text-gray-500">Cargando órdenes...</p>}
-
-      {!loading && orders.length === 0 && (
-        <p className="text-gray-500">Aún no tienes órdenes.</p>
-      )}
-
-      {!loading && orders.length > 0 && (
-        <>
-          <div className="flex flex-col gap-6">
-            {currentOrders.map((order) => {
-              const formattedDate = new Date(order.createdAt).toLocaleString(
-                "es-ES",
-                {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit"
-                }
-              );
+        {/* LISTADO DE ORDENES */}
+        {loading ? (
+          <div className="flex flex-col items-center py-20 gap-4">
+            <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {currentOrders.map(order => {
+              const theme = STATUS_THEME[order.status] || STATUS_THEME.pending;
+              const { date, time } = formatOrderDate(order.createdAt);
 
               return (
-                <div
-                  key={order._id}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6"
-                >
-                  <div className="flex justify-between items-center">
+                <div key={order._id} className={`bg-white rounded-[24px] border border-slate-100 border-l-4 ${theme.accent} p-5 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row items-center gap-6`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${theme.bg} ${theme.color}`}>
+                    {theme.icon}
+                  </div>
+                  
+                  <div className="flex-1 w-full grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                     <div>
-                      <h3 className="text-lg font-semibold">
-                        Orden #{order._id.slice(-6)}
-                      </h3>
-
-                      <p className="text-gray-600 mt-1">
-                        Estado:
-                        <span className="ml-2 font-bold text-orange-600">
-                          {ORDER_STATUS_LABELS[order.status] || order.status}
-                        </span>
-                      </p>
-
-                      <p className="mt-3 text-blue-600 font-bold text-xl">
-                        Total: ${order.total.toLocaleString()}
-                      </p>
-
-                      <p className="mt-2 text-gray-500 text-sm">
-                        Realizada el {formattedDate}
-                      </p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Orden</p>
+                      <p className="text-sm font-bold">#{order._id.slice(-6).toUpperCase()}</p>
                     </div>
 
-                    <button
-                      onClick={() =>
-                        setSelectedOrder(JSON.parse(JSON.stringify(order)))
-                      }
-                      className="text-blue-600 hover:text-blue-700 p-2"
-                    >
-                      <Eye size={28} />
-                    </button>
+                    <div className="flex flex-col items-start">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Realizado</p>
+                      <div className="bg-slate-50 border border-slate-100 px-2 py-1 rounded-lg flex items-center gap-2">
+                        <Calendar size={12} className="text-blue-500" />
+                        <div>
+                          <p className="text-[10px] font-black text-slate-700 leading-none">{date}</p>
+                          <p className="text-[9px] font-bold text-slate-400 leading-none mt-0.5">{time}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</p>
+                      <p className="text-sm font-black text-slate-900">${order.total?.toLocaleString('es-CO')}</p>
+                    </div>
+
+                    <div className="text-right md:text-left">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pago</p>
+                      <span className={`text-[9px] font-bold px-2 py-1 rounded-md uppercase inline-block ${order.paymentMethod === 'cash_on_delivery' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
+                        {PAYMENT_LABELS[order.paymentStatus]}
+                      </span>
+                    </div>
                   </div>
+
+                  <button onClick={() => setSelectedOrder(order)} className="w-full md:w-auto bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+                    DETALLES <ChevronRight size={14} />
+                  </button>
                 </div>
               );
             })}
           </div>
+        )}
 
-          {/* PAGINACIÓN */}
-          {orders.length > ordersPerPage && (
-            <div className="flex justify-center items-center gap-4 mt-8">
-              <button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.max(prev - 1, 1))
-                }
-                disabled={currentPage === 1}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium ${
-                  currentPage === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                Anterior
-              </button>
+        {/* PAGINACIÓN */}
+        {!loading && totalPages > 1 && (
+          <div className="flex justify-center items-center mt-10 gap-4">
+            <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)} className="p-2 rounded-xl border bg-white disabled:opacity-20"><ChevronRight className="rotate-180"/></button>
+            <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Página {currentPage} de {totalPages}</span>
+            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)} className="p-2 rounded-xl border bg-white disabled:opacity-20"><ChevronRight/></button>
+          </div>
+        )}
+      </div>
 
-              <span className="text-sm text-gray-600">
-                Página <strong>{currentPage}</strong> de{" "}
-                <strong>{totalPages}</strong>
-              </span>
-
-              <button
-                onClick={() =>
-                  setCurrentPage((prev) =>
-                    Math.min(prev + 1, totalPages)
-                  )
-                }
-                disabled={currentPage === totalPages}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium ${
-                  currentPage === totalPages
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                Siguiente
-              </button>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ================= MODAL ================= */}
+      {/* ================= MODAL DE DETALLES ================= */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh] relative">
-            <button
-              onClick={() => setSelectedOrder(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 z-10"
-            >
-              <X size={24} />
-            </button>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[32px] w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            
+            <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-50 p-3 rounded-2xl text-blue-600">
+                  <Calendar size={22} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black leading-none">Detalles del Pedido</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase">ID: {selectedOrder._id}</span>
+                    <span className="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-black">
+                      {formatOrderDate(selectedOrder.createdAt).date} • {formatOrderDate(selectedOrder.createdAt).time}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400"><X /></button>
+            </div>
 
-            <div className="p-6 overflow-y-auto">
-              <h3 className="text-2xl font-bold mb-4 pr-8">
-                Orden #{selectedOrder._id.slice(-6)}
-              </h3>
+            <div className="flex-1 overflow-y-auto p-6 space-y-8">
+              
+              {/* ESTADO ACTUAL */}
+              <div className={`p-4 rounded-2xl border ${STATUS_THEME[selectedOrder.status]?.bg} ${STATUS_THEME[selectedOrder.status]?.border} flex items-center gap-4`}>
+                <div className={`p-3 rounded-xl bg-white shadow-sm ${STATUS_THEME[selectedOrder.status]?.color}`}>
+                  {STATUS_THEME[selectedOrder.status]?.icon}
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Estado del pedido</p>
+                  <p className={`font-black ${STATUS_THEME[selectedOrder.status]?.color}`}>{STATUS_THEME[selectedOrder.status]?.label}</p>
+                </div>
+              </div>
 
-              <p className="text-gray-600 mb-2">
-                Estado:{" "}
-                <strong>
-                  {ORDER_STATUS_LABELS[selectedOrder.status] ||
-                    selectedOrder.status}
-                </strong>
-              </p>
+              {/* BOTÓN DE CHAT ACTUALIZADO CON LÓGICA DE TIENDA */}
+              <button 
+                onClick={() => setShowChatModal(true)}
+                className={`w-full rounded-[2rem] p-5 flex items-center justify-between shadow-xl transition-all group ${
+                    selectedOrder.status === 'delivered' ? "bg-slate-100 border border-slate-200" : "bg-slate-900 hover:bg-blue-600 cursor-pointer"
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selectedOrder.status === 'delivered' ? "bg-slate-200 text-slate-400" : "bg-white/10 text-white"}`}>
+                    <Info size={20} />
+                  </div>
+                  <div className="text-left">
+                    <h4 className={`font-black text-sm uppercase ${selectedOrder.status === 'delivered' ? "text-slate-400" : "text-white"}`}>Chat con el Vendedor</h4>
+                    <p className={`text-[9px] font-bold uppercase tracking-widest italic ${selectedOrder.status === 'delivered' ? "text-slate-400" : "text-white/50"}`}>
+                      {selectedOrder.status === 'delivered' 
+                        ? "Chat finalizado" 
+                        : (selectedOrder.paymentMethod === 'cash_on_delivery' || selectedOrder.paymentStatus === 'confirmed')
+                          ? "Disponible ahora • Coordinar entrega" 
+                          : "Se activará al validar el pago"}
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight size={18} className={selectedOrder.status === 'delivered' ? "text-slate-300" : "text-white"} />
+              </button>
 
-              <p className="text-gray-600 mb-4">
-                Fecha:{" "}
-                {new Date(selectedOrder.createdAt).toLocaleString("es-ES")}
-              </p>
-
-              <h4 className="text-lg font-semibold mb-3 border-b pb-2">
-                Productos
-              </h4>
-
-              <ul className="divide-y divide-gray-200 mb-6">
-                {selectedOrder.products.map((item) => (
-                  <li key={item._id} className="py-4 flex flex-col gap-3">
-                    <div className="flex justify-between gap-4">
-                      <div className="flex-1">
-                        <p className="text-base font-semibold text-gray-900">
-                          {item.product?.name ||
-                            item.productName ||
-                            "Producto no disponible"}
-                        </p>
-                        <div className="mt-1 text-sm text-gray-600">
-                          <p>Cantidad: {item.quantity}</p>
-                          <p>
-                            Unitario: ${item.price.toLocaleString()}
-                          </p>
+              {/* PRODUCTOS */}
+              <section>
+                <div className="flex items-center gap-2 mb-4 font-black text-xs uppercase tracking-widest text-slate-400 px-2">
+                  <Receipt size={14}/> <h4>Resumen de Productos</h4>
+                </div>
+                <div className="space-y-3">
+                  {selectedOrder.products.map(item => (
+                    <div key={item._id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-sm text-slate-800">{item.productName}</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase">Cantidad: {item.quantity}</p>
                         </div>
+                        <p className="font-black text-sm text-slate-900">${(item.price * item.quantity).toLocaleString('es-CO')}</p>
                       </div>
-
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-gray-900">
-                          ${(item.price * item.quantity).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    {selectedOrder.status === "delivered" &&
-                      !item.reviewed && (
-                        <div className="bg-gray-50 p-3 rounded-lg mt-2">
-                          <ReviewForm
-                            orderId={selectedOrder._id}
-                            productId={item.product?._id}
-                            sellerId={item.seller}
-                            onSuccess={fetchOrders}
-                          />
+                      {selectedOrder.status === "delivered" && !item.reviewed && (
+                        <div className="mt-4 pt-4 border-t border-slate-200">
+                           <ReviewForm orderId={selectedOrder._id} productId={item.product?._id} sellerId={item.seller} onSuccess={fetchOrders} />
                         </div>
                       )}
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-                    {item.reviewed && (
-                      <p className="text-sm text-green-600 font-medium">
-                        ✔ Ya calificaste este producto
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-
-              {selectedOrder.status === "shipped" && (
-                <button
-                  onClick={() => confirmReceived(selectedOrder._id)}
-                  className="w-full mb-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
-                >
-                  Confirmar pedido recibido
-                </button>
+              {/* COMPROBANTE DE PAGO (Solo si no es efectivo) */}
+              {selectedOrder.paymentStatus === "pending" && selectedOrder.paymentMethod !== "cash_on_delivery" && (
+                <section className="bg-blue-50 border-2 border-dashed border-blue-200 rounded-[24px] p-6 text-center space-y-4">
+                  <p className="text-blue-600 font-black text-xs uppercase tracking-widest">Subir Comprobante</p>
+                  <label className="w-full cursor-pointer bg-white border border-blue-200 p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-blue-100/50 transition-colors shadow-sm">
+                    <UploadCloud className="text-blue-500" />
+                    <span className="text-[10px] font-bold text-slate-600 truncate max-w-full">
+                        {proofFile ? proofFile.name : "Seleccionar Imagen del Pago"}
+                    </span>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => setProofFile(e.target.files[0])} />
+                  </label>
+                  <button onClick={() => uploadPaymentProof(selectedOrder._id)} disabled={uploadingProof || !proofFile} className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest disabled:opacity-50 shadow-lg">
+                    {uploadingProof ? "Subiendo..." : "Enviar Pago"}
+                  </button>
+                </section>
               )}
 
-              <div className="border-t pt-4 flex justify-between items-center sticky bottom-0 bg-white">
-                <span className="text-lg font-semibold">Total pagado</span>
-                <span className="text-2xl font-bold text-blue-600">
-                  ${selectedOrder.total.toLocaleString()}
-                </span>
+              {/* INFO RECOGER EN TIENDA */}
+              {selectedOrder.paymentMethod === 'cash_on_delivery' && selectedOrder.status !== 'delivered' && (
+                <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-4">
+                    <div className="bg-white p-2 rounded-xl text-emerald-600 shadow-sm"><Store size={20}/></div>
+                    <div>
+                        <p className="text-[11px] font-black text-emerald-800 uppercase leading-none mb-1">Pago en Tienda</p>
+                        <p className="text-[10px] text-emerald-600 font-bold uppercase">Usa el chat para avisar al vendedor que vas en camino.</p>
+                    </div>
+                </div>
+              )}
+            </div>
+
+            {/* TOTAL Y CONFIRMACIÓN */}
+            <div className="p-6 border-t bg-slate-50 space-y-4">
+              <div className="flex justify-between items-center px-2">
+                <span className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Pago Total</span>
+                <span className="text-2xl font-black text-slate-900">${selectedOrder.total?.toLocaleString('es-CO')}</span>
               </div>
+              {selectedOrder.status === "shipped" && (
+                <button onClick={() => confirmReceived(selectedOrder._id)} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black text-sm shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95">
+                  <CheckCircle2 size={18} /> CONFIRMAR RECEPCIÓN
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL DE CHAT ================= */}
+      {showChatModal && selectedOrder && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-in zoom-in duration-200">
+          <div className="bg-white rounded-[40px] w-full max-w-lg h-[80vh] flex flex-col shadow-2xl overflow-hidden border border-white/20">
+            <div className="p-6 bg-white border-b flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg ${selectedOrder.status === 'delivered' ? "bg-emerald-500" : "bg-blue-600"}`}>
+                  <Info size={20} />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-800 text-sm uppercase">Mensajería</h3>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Orden #{selectedOrder._id.slice(-6).toUpperCase()}</p>
+                </div>
+              </div>
+              <button onClick={() => setShowChatModal(false)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500"><X size={20} /></button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              {selectedOrder.status === "delivered" ? (
+                <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-slate-50">
+                  <div className="w-16 h-16 bg-emerald-100 rounded-3xl flex items-center justify-center mb-4 text-emerald-600 shadow-sm"><CheckCircle2 size={32} /></div>
+                  <h4 className="font-black text-slate-800 uppercase text-sm mb-2">Chat Finalizado</h4>
+                  <p className="text-[11px] text-slate-500 font-medium">Este pedido ya fue entregado y la conversación se ha cerrado satisfactoriamente.</p>
+                </div>
+              ) : (selectedOrder.paymentMethod === "cash_on_delivery" || selectedOrder.paymentStatus === "confirmed") ? (
+                /* CHAT ACTIVO SI ES PAGO EN TIENDA O PAGO YA CONFIRMADO */
+                <UserMessages orderId={selectedOrder._id} />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-slate-50">
+                  <div className="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-4 text-slate-300"><Clock size={32} /></div>
+                  <h4 className="font-black text-slate-800 uppercase text-sm mb-2">Validando Pago</h4>
+                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed">Sube tu comprobante de pago para habilitar el chat con el vendedor.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
