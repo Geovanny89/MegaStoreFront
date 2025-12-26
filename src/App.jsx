@@ -43,6 +43,9 @@ import SellerQuestions from "./components/Vendedor/Questions/SellerQuestions";
 import DashboardSeller from "./pages/Vendedor/DashboardSeller";
 import UserMessages from "./components/User/messages/UserMessages";
 import SellerMessages from "./components/Vendedor/messages/SellerMessages";
+import Storefront from "./pages/Stores/Storefront";
+import ValidarPagos from "./pages/Admin/ValidarPagos";
+
 
 export default function AppRouter() {
   return (
@@ -52,6 +55,21 @@ export default function AppRouter() {
       <Route path="/register" element={<Register />} />
       <Route path="/productos" element={<ProductosTienda />} />
 
+
+        {/* ================= TIENDA PÚBLICA ================= */}
+
+
+      <Route path="/tienda/:slug" element={<Storefront />}>
+  <Route element={<PrivateRoute rol={["user"]} />}>
+    <Route path="carrito" element={<Carrito />} />
+    <Route path="favoritos" element={<Favoritos />} />
+    <Route path="ordenes" element={<Orders />} />
+    <Route path="perfil" element={<Perfil />} />
+    <Route path="notificaciones" element={<Notificacion />} />
+
+  </Route>
+</Route>
+
       {/* --- RUTAS DE RECUPERAR CONTRASEÑA --- */}
       <Route path="/forgot-password" element={<RecuperarContraseña />} />
       <Route path="/reset-password/:token" element={<RestablecerContraseña />} />
@@ -59,6 +77,8 @@ export default function AppRouter() {
 
 
       <Route path="/unauthorized" element={<Unauthorized />} />
+
+      
 
       {/* TODAS las rutas del admin dentro de un solo LayoutUser */}
       <Route element={<PrivateRoute rol={["admin"]} />}>
@@ -68,6 +88,7 @@ export default function AppRouter() {
           <Route path="/admin/usuarios" element={<HomeAdmin />} />
           <Route path="/admin/Categorias" element={<CategoriasAdmin />} />
           <Route path="/admin/editarUsuario" element={<AdminUser />} />
+          <Route path="/admin/sellers/pagos" element={<ValidarPagos />} />
 
         </Route>
       </Route>

@@ -31,24 +31,29 @@ export default function NavbarUser({ name, categorias = [] }) {
     localStorage.removeItem("token");
     navigate("/");
   };
-  const fetchNotificationCount = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setNotificationCount(0);
-        return;
-      }
-
-      const res = await api.get("/user/notifications", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const unread = res.data.filter((n) => !n.isRead).length;
-      setNotificationCount(unread);
-    } catch (error) {
+const fetchNotificationCount = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
       setNotificationCount(0);
+      return;
     }
-  };
+
+    const res = await api.get("/notifications/user", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const unread = Array.isArray(res.data)
+      ? res.data.filter((n) => !n.isRead).length
+      : 0;
+
+    setNotificationCount(unread);
+  } catch (error) {
+    console.error("Error obteniendo notificaciones:", error);
+    setNotificationCount(0);
+  }
+};
+
   useEffect(() => {
     const onNotificationsUpdated = () => fetchNotificationCount();
 

@@ -22,9 +22,9 @@ export default function Sidebar({ open, setOpen }) {
   /* ===================== NOTIFICATIONS ===================== */
   const fetchUnreadNotifications = async () => {
     try {
-      const res = await api.get("/seller/notificacion");
+      const res = await api.get("/notifications/seller");
       const unread = res.data.notifications.filter(n => !n.isRead).length;
- 
+      
       setUnreadNotifications(unread);
     } catch (error) {
       console.error("Error obteniendo notificaciones", error);
@@ -62,7 +62,6 @@ export default function Sidebar({ open, setOpen }) {
         >
           <X size={26} />
         </button>
-
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">

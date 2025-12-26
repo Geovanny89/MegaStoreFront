@@ -2,11 +2,13 @@ import { useState } from "react";
 import api from "../../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/Logo3.png";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -18,6 +20,10 @@ export default function Login() {
 
     try {
       const res = await api.post("/login", { email, password });
+
+      // ===============================
+      // GUARDAR SESIÓN
+      // ===============================
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.user._id);
       localStorage.setItem("userName", res.data.user.name);
@@ -27,6 +33,18 @@ export default function Login() {
 
       const role = res.data.user.rol;
 
+      // ===============================
+      // 🔁 REDIRECCIÓN CORRECTA
+      // ===============================
+      const from = location.state?.from;
+
+      // 👉 Si viene de una tienda (o cualquier ruta protegida)
+      if (from) {
+        navigate(from, { replace: true });
+        return;
+      }
+
+      // 👉 Flujo normal de la plataforma
       if (role === "user") {
         navigate("/homeUser");
       } else if (role === "seller") {
@@ -37,7 +55,7 @@ export default function Login() {
         navigate("/unauthorized");
       }
 
-      alert("Login exitoso");
+      alert("Login exitoso ✅");
 
     } catch (error) {
       alert("Correo o contraseña incorrectos ❌");
@@ -47,28 +65,24 @@ export default function Login() {
   };
 
   const loginWithGoogle = () => {
+    // Google también respeta el flujo (backend debe reenviar state si aplica)
     window.location.href = "http://localhost:3001/auth/google";
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-
       <div className="relative w-full max-w-md p-8 bg-white shadow-lg rounded-2xl">
 
-        {/* Botón X */}
+        {/* Botón cerrar */}
         <Link
           to="/"
-          className="
-            absolute top-4 right-4 
-            w-8 h-8 flex items-center justify-center 
-            rounded-full bg-gray-200 text-gray-600 text-lg 
-            hover:bg-gray-300 hover:text-gray-800 
-            transition cursor-pointer
-          "
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center 
+                     rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition"
         >
           ✕
         </Link>
 
+        {/* Logo */}
         <div className="flex justify-center mb-4">
           <img
             src={Logo}
@@ -77,9 +91,8 @@ export default function Login() {
           />
         </div>
 
-        {/* Formulario */}
+        {/* FORMULARIO */}
         <form className="mt-6 space-y-4" onSubmit={handleLogin}>
-
           {/* Email */}
           <div>
             <label className="text-gray-700 font-medium">Correo</label>
@@ -113,22 +126,19 @@ export default function Login() {
             </div>
           </div>
 
-          {/* 🔵 Recuperar contraseña */}
-          <div className="text-right mt-1">
-            <Link
-              to="/forgot-password"
-              className="text-sm text-blue-600 hover:underline"
-            >
+          {/* Recuperar contraseña */}
+          <div className="text-right">
+            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
 
-          {/* Botón Login */}
+          {/* Botón */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg text-white font-semibold transition 
-            ${loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"}`}
+            className={`w-full py-3 rounded-lg text-white font-semibold transition
+              ${loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"}`}
           >
             {loading ? "Ingresando..." : "Ingresar"}
           </button>
@@ -136,9 +146,9 @@ export default function Login() {
 
         {/* Separador */}
         <div className="flex items-center my-5">
-          <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex-1 h-px bg-gray-300" />
           <span className="px-3 text-gray-500">o</span>
-          <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex-1 h-px bg-gray-300" />
         </div>
 
         {/* Google */}
@@ -157,7 +167,6 @@ export default function Login() {
             Crear cuenta
           </Link>
         </p>
-        
       </div>
     </div>
   );

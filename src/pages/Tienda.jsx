@@ -39,7 +39,7 @@ export default function Tienda({ setVendedorSeleccionado }) {
             <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
               {v.storeName}
             </h3>
-            
+            saludosss
             {/* Botón */}
             <button
               onClick={() => setVendedorSeleccionado(v)}

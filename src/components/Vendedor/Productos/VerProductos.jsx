@@ -179,10 +179,11 @@ export default function VerProductos() {
             <div className="w-16 h-16 flex-shrink-0">
               {producto.image && producto.image[0] ? (
                 <img
-                  src={producto.image[0]}
-                  alt={producto.name}
-                  className="w-full h-full object-cover rounded-md"
-                />
+  src={producto.image[0]?.url}
+  alt={producto.name}
+  className="w-full h-full object-cover rounded-md"
+/>
+
               ) : (
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-md text-gray-500 text-xs">
                   Sin imagen
@@ -342,27 +343,26 @@ export default function VerProductos() {
                 />
               </div>
 
-              {/* Imágenes existentes */}
-              {existingImages.length > 0 && (
-                <div className="flex gap-2 flex-wrap">
-                  {existingImages.map((img, idx) => (
-                    <div key={idx} className="relative">
-                      <img
-                        src={img}
-                        alt="existente"
-                        className="w-24 h-24 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveExistingImage(idx)}
-                        className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+               {/* IMÁGENES EXISTENTES */}
+            {existingImages.length > 0 && (
+              <div className="flex gap-2 flex-wrap mb-4">
+                {existingImages.map((img, i) => (
+                  <div key={i} className="relative">
+                    <img
+                      src={img.url}
+                      alt="existente"
+                      className="w-24 h-24 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={() => handleRemoveExistingImage(i)}
+                      className="absolute top-0 right-0 bg-red-600 text-white w-6 h-6 rounded-full"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
               {/* Nuevas imágenes */}
               <div>

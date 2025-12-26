@@ -33,6 +33,12 @@ export default function SidebarAdmin({ open, setOpen }) {
         <SidebarItem to="/admin/usuarios" icon={<User size={20} />} label="Usuarios" open={open} />
         <SidebarItem to="/admin/Categorias" icon={<Package size={20} />} label="Categorias" open={open} />
         <SidebarItem to="/admin/configuracion" icon={<Settings size={20} />} label="Configuración" open={open} />
+        <SidebarItem 
+    to="/admin/sellers/pagos" 
+    icon={<Package size={20} />} 
+    label="Validar Pagos" 
+    open={open} 
+  />
       </nav>
 
       {/* FOOTER */}

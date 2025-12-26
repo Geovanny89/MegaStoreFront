@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../api/axios";
 import { 
   Trash2, MapPin, Store, ShoppingBag, 
@@ -16,6 +16,7 @@ export default function Carrito() {
   const [paymentMethod, setPaymentMethod] = useState("nequi");
   const [loadingId, setLoadingId] = useState(null);
   const [loadingOrder, setLoadingOrder] = useState(false);
+  const { slug } = useParams();
 
   // Estados para nueva dirección
   const [showAddForm, setShowAddForm] = useState(false);
@@ -32,14 +33,27 @@ export default function Carrito() {
   const token = localStorage.getItem("token");
 
   // --- CARGA DE DATOS ---
-  const fetchCarrito = async () => {
-    try {
-      const res = await api.get("/user/carAll", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCarrito(res.data.items || []);
-    } catch (err) { console.error("Error al cargar carrito"); }
-  };
+// Dentro de fetchCarrito en tu React
+const fetchCarrito = async () => {
+  try {
+    const endpoint = slug
+      ? `/user/car/tienda/${slug}`
+      : "/user/carAll";
+
+    const res = await api.get(endpoint, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    setCarrito(res.data.items || []);
+    
+    // Opcional: Si quieres mostrar el nombre de la tienda en el título
+    if (res.data.storeInfo) {
+       console.log("Comprando en:", res.data.storeInfo.name);
+    }
+  } catch (error) {
+    console.error("Error al cargar carrito", error);
+  }
+};
 
   const fetchAddresses = async () => {
     try {

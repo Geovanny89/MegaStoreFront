@@ -40,7 +40,7 @@ export default function Home() {
       {!vendedorSeleccionado && (
         <div id="productos">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">
-            Productos destacados
+            Productos destacadosss
           </h2>
           <Products />
         </div>

@@ -54,8 +54,8 @@ export default function SellerNotifications() {
   const fetchNotifications = async () => {
     if (notifications.length === 0) setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await api.get("/seller/notificacion", {
+      const token = localStorage.getItem("token"); 
+      const res = await api.get("/notifications/seller", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = res.data.notifications || res.data || [];
@@ -70,7 +70,7 @@ export default function SellerNotifications() {
   const markAsRead = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await api.patch(`/seller/notificacion/${id}/read`, null, {
+      await api.patch(`/notifications/${id}/read`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications((prev) =>
