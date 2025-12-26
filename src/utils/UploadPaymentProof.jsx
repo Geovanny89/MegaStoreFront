@@ -11,25 +11,37 @@ export default function UploadPaymentProof() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [sellerStatus, setSellerStatus] = useState(null);
+
+  // estados provenientes del backend
+  const [sellerStatus, setSellerStatus] = useState(null);     // acceso
+  const [paymentStatus, setPaymentStatus] = useState(null);   // estado del pago
   const [loadingSeller, setLoadingSeller] = useState(true);
 
-  /* 🔹 OBTENER ESTADO DEL SELLER */
+  /* ===============================
+     🔹 OBTENER ESTADO DEL SELLER
+  =============================== */
   useEffect(() => {
     const fetchSeller = async () => {
       try {
         const res = await api.get("/seller/me");
+
         setSellerStatus(res.data.sellerStatus);
+        setPaymentStatus(res.data.paymentStatus);
       } catch (err) {
-        console.error(err);
+        console.error("Error obteniendo seller:", err);
       } finally {
         setLoadingSeller(false);
       }
     };
+
     fetchSeller();
   }, []);
 
-  /* 🔹 SUBIR / REENVIAR COMPROBANTE */
+  const isExpired = sellerStatus === "expired";
+
+  /* ===============================
+     🔹 SUBIR / RENOVAR COMPROBANTE
+  =============================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -49,16 +61,21 @@ export default function UploadPaymentProof() {
         headers: { "Content-Type": "multipart/form-data" }
       });
 
-      // Volvemos a estado en revisión
+      // pasa a revisión (sin esperar nuevo fetch)
       setSellerStatus("pending_review");
+      setPaymentStatus("en_revision");
     } catch (err) {
-      setError(err.response?.data?.error || "Error al subir el comprobante");
+      setError(
+        err.response?.data?.error || "Error al subir el comprobante"
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  /* ⏳ CARGANDO SELLER */
+  /* ===============================
+     ⏳ CARGANDO
+  =============================== */
   if (loadingSeller) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -67,7 +84,9 @@ export default function UploadPaymentProof() {
     );
   }
 
-  /* 🟠 EN REVISIÓN */
+  /* ===============================
+     🟠 EN REVISIÓN
+  =============================== */
   if (sellerStatus === "pending_review") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-yellow-50 px-4">
@@ -77,32 +96,46 @@ export default function UploadPaymentProof() {
             Pago en revisión
           </h2>
           <p className="text-slate-500 font-medium">
-            Tu comprobante está siendo revisado por el administrador.
+            Hemos recibido tu comprobante.  
+            Tu tienda será activada tras la validación.
           </p>
         </div>
       </div>
     );
   }
 
-  /* 🟡 FORMULARIO (INICIAL O RECHAZADO) */
+  /* ===============================
+     🟡 FORMULARIO
+  =============================== */
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg p-8">
 
         <h1 className="text-2xl font-black text-slate-900 mb-2">
-          Activar mi tienda
+          {isExpired ? "Renovar suscripción" : "Activar mi tienda"}
         </h1>
 
         <p className="text-slate-500 font-medium mb-6">
-          Realiza el pago del plan y sube el comprobante para activar tu tienda.
+          {isExpired
+            ? "Tu suscripción venció. Realiza el pago y sube el comprobante para renovarla."
+            : "Realiza el pago del plan y sube el comprobante para activar tu tienda."}
         </p>
 
-        {/* 🔴 RECHAZADO */}
-        {sellerStatus === "rejected" && (
+        {/* 🔴 PAGO RECHAZADO */}
+        {paymentStatus === "rechazada" && (
           <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm font-bold p-4 rounded-xl mb-4">
             <AlertTriangle size={18} />
-            Tu comprobante fue rechazado.  
-            Por favor, sube uno nuevo.
+            El comprobante fue rechazado.  
+            Por favor, sube el comprobante correcto.
+          </div>
+        )}
+
+        {/* 🟠 SUSCRIPCIÓN VENCIDA */}
+        {isExpired && (
+          <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 text-orange-700 text-sm font-bold p-4 rounded-xl mb-4">
+            <AlertTriangle size={18} />
+            Tu suscripción ha vencido.  
+            Sube el comprobante para renovarla.
           </div>
         )}
 
@@ -114,7 +147,14 @@ export default function UploadPaymentProof() {
           <ul className="text-sm text-blue-600 font-medium space-y-1">
             <li>📱 Llave Nequi: <b>@NEQUI109040</b></li>
             <li>📱 Daviplata: <b>300 000 0000</b></li>
-            <li>💰 Concepto: <b>Activación de tienda</b></li>
+            <li>
+              💰 Concepto:{" "}
+              <b>
+                {isExpired
+                  ? "Renovación de suscripción"
+                  : "Activación de tienda"}
+              </b>
+            </li>
           </ul>
         </div>
 
@@ -136,7 +176,8 @@ export default function UploadPaymentProof() {
               type="file"
               accept="image/*,.pdf"
               onChange={(e) => setFile(e.target.files[0])}
-              className="mt-2 block w-full text-sm file:mr-4 file:py-2 file:px-4
+              className="mt-2 block w-full text-sm
+                file:mr-4 file:py-2 file:px-4
                 file:rounded-xl file:border-0
                 file:text-sm file:font-bold
                 file:bg-blue-600 file:text-white

@@ -25,7 +25,9 @@ export default function LayoutSeller() {
     fetchSeller();
   }, []);
 
-  /* ⏳ LOADING */
+  /* ===============================
+     ⏳ LOADING
+  =============================== */
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -34,15 +36,21 @@ export default function LayoutSeller() {
     );
   }
 
-  /* 🔴 NO HA PAGADO O FUE RECHAZADO */
+  /* ===============================
+     🔴 DEBE SUBIR / RENOVAR PAGO
+     (INICIAL, RECHAZADO O VENCIDO)
+  =============================== */
   if (
     seller?.sellerStatus === "pending_payment" ||
-    seller?.sellerStatus === "rejected"
+    seller?.sellerStatus === "rejected" ||
+    seller?.sellerStatus === "expired"
   ) {
     return <UploadPaymentProof />;
   }
 
-  /* 🟡 EN REVISIÓN */
+  /* ===============================
+     🟡 EN REVISIÓN
+  =============================== */
   if (seller?.sellerStatus === "pending_review") {
     return (
       <div className="h-screen flex items-center justify-center bg-yellow-50">
@@ -59,7 +67,9 @@ export default function LayoutSeller() {
     );
   }
 
-  /* 🟢 ACTIVO */
+  /* ===============================
+     🟢 ACTIVO
+  =============================== */
   if (seller?.sellerStatus === "active") {
     return (
       <div className="flex flex-col min-h-screen bg-gray-100">
@@ -76,10 +86,14 @@ export default function LayoutSeller() {
     );
   }
 
-  /* ❗ FALLBACK (NUNCA EN BLANCO) */
+  /* ===============================
+     ❗ FALLBACK
+  =============================== */
   return (
     <div className="h-screen flex items-center justify-center">
-      <p className="text-gray-500">Estado desconocido del vendedor</p>
+      <p className="text-gray-500">
+        Estado desconocido del vendedor
+      </p>
     </div>
   );
 }
