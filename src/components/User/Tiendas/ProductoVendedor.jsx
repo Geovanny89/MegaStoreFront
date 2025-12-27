@@ -97,8 +97,16 @@ export default function Productosvendedor() {
     try {
       setLoadingProduct(id);
       const res = await api.get(`/product/${id}`);
-      setSelectedProduct(res.data);
-      setSelectedImg(res.data.image?.[0] || "");
+      const prod = res.data;
+      setSelectedProduct(prod);
+      
+      // Corrección: Acceder a la URL del primer objeto del array image
+      if (prod.image && prod.image.length > 0) {
+        setSelectedImg(prod.image[0].url);
+      } else {
+        setSelectedImg(""); 
+      }
+      
       setCantidad(1);
       setModalOpen(true);
     } catch (error) { alert("Error al cargar detalle"); } 
@@ -156,7 +164,6 @@ export default function Productosvendedor() {
           <h2 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Catálogo</h2>
         </div>
 
-        {/* 3. CONTENEDOR PRINCIPAL */}
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-sm border border-gray-100 p-4 md:p-8 min-h-[500px]">
           {/* HEADER DEL CATÁLOGO */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 md:mb-10 pb-6 border-b border-gray-50">
@@ -195,7 +202,13 @@ export default function Productosvendedor() {
                 {productosActuales.map((p) => (
                   <div key={p._id} className="group flex flex-col bg-white border border-gray-100 rounded-[1.8rem] md:rounded-[2.5rem] p-3 md:p-4 hover:shadow-xl transition-all duration-300">
                     <div className="relative aspect-square bg-[#fcfcfc] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-4">
-                      <img src={p.image?.[0]} className="w-full h-full object-contain p-4 md:p-6 group-hover:scale-105 transition-transform" alt={p.name} />
+                      {/* Corrección: Acceder a image[0].url */}
+                      <img 
+                        src={p.image?.[0]?.url || "https://via.placeholder.com/300?text=Sin+Imagen"} 
+                        className="w-full h-full object-contain p-4 md:p-6 group-hover:scale-105 transition-transform" 
+                        alt={p.name} 
+                        onError={(e) => { e.target.src = "https://via.placeholder.com/300?text=Error+Imagen"; }}
+                      />
                       <button 
                         onClick={() => handleToggleFavorite(p)}
                         className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur rounded-xl shadow-sm text-gray-400"
@@ -289,13 +302,14 @@ export default function Productosvendedor() {
                       <img src={selectedImg} className="max-h-full object-contain" alt="Selected" />
                     </div>
                     <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                      {/* Corrección: Mapear objetos image y usar .url */}
                       {selectedProduct.image?.map((img, i) => (
                         <img
                           key={i}
-                          src={img}
-                          onClick={() => setSelectedImg(img)}
+                          src={img.url}
+                          onClick={() => setSelectedImg(img.url)}
                           className={`w-14 h-14 md:w-20 md:h-20 flex-shrink-0 rounded-lg object-cover cursor-pointer border-2 transition-all 
-                            ${selectedImg === img ? "border-blue-500" : "border-transparent opacity-60"}`}
+                            ${selectedImg === img.url ? "border-blue-500" : "border-transparent opacity-60"}`}
                         />
                       ))}
                     </div>

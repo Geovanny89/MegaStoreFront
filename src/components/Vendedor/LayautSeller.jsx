@@ -37,8 +37,11 @@ export default function LayoutSeller() {
   }
 
   /* ===============================
-     🔴 DEBE SUBIR / RENOVAR PAGO
-     (INICIAL, RECHAZADO O VENCIDO)
+     🔴 DEBE PAGAR / RENOVAR
+     - Registro inicial
+     - Rechazado
+     - Suscripción vencida
+     👉 MISMA pantalla
   =============================== */
   if (
     seller?.sellerStatus === "pending_payment" ||
@@ -49,7 +52,7 @@ export default function LayoutSeller() {
   }
 
   /* ===============================
-     🟡 EN REVISIÓN
+     🟡 PAGO EN REVISIÓN
   =============================== */
   if (seller?.sellerStatus === "pending_review") {
     return (
@@ -59,7 +62,8 @@ export default function LayoutSeller() {
             Pago en revisión
           </h2>
           <p className="text-slate-500 font-medium">
-            Hemos recibido tu comprobante.  
+            Hemos recibido tu comprobante.
+            <br />
             Tu tienda será activada tras validación.
           </p>
         </div>
@@ -68,7 +72,7 @@ export default function LayoutSeller() {
   }
 
   /* ===============================
-     🟢 ACTIVO
+     🟢 TIENDA ACTIVA
   =============================== */
   if (seller?.sellerStatus === "active") {
     return (
@@ -87,7 +91,7 @@ export default function LayoutSeller() {
   }
 
   /* ===============================
-     ❗ FALLBACK
+     ❗ FALLBACK (NO DEBERÍA PASAR)
   =============================== */
   return (
     <div className="h-screen flex items-center justify-center">

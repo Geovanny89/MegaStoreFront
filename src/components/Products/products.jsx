@@ -29,7 +29,7 @@ export default function Products() {
 
   // CANTIDAD
   const [cantidad, setCantidad] = useState(1);
-  
+
 
   useEffect(() => {
     const fetchProductos = async () => {
@@ -97,10 +97,11 @@ export default function Products() {
 
       const res = await api.get(`/product/${id}`);
       setSelectedProduct(res.data);
-    
+
       if (res.data.image?.length > 0) {
-        setSelectedImg(res.data.image[0]);
+        setSelectedImg(res.data.image[0].url);
       }
+
 
       setCantidad(1);
       setModalOpen(true);
@@ -130,10 +131,11 @@ export default function Products() {
                   <div className="relative">
                     <div className="w-full h-48 bg-gray-50 flex justify-center items-center">
                       <img
-                        src={p.image?.[1] || p.image?.[0]}
+                        src={p.image?.[1]?.url || p.image?.[0]?.url}
                         alt={p.name}
                         className="h-full object-contain p-2"
                       />
+
                     </div>
 
                     {/* FAVORITO */}
@@ -209,8 +211,8 @@ export default function Products() {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`px-4 py-2 rounded-lg border ${currentPage === 1
-                    ? "text-gray-400 bg-gray-200"
-                    : "bg-white hover:bg-gray-100"
+                  ? "text-gray-400 bg-gray-200"
+                  : "bg-white hover:bg-gray-100"
                   }`}
               >
                 Anterior
@@ -223,8 +225,8 @@ export default function Products() {
                     key={page}
                     onClick={() => handlePageChange(page)}
                     className={`px-4 py-2 rounded-lg border ${currentPage === page
-                        ? "bg-blue-600 text-white"
-                        : "bg-white hover:bg-gray-100"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white hover:bg-gray-100"
                       }`}
                   >
                     {page}
@@ -236,8 +238,8 @@ export default function Products() {
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 rounded-lg border ${currentPage === totalPages
-                    ? "text-gray-400 bg-gray-200"
-                    : "bg-white hover:bg-gray-100"
+                  ? "text-gray-400 bg-gray-200"
+                  : "bg-white hover:bg-gray-100"
                   }`}
               >
                 Siguiente
@@ -248,162 +250,165 @@ export default function Products() {
       </div>
 
       {/* MODAL PROFESIONAL */}
-{modalOpen && selectedProduct && (
-  <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
-    <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden">
+      {modalOpen && selectedProduct && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
+          <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden">
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between px-4 py-3 border-b">
-        <h3 className="text-base font-semibold text-gray-800 truncate">
-          {selectedProduct.name}
-        </h3>
-        <button
-          onClick={() => setModalOpen(false)}
-          className="text-gray-400 hover:text-black text-lg"
-        >
-          ✖
-        </button>
-      </div>
-
-      {/* CUERPO */}
-      <div className="max-h-[80vh] overflow-y-auto">
-
-        {/* PRODUCTO */}
-        <div className="p-4 border-b">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* IMÁGENES */}
-            <div>
-              <div className="bg-gray-50 border rounded-lg h-[320px] flex items-center justify-center">
-                <img
-                  src={selectedImg}
-                  alt={selectedProduct.name}
-                  className="object-contain max-h-full"
-                />
-              </div>
-
-              <div className="grid grid-cols-4 gap-2 mt-3">
-                {selectedProduct.image.slice(0, 4).map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    onClick={() => setSelectedImg(img)}
-                    className={`h-16 rounded-md object-cover cursor-pointer border ${
-                      selectedImg === img
-                        ? "border-blue-500 ring-2 ring-blue-500"
-                        : "border-gray-200"
-                    }`}
-                  />
-                ))}
-              </div>
+            {/* HEADER */}
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+              <h3 className="text-base font-semibold text-gray-800 truncate">
+                {selectedProduct.name}
+              </h3>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="text-gray-400 hover:text-black text-lg"
+              >
+                ✖
+              </button>
             </div>
 
-            {/* INFO */}
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">
-                {selectedProduct.name}
-              </h2>
+            {/* CUERPO */}
+            <div className="max-h-[80vh] overflow-y-auto">
 
-              <div className="mt-1">Calificación
-                {selectedProduct.rating?.count > 0 ? (
-                  <RatingStars
-                    value={selectedProduct.rating.average}
-                    count={selectedProduct.rating.count}
-                    size="text-base"
-                  />
-                ) : (
-                  <p className="text-xs text-gray-400">
-                    Sin calificaciones
-                  </p>
-                )}
-              </div>
+              {/* PRODUCTO */}
+              <div className="p-4 border-b">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              <p className="text-2xl font-bold text-blue-600 mt-3">Precio: $
-                {selectedProduct.price}
-              </p>
+                  {/* IMÁGENES */}
+                  <div>
+                    <div className="bg-gray-50 border rounded-lg h-[320px] flex items-center justify-center">
+                     <img
+  src={selectedImg}
+  alt={selectedProduct.name}
+  className="object-contain max-h-full"
+/>
 
-              <div className="mt-3 text-sm text-gray-600 space-y-1">
-                <p>Marca: <span className="font-medium">{selectedProduct.brand}</span></p>
+                    </div>
 
-                <p className="flex items-center gap-2">
-                  Vendido por{" "}
-                  <span className="font-bold uppercase">
-                    {selectedProduct?.vendedor?.storeName}
-                  </span>
-                  {selectedProduct?.vendedor?.sellerRating?.count > 0 && (
-                    <RatingStars
-                      value={selectedProduct.vendedor.sellerRating.average}
-                      count={selectedProduct.vendedor.sellerRating.count}
-                      size="text-xs"
-                    />
-                  )}
-                </p>
+                    <div className="grid grid-cols-4 gap-2 mt-3">
+                      {selectedProduct.image.slice(0, 4).map((img, i) => (
+  <img
+    key={i}
+    src={img.url}
+    onClick={() => setSelectedImg(img.url)}
+    className={`h-16 rounded-md object-cover cursor-pointer border ${
+      selectedImg === img.url
+        ? "border-blue-500 ring-2 ring-blue-500"
+        : "border-gray-200"
+    }`}
+  />
+))}
 
-                <p>
-                  Stock:{" "} 
-                  <span className="font-semibold">
-                    {selectedProduct.stock}
-                  </span>
-                </p>
-              </div>
 
-              {/* CANTIDAD */}
-              <div className="mt-4">
-                <label className="text-sm font-medium">Cantidad</label>
-                <div className="flex items-center gap-2 mt-1">
-                  <button
-                    onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                    className="w-9 h-9 rounded bg-gray-200"
-                  >
-                    −
-                  </button>
+                    </div>
+                  </div>
 
-                  <input
-                    type="number"
-                    value={cantidad}
-                    min="1"
-                    onChange={(e) =>
-                      setCantidad(Math.max(1, Number(e.target.value)))
-                    }
-                    className="w-14 text-center border rounded"
-                  />
+                  {/* INFO */}
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      {selectedProduct.name}
+                    </h2>
 
-                  <button
-                    onClick={() => setCantidad(cantidad + 1)}
-                    className="w-9 h-9 rounded bg-gray-200"
-                  >
-                    +
-                  </button>
+                    <div className="mt-1">Calificación
+                      {selectedProduct.rating?.count > 0 ? (
+                        <RatingStars
+                          value={selectedProduct.rating.average}
+                          count={selectedProduct.rating.count}
+                          size="text-base"
+                        />
+                      ) : (
+                        <p className="text-xs text-gray-400">
+                          Sin calificaciones
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="text-2xl font-bold text-blue-600 mt-3">Precio: $
+                      {selectedProduct.price}
+                    </p>
+
+                    <div className="mt-3 text-sm text-gray-600 space-y-1">
+                      <p>Marca: <span className="font-medium">{selectedProduct.brand}</span></p>
+
+                      <p className="flex items-center gap-2">
+                        Vendido por{" "}
+                        <span className="font-bold uppercase">
+                          {selectedProduct?.vendedor?.storeName}
+                        </span>
+                        {selectedProduct?.vendedor?.sellerRating?.count > 0 && (
+                          <RatingStars
+                            value={selectedProduct.vendedor.sellerRating.average}
+                            count={selectedProduct.vendedor.sellerRating.count}
+                            size="text-xs"
+                          />
+                        )}
+                      </p>
+
+                      <p>
+                        Stock:{" "}
+                        <span className="font-semibold">
+                          {selectedProduct.stock}
+                        </span>
+                      </p>
+                    </div>
+
+                    {/* CANTIDAD */}
+                    <div className="mt-4">
+                      <label className="text-sm font-medium">Cantidad</label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <button
+                          onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                          className="w-9 h-9 rounded bg-gray-200"
+                        >
+                          −
+                        </button>
+
+                        <input
+                          type="number"
+                          value={cantidad}
+                          min="1"
+                          onChange={(e) =>
+                            setCantidad(Math.max(1, Number(e.target.value)))
+                          }
+                          className="w-14 text-center border rounded"
+                        />
+
+                        <button
+                          onClick={() => setCantidad(cantidad + 1)}
+                          className="w-9 h-9 rounded bg-gray-200"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
+                      className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold"
+                    >
+                      Agregar al carrito
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <button
-                onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
-                className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold"
-              >
-                Agregar al carrito
-              </button>
+              {/* REVIEWS */}
+              <div className="p-4 border-b">
+                <h3 className="text-lg font-semibold mb-3">
+                  Opiniones
+                </h3>
+                <ProductReviews productId={selectedProduct._id} />
+              </div>
+
+              {/* PREGUNTAS */}
+              <div className="p-4">
+                <ProductQuestions productId={selectedProduct._id} />
+              </div>
+
             </div>
           </div>
         </div>
-
-        {/* REVIEWS */}
-        <div className="p-4 border-b">
-          <h3 className="text-lg font-semibold mb-3">
-            Opiniones
-          </h3>
-          <ProductReviews productId={selectedProduct._id} />
-        </div>
-
-        {/* PREGUNTAS */}
-        <div className="p-4">
-          <ProductQuestions productId={selectedProduct._id} />
-        </div>
-
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
     </div>
   );
