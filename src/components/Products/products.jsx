@@ -61,7 +61,13 @@ export default function Products() {
     try {
       setLoadingId(productId);
       await api.post("/user/car", { productId, quantity });
+
+      // 1. Notifica a la pestaña actual
       window.dispatchEvent(new Event("cartUpdated"));
+
+      // 2. Notifica a OTRAS pestañas (esto dispara el evento 'storage' que ya tienes en el Navbar)
+      localStorage.setItem("cartTimestamp", Date.now().toString());
+
       alert("Producto agregado al carrito ✔");
     } catch (error) {
       console.error(error);
@@ -277,27 +283,26 @@ export default function Products() {
                   {/* IMÁGENES */}
                   <div>
                     <div className="bg-gray-50 border rounded-lg h-[320px] flex items-center justify-center">
-                     <img
-  src={selectedImg}
-  alt={selectedProduct.name}
-  className="object-contain max-h-full"
-/>
+                      <img
+                        src={selectedImg}
+                        alt={selectedProduct.name}
+                        className="object-contain max-h-full"
+                      />
 
                     </div>
 
                     <div className="grid grid-cols-4 gap-2 mt-3">
                       {selectedProduct.image.slice(0, 4).map((img, i) => (
-  <img
-    key={i}
-    src={img.url}
-    onClick={() => setSelectedImg(img.url)}
-    className={`h-16 rounded-md object-cover cursor-pointer border ${
-      selectedImg === img.url
-        ? "border-blue-500 ring-2 ring-blue-500"
-        : "border-gray-200"
-    }`}
-  />
-))}
+                        <img
+                          key={i}
+                          src={img.url}
+                          onClick={() => setSelectedImg(img.url)}
+                          className={`h-16 rounded-md object-cover cursor-pointer border ${selectedImg === img.url
+                              ? "border-blue-500 ring-2 ring-blue-500"
+                              : "border-gray-200"
+                            }`}
+                        />
+                      ))}
 
 
                     </div>

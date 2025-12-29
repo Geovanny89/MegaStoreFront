@@ -45,15 +45,30 @@ import UserMessages from "./components/User/messages/UserMessages";
 import SellerMessages from "./components/Vendedor/messages/SellerMessages";
 import Storefront from "./pages/Stores/Storefront";
 import ValidarPagos from "./pages/Admin/ValidarPagos";
+import RegisterSeller from "./pages/Login/RegisterSeller";
+import AboutUs from "./components/Home/AboutUs";
+import Terminos from "./components/Home/Terminos";
+import Privacidad from "./components/Home/Privacidad";
+import Contacto from "./components/Home/Contacto";
 
 
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/productos" element={<ProductosTienda />} />
+      <Route path="/register-vendedor" element={<RegisterSeller />} />
+        {/* ================= RUTAS PÚBLICAS CON LAYOUT ================= */}
+       <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/productos" element={<Products />} />
+          <Route path="/sobre-nosotros" element={<AboutUs />} />
+          <Route path="/terminos-condiciones" element={<Terminos />} />
+          <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="/contacto" element={<Contacto />} />
+
+        </Route>
 
 
         {/* ================= TIENDA PÚBLICA ================= */}

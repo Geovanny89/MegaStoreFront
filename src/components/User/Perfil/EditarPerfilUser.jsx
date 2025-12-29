@@ -79,7 +79,7 @@ export default function EditarPerfilUser() {
     setErrorMessage("");
   };
 
-  const openEditAddress = (addr) => {
+  const openEditAddress = (addr) => { 
     setEditingAddress(addr);
     // clonar para no mutar
     setFormAddress({
@@ -245,12 +245,7 @@ export default function EditarPerfilUser() {
 
         {/* Volver */}
         <div className="mb-4">
-          <button
-            onClick={() => navigate("/perfil")}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50"
-          >
-            ← Volver
-          </button>
+          
         </div>
 
         {/* Card principal */}

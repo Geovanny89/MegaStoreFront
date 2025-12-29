@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../api/axios";
-import { 
-  Trash2, MapPin, Store, ShoppingBag, 
-  ArrowRight, PlusCircle, X, Check, Info 
+import {
+  Trash2, MapPin, Store, ShoppingBag,
+  ArrowRight, PlusCircle, X, Check, Info
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -33,27 +33,27 @@ export default function Carrito() {
   const token = localStorage.getItem("token");
 
   // --- CARGA DE DATOS ---
-// Dentro de fetchCarrito en tu React
-const fetchCarrito = async () => {
-  try {
-    const endpoint = slug
-      ? `/user/car/tienda/${slug}`
-      : "/user/carAll";
+  // Dentro de fetchCarrito en tu React
+  const fetchCarrito = async () => {
+    try {
+      const endpoint = slug
+        ? `/user/car/tienda/${slug}`
+        : "/user/carAll";
 
-    const res = await api.get(endpoint, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+      const res = await api.get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    setCarrito(res.data.items || []);
-    
-    // Opcional: Si quieres mostrar el nombre de la tienda en el título
-    if (res.data.storeInfo) {
-       console.log("Comprando en:", res.data.storeInfo.name);
+      setCarrito(res.data.items || []);
+
+      // Opcional: Si quieres mostrar el nombre de la tienda en el título
+      if (res.data.storeInfo) {
+        console.log("Comprando en:", res.data.storeInfo.name);
+      }
+    } catch (error) {
+      console.error("Error al cargar carrito", error);
     }
-  } catch (error) {
-    console.error("Error al cargar carrito", error);
-  }
-};
+  };
 
   const fetchAddresses = async () => {
     try {
@@ -125,7 +125,7 @@ const fetchCarrito = async () => {
         reference: selectedAddress.reference
       } : null;
 
-      await api.post("/order", 
+      await api.post("/order",
         { products, deliveryMethod, paymentMethod, shippingAddress },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -137,14 +137,14 @@ const fetchCarrito = async () => {
         colors: ['#16a34a', '#3b82f6', '#ffffff']
       });
 
-      setCarrito([]); 
+      setCarrito([]);
       window.dispatchEvent(new Event("cartUpdated"));
 
       setTimeout(() => {
         // Redirigir con parámetro extra para informar sobre el envío en el Success
         const shipParam = deliveryMethod === "delivery" ? "&shipping=seller" : "";
-        navigate(paymentMethod === "cash_on_delivery" 
-          ? `/success?type=pickup${shipParam}` 
+        navigate(paymentMethod === "cash_on_delivery"
+          ? `/success?type=pickup${shipParam}`
           : `/success?type=mobile${shipParam}`
         );
       }, 800);
@@ -161,7 +161,7 @@ const fetchCarrito = async () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] py-12 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
-        
+
         {/* HEADER */}
         <div className="flex items-end gap-4 mb-10">
           <div className="bg-green-600 p-3 rounded-2xl shadow-lg text-white">
@@ -176,23 +176,30 @@ const fetchCarrito = async () => {
         {carrito.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[40px] border-2 border-dashed border-slate-200">
             <ShoppingBag size={48} className="text-slate-300 mb-6" />
-            <h3 className="text-2xl font-black text-slate-800 mb-2 uppercase">Tu carrito está vacío</h3>
-            <button 
-              onClick={() => navigate("/user/productos")}
-              className="mt-6 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl"
-            >
-              Ir a la tienda
-            </button>
+            <h3 className="text-2xl font-black text-slate-800 mb-2 uppercase">
+              Tu carrito está vacío
+            </h3>
+            <p className="text-slate-400 text-sm font-bold italic">
+              Agrega productos para continuar con tu pedido
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* LISTA DE PRODUCTOS */}
             <div className="lg:col-span-7 space-y-4">
               {carrito.map(item => (
                 <div key={item.product._id} className="group bg-white p-5 rounded-[32px] border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-6 items-center hover:shadow-md transition-all">
                   <div className="relative overflow-hidden rounded-2xl bg-slate-50 p-2">
-                    <img src={item.product.image?.[0]} className="w-24 h-24 object-contain group-hover:scale-105 transition-transform" alt={item.product.name} />
+                    <img
+                      src={
+                        item.product.image?.[0]?.url ||
+                        "/placeholder-product.png"
+                      }
+                      alt={item.product.name}
+                      className="w-24 h-24 object-contain"
+                    />
+
                   </div>
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-black text-slate-800 text-lg mb-1">{item.product.name}</h3>
@@ -201,8 +208,8 @@ const fetchCarrito = async () => {
                       ${(item.product.price * item.quantity).toLocaleString('es-CO')}
                     </span>
                   </div>
-                  <button 
-                    onClick={() => eliminarProducto(item.product._id)} 
+                  <button
+                    onClick={() => eliminarProducto(item.product._id)}
                     disabled={loadingId === item.product._id}
                     className="p-4 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-2xl transition-all disabled:opacity-30"
                   >
@@ -214,21 +221,21 @@ const fetchCarrito = async () => {
 
             {/* PANEL DE PAGO / CHECKOUT */}
             <div className="lg:col-span-5 bg-white border border-slate-100 rounded-[40px] p-8 shadow-2xl space-y-8 sticky top-28">
-              
+
               {/* 1. MÉTODO ENTREGA */}
               <div>
                 <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span> 1. Modo de Entrega
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <button 
+                  <button
                     onClick={() => setDeliveryMethod("delivery")}
                     className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 transition-all ${deliveryMethod === 'delivery' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-100 text-slate-400'}`}
                   >
                     <MapPin size={24} />
                     <span className="text-[10px] font-black uppercase tracking-tight">Domicilio</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => { setDeliveryMethod("pickup"); setPaymentMethod("nequi"); }}
                     className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 transition-all ${deliveryMethod === 'pickup' ? 'border-green-500 bg-green-50 text-green-700' : 'border-slate-100 text-slate-400'}`}
                   >
@@ -257,53 +264,53 @@ const fetchCarrito = async () => {
                     </h4>
                     {!showAddForm && (
                       <button onClick={() => setShowAddForm(true)} className="text-[10px] font-black text-blue-600 uppercase flex items-center gap-1">
-                        <PlusCircle size={14}/> Añadir
+                        <PlusCircle size={14} /> Añadir
                       </button>
                     )}
                   </div>
 
                   {showAddForm ? (
                     <form onSubmit={handleAddAddress} className="bg-slate-50 p-4 rounded-3xl border-2 border-dashed border-slate-200 space-y-3">
-                      <input 
-                        placeholder="Etiqueta (Ej: Casa, Trabajo)" 
+                      <input
+                        placeholder="Etiqueta (Ej: Casa, Trabajo)"
                         className="w-full p-3 rounded-xl text-xs border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={newAddress.label}
-                        onChange={e => setNewAddress({...newAddress, label: e.target.value})}
+                        onChange={e => setNewAddress({ ...newAddress, label: e.target.value })}
                         required
                       />
-                      <input 
-                        placeholder="Dirección (Calle/Carrera/Número)" 
+                      <input
+                        placeholder="Dirección (Calle/Carrera/Número)"
                         className="w-full p-3 rounded-xl text-xs border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         value={newAddress.street}
-                        onChange={e => setNewAddress({...newAddress, street: e.target.value})}
+                        onChange={e => setNewAddress({ ...newAddress, street: e.target.value })}
                         required
                       />
                       <div className="grid grid-cols-2 gap-2">
-                        <input 
-                          placeholder="Ciudad" 
+                        <input
+                          placeholder="Ciudad"
                           className="p-3 rounded-xl text-xs border border-slate-200"
                           value={newAddress.city}
-                          onChange={e => setNewAddress({...newAddress, city: e.target.value})}
+                          onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
                           required
                         />
-                        <input 
-                          placeholder="Barrio/Referencia" 
+                        <input
+                          placeholder="Barrio/Referencia"
                           className="p-3 rounded-xl text-xs border border-slate-200"
                           value={newAddress.reference}
-                          onChange={e => setNewAddress({...newAddress, reference: e.target.value})}
+                          onChange={e => setNewAddress({ ...newAddress, reference: e.target.value })}
                         />
                       </div>
                       <div className="flex gap-2">
                         <button type="submit" className="flex-1 bg-blue-600 text-white text-[10px] font-black py-3 rounded-xl uppercase tracking-widest">Guardar</button>
-                        <button type="button" onClick={() => setShowAddForm(false)} className="p-3 bg-slate-200 rounded-xl"><X size={16}/></button>
+                        <button type="button" onClick={() => setShowAddForm(false)} className="p-3 bg-slate-200 rounded-xl"><X size={16} /></button>
                       </div>
                     </form>
                   ) : (
                     <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
                       {addresses.length > 0 ? (
                         addresses.map(addr => (
-                          <div 
-                            key={addr._id} 
+                          <div
+                            key={addr._id}
                             onClick={() => setSelectedAddress(addr)}
                             className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex items-center gap-3 ${selectedAddress?._id === addr._id ? 'border-blue-500 bg-blue-50/50' : 'border-slate-50 bg-slate-50/50 hover:border-slate-200'}`}
                           >
@@ -331,8 +338,8 @@ const fetchCarrito = async () => {
                 <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span> 3. Método de Pago
                 </h4>
-                <select 
-                  value={paymentMethod} 
+                <select
+                  value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
@@ -349,7 +356,7 @@ const fetchCarrito = async () => {
                     <span>Subtotal Productos</span>
                     <span>${total.toLocaleString('es-CO')}</span>
                   </div>
-                  
+
                   {deliveryMethod === "delivery" && (
                     <div className="flex justify-between items-center">
                       <span className="text-amber-600 font-black text-[10px] uppercase tracking-widest">Envío</span>
@@ -362,10 +369,10 @@ const fetchCarrito = async () => {
                     <span className="text-3xl font-black text-slate-900">${total.toLocaleString('es-CO')}</span>
                   </div>
                 </div>
-                
-                <button 
-                  onClick={handleCreateOrder} 
-                  disabled={loadingOrder || carrito.length === 0} 
+
+                <button
+                  onClick={handleCreateOrder}
+                  disabled={loadingOrder || carrito.length === 0}
                   className="w-full group bg-slate-900 hover:bg-green-600 disabled:bg-slate-200 text-white font-black py-5 rounded-[2rem] transition-all flex items-center justify-center gap-3 shadow-xl"
                 >
                   {loadingOrder ? (

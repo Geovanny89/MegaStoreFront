@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../../api/axios";
 import { FcGoogle } from "react-icons/fc";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, X, LogIn } from "lucide-react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/Logo3.png";
 
@@ -21,9 +21,6 @@ export default function Login() {
     try {
       const res = await api.post("/login", { email, password });
 
-      // ===============================
-      // GUARDAR SESIÓN
-      // ===============================
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.user._id);
       localStorage.setItem("userName", res.data.user.name);
@@ -32,30 +29,17 @@ export default function Login() {
       localStorage.setItem("rol", res.data.user.rol);
 
       const role = res.data.user.rol;
-
-      // ===============================
-      // 🔁 REDIRECCIÓN CORRECTA
-      // ===============================
       const from = location.state?.from;
 
-      // 👉 Si viene de una tienda (o cualquier ruta protegida)
       if (from) {
         navigate(from, { replace: true });
         return;
       }
 
-      // 👉 Flujo normal de la plataforma
-      if (role === "user") {
-        navigate("/homeUser");
-      } else if (role === "seller") {
-        navigate("/Homevendedor");
-      } else if (role === "admin") {
-        navigate("/HomeAdmin");
-      } else {
-        navigate("/unauthorized");
-      }
-
-      alert("Login exitoso ✅");
+      if (role === "user") navigate("/homeUser");
+      else if (role === "seller") navigate("/Homevendedor");
+      else if (role === "admin") navigate("/HomeAdmin");
+      else navigate("/unauthorized");
 
     } catch (error) {
       alert("Correo o contraseña incorrectos ❌");
@@ -65,108 +49,108 @@ export default function Login() {
   };
 
   const loginWithGoogle = () => {
-    // Google también respeta el flujo (backend debe reenviar state si aplica)
     window.location.href = "http://localhost:3001/auth/google";
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="relative w-full max-w-md p-8 bg-white shadow-lg rounded-2xl">
+  // Estilos consistentes con RegisterSeller
+  const inputStyle = "w-full bg-[#374151] border border-[#4B5563] text-white text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3.5 placeholder-gray-400 outline-none transition-all";
+  const labelStyle = "block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider";
 
-        {/* Botón cerrar */}
-        <Link
-          to="/"
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center 
-                     rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition"
-        >
-          ✕
+  return (
+    <div className="min-h-screen bg-[#111827] flex items-center justify-center p-4 md:p-10 font-sans text-gray-200">
+      <div className="max-w-4xl w-full flex flex-col md:flex-row items-stretch bg-[#1F2937] rounded-[2.5rem] overflow-hidden shadow-2xl border border-[#374151] relative">
+        
+        {/* Botón Cerrar */}
+        <Link to="/" className="absolute top-6 right-6 text-gray-400 hover:text-white z-20">
+          <X size={28} />
         </Link>
 
-        {/* Logo */}
-        <div className="flex justify-center mb-4">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="h-24 w-auto sm:h-32 md:h-36 lg:h-40 object-contain"
-          />
-        </div>
-
-        {/* FORMULARIO */}
-        <form className="mt-6 space-y-4" onSubmit={handleLogin}>
-          {/* Email */}
-          <div>
-            <label className="text-gray-700 font-medium">Correo</label>
-            <input
-              type="email"
-              required
-              className="w-full mt-1 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="correo@ejemplo.com"
-              onChange={(e) => setEmail(e.target.value)}
-            />
+        {/* COLUMNA IZQUIERDA: FORMULARIO */}
+        <div className="w-full md:w-1/2 p-8 md:p-12">
+          <div className="flex items-center gap-3 mb-8">
+            <img src={Logo} alt="Logo" className="h-10 w-auto" />
+            <div className="h-6 w-px bg-gray-700"></div>
+            <span className="text-blue-500 text-[10px] font-black uppercase tracking-widest">Acceso Seguro</span>
           </div>
 
-          {/* Password */}
-          <div>
-            <label className="text-gray-700 font-medium">Contraseña</label>
+          <h2 className="text-3xl font-black text-white tracking-tight mb-2">Bienvenido</h2>
+          <p className="text-gray-400 mb-8 text-sm">Ingresa tus credenciales para continuar.</p>
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className={labelStyle}>Correo Electrónico</label>
+              <input
+                type="email"
+                required
+                className={inputStyle}
+                placeholder="ejemplo@correo.com"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
             <div className="relative">
+              <label className={labelStyle}>Contraseña</label>
               <input
                 type={showPass ? "text" : "password"}
                 required
-                className="w-full mt-1 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Tu contraseña"
+                className={inputStyle}
+                placeholder="••••••••"
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
-                className="absolute right-3 top-4 text-gray-500"
                 onClick={() => setShowPass(!showPass)}
+                className="absolute right-4 top-[38px] text-gray-500 hover:text-gray-300"
               >
-                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-          </div>
 
-          {/* Recuperar contraseña */}
-          <div className="text-right">
-            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
+            <div className="text-right">
+              <Link to="/forgot-password" size="sm" className="text-xs text-blue-500 hover:underline font-semibold">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
 
-          {/* Botón */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-lg text-white font-semibold transition
-              ${loading ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700"}`}
-          >
-            {loading ? "Ingresando..." : "Ingresar"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2 group disabled:opacity-50"
+            >
+              {loading ? "Verificando..." : <>Entrar a mi cuenta <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>}
+            </button>
+          </form>
 
-        {/* Separador */}
-        <div className="flex items-center my-5">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="px-3 text-gray-500">o</span>
-          <div className="flex-1 h-px bg-gray-300" />
+
+          <p className="mt-8 text-center text-gray-500 text-sm">
+            ¿No tienes cuenta? <Link to="/register" className="text-blue-500 font-bold hover:underline">Regístrate gratis</Link>
+          </p>
         </div>
 
-        {/* Google */}
-        <button
-          onClick={loginWithGoogle}
-          className="w-full py-3 flex items-center justify-center gap-3 border rounded-lg hover:bg-gray-100 transition"
-        >
-          <FcGoogle size={24} />
-          <span className="font-medium text-gray-700">Continuar con Google</span>
-        </button>
+        {/* COLUMNA DERECHA: DECORATIVA */}
+        <div className="hidden md:flex md:w-1/2 bg-[#111827] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
+          {/* Efecto de luz azul de fondo */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px]"></div>
+          
+          <div className="relative z-10 space-y-6">
+            <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto border border-blue-500/20">
+              <LogIn className="text-blue-500" size={40} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-2">Marketplace Oficial</h3>
+              <p className="text-gray-400 text-sm max-w-[250px] mx-auto leading-relaxed">
+                Gestiona tus compras y ventas desde un solo lugar con la seguridad que necesitas.
+              </p>
+            </div>
+            
+            <div className="pt-4">
+               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black uppercase tracking-widest">
+                 Sessión Encriptada
+               </div>
+            </div>
+          </div>
+        </div>
 
-        {/* Registro */}
-        <p className="mt-5 text-center text-gray-600">
-          ¿No tienes cuenta?{" "}
-          <Link to="/register" className="text-blue-600 font-semibold hover:underline">
-            Crear cuenta
-          </Link>
-        </p>
       </div>
     </div>
   );

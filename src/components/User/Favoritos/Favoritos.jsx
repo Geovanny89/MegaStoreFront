@@ -27,29 +27,29 @@ export default function Favoritos() {
   }, []);
 
   // ✅ Eliminar FAVORITO usando productId → porque tu backend lo pide así
-const eliminarFavorito = async (favorite) => {
-  try {
-    setLoadingId(favorite._id);
+  const eliminarFavorito = async (favorite) => {
+    try {
+      setLoadingId(favorite._id);
 
-    await api.delete(`/favoriteDelete/${favorite.product._id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-    });
+      await api.delete(`/favoriteDelete/${favorite.product._id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
 
-    // Eliminar en lista local de favoritos
-    setProductos((prev) => prev.filter((f) => f._id !== favorite._id));
+      // Eliminar en lista local de favoritos
+      setProductos((prev) => prev.filter((f) => f._id !== favorite._id));
 
-    // 🔥 ACTUALIZAR FAVORITOS GLOBALES (Products.jsx también lo verá)
-    removeFavorite(favorite.product._id);
+      // 🔥 ACTUALIZAR FAVORITOS GLOBALES (Products.jsx también lo verá)
+      removeFavorite(favorite.product._id);
 
-  } catch (e) {
-    console.error("ERROR ELIMINANDO FAVORITO:", e);
-    alert("Error al eliminar favorito");
-  } finally {
-    setLoadingId(null);
-  }
-};
+    } catch (e) {
+      console.error("ERROR ELIMINANDO FAVORITO:", e);
+      alert("Error al eliminar favorito");
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
 
   // 🛒 Agregar al carrito y luego eliminar favorito
@@ -96,10 +96,15 @@ const eliminarFavorito = async (favorite) => {
             >
               <div className="w-full h-44 bg-gray-50 flex justify-center items-center">
                 <img
-                  src={f.product.image?.[0]}
+                  src={
+                    f.product.image?.[0]?.url ||
+                    f.product.image?.[1]?.url ||
+                    "/no-image.png"
+                  }
                   alt={f.product.name}
                   className="h-full object-contain p-3"
                 />
+
               </div>
 
               <div className="p-4">

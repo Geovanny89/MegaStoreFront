@@ -8,9 +8,13 @@ import {
   Heart,
   Menu,
   X,
+  Search,
+  Bell,
+  User,
+  Package,
+  ShieldCheck,
 } from "lucide-react";
-import api from "../../../api/axios"; // <- asegúrate que la ruta sea correcta
-import { Bell } from "lucide-react";
+import api from "../../../api/axios";
 
 export default function NavbarUser({ name, categorias = [] }) {
   const navigate = useNavigate();
@@ -22,8 +26,6 @@ export default function NavbarUser({ name, categorias = [] }) {
   const [notificationCount, setNotificationCount] = useState(0);
   const [highlightNotification, setHighlightNotification] = useState(false);
 
-
-
   const userRef = useRef();
   const catRef = useRef();
 
@@ -31,28 +33,29 @@ export default function NavbarUser({ name, categorias = [] }) {
     localStorage.removeItem("token");
     navigate("/");
   };
-const fetchNotificationCount = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
+
+  const fetchNotificationCount = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setNotificationCount(0);
+        return;
+      }
+
+      const res = await api.get("/notifications/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const unread = Array.isArray(res.data)
+        ? res.data.filter((n) => !n.isRead).length
+        : 0;
+
+      setNotificationCount(unread);
+    } catch (error) {
+      console.error("Error obteniendo notificaciones:", error);
       setNotificationCount(0);
-      return;
     }
-
-    const res = await api.get("/notifications/user", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const unread = Array.isArray(res.data)
-      ? res.data.filter((n) => !n.isRead).length
-      : 0;
-
-    setNotificationCount(unread);
-  } catch (error) {
-    console.error("Error obteniendo notificaciones:", error);
-    setNotificationCount(0);
-  }
-};
+  };
 
   useEffect(() => {
     const onNotificationsUpdated = () => fetchNotificationCount();
@@ -70,7 +73,6 @@ const fetchNotificationCount = async () => {
     };
   }, []);
 
-  // --- Mueve la función arriba para que esté disponible al primer useEffect ---
   const fetchCartCount = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -90,14 +92,11 @@ const fetchNotificationCount = async () => {
     }
   };
 
-  // Llamada inicial para cargar el contador
   useEffect(() => {
     fetchCartCount();
-    fetchNotificationCount(); // 👈 AÑADIR
+    fetchNotificationCount();
   }, []);
 
-
-  // Escuchar actualizaciones: storage (otras pestañas) + evento custom (misma pestaña)
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === "updateCart") fetchCartCount();
@@ -114,7 +113,6 @@ const fetchNotificationCount = async () => {
     };
   }, []);
 
-  // Cerrar dropdown de usuario al hacer click fuera
   useEffect(() => {
     const handler = (e) => {
       if (userRef.current && !userRef.current.contains(e.target)) {
@@ -125,7 +123,6 @@ const fetchNotificationCount = async () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Cerrar categorías al hacer click fuera
   useEffect(() => {
     const handler = (e) => {
       if (catRef.current && !catRef.current.contains(e.target)) {
@@ -135,18 +132,18 @@ const fetchNotificationCount = async () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-useEffect(() => {
-  if (notificationCount > 0) {
-    setHighlightNotification(true);
 
-    const timer = setTimeout(() => {
-      setHighlightNotification(false);
-    }, 1200); // duración del efecto
+  useEffect(() => {
+    if (notificationCount > 0) {
+      setHighlightNotification(true);
 
-    return () => clearTimeout(timer);
-  }
-}, [notificationCount]);
+      const timer = setTimeout(() => {
+        setHighlightNotification(false);
+      }, 1200);
 
+      return () => clearTimeout(timer);
+    }
+  }, [notificationCount]);
 
   return (
     <>
@@ -154,27 +151,26 @@ useEffect(() => {
       <nav
         className="
           w-full fixed top-0 left-0 z-50 
-          shadow-lg 
-          bg-gradient-to-b 
-          from-green-600 
-          via-green-500 
-          to-blue-300
+          bg-white border-b border-gray-100 shadow-sm
         "
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-9 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
           {/* LOGO */}
           <div
             className="flex items-center gap-3 flex-shrink-0 cursor-pointer"
             onClick={() => navigate("/homeUser")}
           >
-            <img src={logo} className="h-10" alt="Logo" />
+            <img src={logo} className="h-10 md:h-12 object-contain" alt="Logo" />
           </div>
 
           {/* SEARCH DESKTOP */}
-          <div className="hidden md:flex flex-1 mx-6">
+          <div className="hidden md:flex flex-1 max-w-2xl mx-6 relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-green-500 transition-colors">
+              <Search size={18} />
+            </div>
             <input
               type="text"
-              placeholder="Buscar productos..."
+              placeholder="¿Qué estás buscando para tu negocio?"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
@@ -184,25 +180,30 @@ useEffect(() => {
                 }
               }}
               className="
-                w-full px-4 py-2 
-                bg-white/90 
-                rounded-xl 
+                w-full pl-11 pr-4 py-2.5 
+                bg-gray-100/50 
+                border border-transparent
+                rounded-full 
+                text-sm
+                focus:bg-white 
                 focus:ring-2 
-                focus:ring-blue-300 
+                focus:ring-green-500/20 
+                focus:border-green-500
                 outline-none
+                transition-all
               "
             />
           </div>
 
           {/* MENU DESKTOP */}
-          <div className="hidden md:flex items-center gap-10 text-white font-medium">
-            <Link to="/homeUser" className="hover:text-yellow-200 transition">
+          <div className="hidden md:flex items-center gap-6 text-gray-600 font-medium">
+            <Link to="/homeUser" className="hover:text-green-600 transition-colors text-sm">
               Inicio
             </Link>
 
             <Link
               to="/user/productos"
-              className="hover:text-yellow-200 transition"
+              className="hover:text-green-600 transition-colors text-sm"
             >
               Productos
             </Link>
@@ -211,13 +212,13 @@ useEffect(() => {
             <div className="relative" ref={catRef}>
               <button
                 onClick={() => setOpenCat(!openCat)}
-                className="flex items-center gap-1 hover:text-yellow-200"
+                className="flex items-center gap-1 hover:text-green-600 transition-colors text-sm"
               >
-                Categorías <ChevronDown size={18} />
+                Categorías <ChevronDown size={16} className={`transition-transform ${openCat ? 'rotate-180' : ''}`} />
               </button>
 
               {openCat && (
-                <div className="absolute left-0 mt-2 w-40 bg-white text-gray-800 rounded-lg shadow-lg z-50">
+                <div className="absolute left-0 mt-4 w-56 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2">
                   {categorias.length > 0 ? (
                     categorias.map((cat) => (
                       <div
@@ -226,94 +227,103 @@ useEffect(() => {
                           navigate(`/user/categorias/${cat._id}`);
                           setOpenCat(false);
                         }}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        className="px-4 py-2.5 hover:bg-green-50 hover:text-green-700 cursor-pointer text-sm transition-colors"
                       >
                         {cat.name}
                       </div>
                     ))
                   ) : (
-                    <div className="px-4 py-2 text-gray-500">
-                      Sin categorías
+                    <div className="px-4 py-2 text-gray-400 text-xs italic">
+                      Sin categorías disponibles
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            <Link
-              to="/favorito/all"
-              className="flex items-center gap-1 hover:text-yellow-200"
-            >
-              <Heart size={20} /> Favoritos
-            </Link>
+            <div className="h-6 w-px bg-gray-200 mx-2" />
 
-            <Link
-              to="/user/carAll"
-              className="relative flex items-center gap-1 hover:text-yellow-200"
-            >
-              <ShoppingCart size={20} /> Carrito
-              {cartCount > 0 && (
-                <span
-                  className="
-                    absolute -top-2 -right-3
-                    bg-red-600 text-white
-                    text-xs font-bold
-                    w-5 h-5 rounded-full
-                    flex items-center justify-center
-                  "
-                >
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                to="/favorito/all"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors relative"
+                title="Favoritos"
+              >
+                <Heart size={22} />
+              </Link>
 
-            <Link
-              to="/orders"
-              className="flex items-center gap-1 hover:text-yellow-200"
-            >
-              <ShoppingCart size={20} /> Mis Órdenes
-            </Link>
+              <Link
+                to="/user/carAll"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors relative"
+                title="Carrito"
+              >
+                <ShoppingCart size={22} />
+                {cartCount > 0 && (
+                  <span
+                    className="
+                      absolute top-0 right-0
+                      bg-green-600 text-white
+                      text-[10px] font-bold
+                      w-5 h-5 rounded-full
+                      flex items-center justify-center
+                      border-2 border-white
+                    "
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </div>
 
             {/* USER MENU */}
             <div className="relative" ref={userRef}>
               <button
                 onClick={() => setOpenUser(!openUser)}
-                className="flex items-center gap-2 hover:bg-green-700/20 px-3 py-2 rounded-lg"
+                className="flex items-center gap-2 pl-2 pr-1 py-1 bg-gray-50 rounded-full border border-gray-100 hover:border-green-200 transition-all shadow-sm"
               >
                 <img
-                  src="https://ui-avatars.com/api/?name=User"
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=10b981&color=fff`}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full"
+                  className="w-8 h-8 rounded-full shadow-inner"
                 />
-                <span className="text-yellow-300 font-bold">{name}</span>
+                <span className="text-gray-800 text-sm font-bold max-w-[100px] truncate">{name}</span>
+                <ChevronDown size={14} className="text-gray-400 mr-1" />
               </button>
 
               {openUser && (
-                <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-lg p-5 z-50 animate-fadeIn">
-                  <div className="flex items-center gap-3 pb-4 border-b">
+                <div className="absolute right-0 mt-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-50 z-50 overflow-hidden animate-in fade-in zoom-in-95">
+                  <div className="flex items-center gap-3 p-4 bg-gray-50/50 border-b">
                     <img
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        name
-                      )}`}
-                      className="w-12 h-12 rounded-full"
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=10b981&color=fff`}
+                      className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
                     />
-                    <div>
-                      <p className="font-bold text-lg">{name}</p>
-                      <p className="text-sm text-gray-500">
+                    <div className="overflow-hidden">
+                      <p className="font-bold text-gray-900 truncate">{name}</p>
+                      <p className="text-xs text-gray-500 truncate">
                         {localStorage.getItem("email")}
                       </p>
                     </div>
                   </div>
 
-                  <div className="py-3 flex flex-col gap-3 text-gray-700">
+                  <div className="p-2 flex flex-col gap-1">
                     <button
                       onClick={() => {
                         setOpenUser(false);
                         navigate("/perfil");
                       }}
-                      className="text-left hover:bg-gray-100 p-2 rounded"
+                      className="flex items-center gap-3 text-left hover:bg-green-50 hover:text-green-700 p-2.5 rounded-xl transition-colors text-sm text-gray-700"
                     >
-                      Mi Perfil
+                      <User size={18} className="text-gray-400" /> Mi Perfil
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setOpenUser(false);
+                        navigate("/orders");
+                      }}
+                      className="flex items-center gap-3 text-left hover:bg-green-50 hover:text-green-700 p-2.5 rounded-xl transition-colors text-sm text-gray-700"
+                    >
+                      <Package size={18} className="text-gray-400" /> Mis Órdenes
                     </button>
 
                     <button
@@ -321,185 +331,193 @@ useEffect(() => {
                         setOpenUser(false);
                         navigate("/cambiar-password");
                       }}
-                      className="text-left hover:bg-gray-100 p-2 rounded"
+                      className="flex items-center gap-3 text-left hover:bg-green-50 hover:text-green-700 p-2.5 rounded-xl transition-colors text-sm text-gray-700"
                     >
-                      Cambiar Contraseña
+                      <ShieldCheck size={18} className="text-gray-400" /> Seguridad
                     </button>
 
                     <Link
                       to="/user/notificaciones"
-                      className="relative flex items-center gap-1"
+                      onClick={() => setOpenUser(false)}
+                      className={`flex items-center justify-between p-2.5 rounded-xl transition-all text-sm ${highlightNotification ? 'bg-yellow-50 text-yellow-700' : 'hover:bg-green-50 hover:text-green-700 text-gray-700'}`}
                     >
-                      <Bell size={20} />Notificaciones
+                      <div className="flex items-center gap-3">
+                        <Bell size={18} className={highlightNotification ? 'text-yellow-500 animate-bounce' : 'text-gray-400'} />
+                        Notificaciones
+                      </div>
                       {notificationCount > 0 && (
-                        <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                           {notificationCount}
                         </span>
                       )}
                     </Link>
                   </div>
 
-                  <button
-                    onClick={handleLogout}
-                    className="mt-2 w-full bg-red-500 text-white rounded-lg py-2 hover:bg-red-600"
-                  >
-                    <LogOut size={18} className="inline-block mr-2" />
-                    Cerrar sesión
-                  </button>
+                  <div className="p-2 mt-1 bg-gray-50">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center justify-center gap-2 w-full bg-red-50 text-red-600 rounded-xl py-2.5 hover:bg-red-500 hover:text-white transition-all text-sm font-semibold"
+                    >
+                      <LogOut size={16} />
+                      Cerrar sesión
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
           {/* BOTÓN MOBILE */}
-          <button
-            className="md:hidden text-white ml-3"
-            onClick={() => setMobileMenu(true)}
-          >
-            <Menu size={30} />
-          </button>
+          <div className="flex md:hidden items-center gap-2">
+            <Link to="/user/carAll" className="p-2 relative text-gray-600">
+               <ShoppingCart size={24} />
+               {cartCount > 0 && <span className="absolute top-1 right-1 bg-green-600 w-4 h-4 rounded-full text-[10px] text-white flex items-center justify-center border border-white">{cartCount}</span>}
+            </Link>
+            <button
+              className="text-gray-800 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => setMobileMenu(true)}
+            >
+              <Menu size={28} />
+            </button>
+          </div>
         </div>
       </nav>
 
       {/* SIDEBAR MOBILE */}
       <div
         className={`
-          fixed top-0 right-0 h-full w-72
-          bg-white shadow-lg z-[999]
-          transform transition-transform duration-300
+          fixed top-0 right-0 h-full w-[85%] max-w-[320px]
+          bg-white shadow-2xl z-[999]
+          transform transition-transform duration-500 ease-in-out
           ${mobileMenu ? "translate-x-0" : "translate-x-full"}
         `}
-        onClick={(e) => e.stopPropagation()} // 🔥 Detiene clics entrando al backdrop
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-5 flex justify-between items-center border-b">
-          <h2 className="text-xl font-bold">Menú</h2>
-          <button onClick={() => setMobileMenu(false)}>
-            <X size={28} />
+        <div className="p-6 flex justify-between items-center border-b border-gray-100">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                {name.charAt(0)}
+             </div>
+             <span className="font-bold text-gray-800">Menú Principal</span>
+          </div>
+          <button onClick={() => setMobileMenu(false)} className="p-2 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-all">
+            <X size={24} />
           </button>
         </div>
 
-        <div className="flex flex-col text-gray-700 mt-5 px-4 gap-4">
-          <Link to="/homeUser" onClick={() => setMobileMenu(false)}>
-            Inicio
-          </Link>
+        <div className="flex flex-col h-[calc(100%-85px)] justify-between overflow-y-auto">
+          <div className="flex flex-col text-gray-600 mt-4 px-4 gap-1 font-medium">
+            <Link to="/homeUser" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all">
+              Inicio
+            </Link>
 
-          <Link to="/user/productos" onClick={() => setMobileMenu(false)}>
-            Productos
-          </Link>
+            <Link to="/user/productos" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all">
+              Productos
+            </Link>
 
-          {/* Categorías Mobile */}
-          <div>
-            <p
-              className="font-semibold mb-2 cursor-pointer"
-              onClick={() => setOpenCat(!openCat)}
-            >
-              Categorías <ChevronDown size={18} className="inline" />
-            </p>
-
-            {openCat && (
-              <div className="flex flex-col gap-2 pl-3">
-                {categorias.length ? (
-                  categorias.map((cat) => (
-                    <button
-                      key={cat._id}
-                      onClick={() => {
-                        navigate(`/user/categorias/${cat._id}`);
-                        setOpenCat(false);
-                        setMobileMenu(false);
-                      }}
-                      className="text-left hover:bg-gray-100 p-2 rounded"
-                    >
-                      {cat.name}
-                    </button>
-                  ))
-                ) : (
-                  <p className="text-gray-500">Sin categorías</p>
-                )}
-              </div>
-            )}
-          </div>
-
-          <Link to="/favorito/all" onClick={() => setMobileMenu(false)}>
-            Favoritos
-          </Link>
-
-          <Link
-            to="/user/carAll"
-            onClick={() => setMobileMenu(false)}
-            className="relative"
-          >
-            Carrito
-            {cartCount > 0 && (
-              <span
-                className="
-                  ml-2 bg-red-600 text-white text-xs font-bold
-                  w-5 h-5 rounded-full inline-flex items-center justify-center
-                "
+            {/* Categorías Mobile */}
+            <div className="flex flex-col">
+              <div
+                className="flex items-center justify-between p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all cursor-pointer"
+                onClick={() => setOpenCat(!openCat)}
               >
-                {cartCount}
-              </span>
-            )}
-          </Link>
+                <span>Categorías</span>
+                <ChevronDown size={18} className={`transition-transform duration-300 ${openCat ? 'rotate-180' : ''}`} />
+              </div>
 
-          <Link to="/orders" onClick={() => setMobileMenu(false)}>
-            Mis Órdenes
-          </Link>
+              {openCat && (
+                <div className="flex flex-col gap-1 pl-6 mt-1 overflow-hidden animate-in slide-in-from-top-1">
+                  {categorias.length ? (
+                    categorias.map((cat) => (
+                      <button
+                        key={cat._id}
+                        onClick={() => {
+                          navigate(`/user/categorias/${cat._id}`);
+                          setOpenCat(false);
+                          setMobileMenu(false);
+                        }}
+                        className="text-left py-2 px-3 text-sm text-gray-500 hover:text-green-600 transition-colors"
+                      >
+                        • {cat.name}
+                      </button>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-xs p-2">Sin categorías</p>
+                  )}
+                </div>
+              )}
+            </div>
 
-          <hr />
+            <Link to="/favorito/all" onClick={() => setMobileMenu(false)} className="flex items-center justify-between p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all">
+              <span>Favoritos</span>
+              <Heart size={18} className="text-gray-300" />
+            </Link>
 
-          <button
-            onClick={() => {
-              navigate("/perfil");
-              setMobileMenu(false);
-            }}
-            className="text-left hover:bg-gray-100 p-2 rounded"
-          >
-            Mi Perfil
-          </button>
+            <Link to="/orders" onClick={() => setMobileMenu(false)} className="flex items-center justify-between p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all">
+              <span>Mis Órdenes</span>
+              <Package size={18} className="text-gray-300" />
+            </Link>
 
-          <button
-            onClick={() => {
-              navigate("/cambiar-password");
-              setMobileMenu(false);
-            }}
-            className="text-left hover:bg-gray-100 p-2 rounded"
-          >
-            Cambiar Contraseña
-          </button>
-          <div className="flex flex-col gap-4 p-4">
-            {/* 🔔 NOTIFICACIONES MOBILE */}
+            <hr className="my-4 border-gray-100" />
+
+            <p className="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Cuenta</p>
+
+            <button
+              onClick={() => {
+                navigate("/perfil");
+                setMobileMenu(false);
+              }}
+              className="flex items-center gap-4 p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all text-left"
+            >
+              Mi Perfil
+            </button>
+
+            <button
+              onClick={() => {
+                navigate("/cambiar-password");
+                setMobileMenu(false);
+              }}
+              className="flex items-center gap-4 p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all text-left"
+            >
+              Seguridad
+            </button>
+
             <Link
               to="/user/notificaciones"
-              className="relative flex items-center gap-2"
+              className="flex items-center justify-between p-3 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all"
               onClick={() => setMobileMenu(false)}
             >
-              <Bell size={18} />
-              Notificaciones
+              <div className="flex items-center gap-2">Notificaciones</div>
               {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                   {notificationCount}
                 </span>
               )}
             </Link>
           </div>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white p-2 rounded mt-4"
-          >
-            Cerrar sesión
-          </button>
+
+          <div className="p-6">
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center gap-3 w-full bg-red-500 text-white p-4 rounded-2xl font-bold shadow-lg shadow-red-200 active:scale-95 transition-all"
+            >
+              <LogOut size={20} />
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
 
       {/* BACKDROP */}
       {mobileMenu && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[998]"
-          onClick={() => {
-            setMobileMenu(false);
-          }}
+          className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[998] animate-in fade-in"
+          onClick={() => setMobileMenu(false)}
         ></div>
       )}
+
+      {/* Padding para que el contenido no quede bajo el navbar */}
+      <div className="h-20 w-full" />
     </>
   );
 }
