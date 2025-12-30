@@ -83,6 +83,7 @@ export default function AppRouter() {
     <Route path="ordenes" element={<Orders />} />
     <Route path="perfil" element={<Perfil />} />
     <Route path="notificaciones" element={<Notificacion />} />
+    
 
   </Route>
 </Route>

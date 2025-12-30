@@ -4,6 +4,7 @@ import api from "../../api/axios";
 import ProductosTienda from "../ProductosTienda";
 import NavbarTienda from "../../components/User/Tiendas/NabvarTienda";
 import { Store, ShieldCheck, ArrowLeft, Info, Package } from "lucide-react";
+import FooterStore from "./FooterStore";
 
 export default function Storefront() {
   const { slug } = useParams();
@@ -170,21 +171,7 @@ export default function Storefront() {
       </main>
 
       {/* ===================== FOOTER ===================== */}
-      <footer className="mt-12 py-12 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white font-bold">
-              {storeData.seller.storeName.charAt(0)}
-            </div>
-            <span className="font-black text-slate-800">
-              {storeData.seller.storeName}
-            </span>
-          </div>
-          <p className="text-slate-400 font-medium text-sm">
-            © {new Date().getFullYear()} · Todos los derechos reservados.
-          </p>
-        </div>
-      </footer>
+   <FooterStore/>
     </div>
   );
 }
