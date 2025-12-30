@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import api from "../../api/axios";
-import { Eye, EyeOff, Store, Upload, ArrowRight, ShieldCheck, X, LayoutGrid } from "lucide-react";
+import { Eye, EyeOff, Store, Upload, ArrowRight, ShieldCheck, X, LayoutGrid, CheckCircle2 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../assets/Logo3.png";
 
 export default function RegisterSeller() {
   const navigate = useNavigate();
   const query = new URLSearchParams(useLocation().search);
-  const planFromUrl = query.get("plan");
+  const planFromUrl = query.get("plan"); // Captura el ID del plan de la URL
 
   const [form, setForm] = useState({
     name: "",
@@ -18,8 +18,8 @@ export default function RegisterSeller() {
     phone: "",
     rol: "seller",
     storeName: "",
-    storeCategory: "", // <--- Nuevo campo
-    planId: planFromUrl || "",
+    storeCategory: "",
+    planId: planFromUrl || "", // Si viene de la URL, se pre-carga
     addresses: [{ street: "", city: "" }]
   });
 
@@ -28,6 +28,9 @@ export default function RegisterSeller() {
   const [loading, setLoading] = useState(false);
   const [planes, setPlanes] = useState([]);
   const [preview, setPreview] = useState(null);
+
+  // Obtener la información del plan seleccionado (para mostrar el nombre y precio)
+  const planSeleccionado = planes.find(p => p._id === form.planId);
 
   useEffect(() => {
     const fetchPlanes = async () => {
@@ -64,6 +67,8 @@ export default function RegisterSeller() {
     e.preventDefault();
     if (!storeLogo) return alert("El logo de la tienda es obligatorio");
     if (!form.storeCategory) return alert("Debes seleccionar una categoría");
+    if (!form.planId) return alert("Debes seleccionar un plan de suscripción");
+    
     setLoading(true);
 
     try {
@@ -76,7 +81,7 @@ export default function RegisterSeller() {
       formData.append("phone", form.phone);
       formData.append("rol", "seller");
       formData.append("storeName", form.storeName);
-      formData.append("storeCategory", form.storeCategory); // <--- Enviamos categoría
+      formData.append("storeCategory", form.storeCategory);
       formData.append("planId", form.planId);
       formData.append("addresses[0][street]", form.addresses[0].street);
       formData.append("addresses[0][city]", form.addresses[0].city);
@@ -103,12 +108,10 @@ export default function RegisterSeller() {
     <div className="min-h-screen bg-[#111827] flex items-center justify-center p-4 md:p-10 font-sans text-gray-200 relative">
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-stretch bg-[#1F2937] rounded-[2.5rem] overflow-hidden shadow-2xl border border-[#374151] relative">
 
-        {/* Botón Cerrar */}
         <Link to="/" className="absolute top-6 right-6 text-gray-400 hover:text-white z-20">
           <X size={28} />
         </Link>
 
-        {/* COLUMNA IZQUIERDA: FORMULARIO */}
         <div className="w-full md:w-7/12 p-8 md:p-12 overflow-y-auto max-h-[90vh] md:max-h-none custom-scrollbar">
           <div className="flex items-center gap-3 mb-8">
             <img src={Logo} alt="Logo" className="h-10 w-auto" />
@@ -121,7 +124,6 @@ export default function RegisterSeller() {
 
           <form onSubmit={handleRegister} className="space-y-6">
 
-            {/* SECCIÓN TIENDA */}
             <div className="bg-[#111827]/40 p-6 rounded-2xl border border-[#374151] space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -129,7 +131,6 @@ export default function RegisterSeller() {
                   <input name="storeName" type="text" required placeholder="Nombre comercial" className={inputStyle} onChange={handleChange} />
                 </div>
 
-                {/* NUEVO: CATEGORÍA */}
                 <div>
                   <label className={labelStyle}>Categoría del Negocio</label>
                   <select name="storeCategory" value={form.storeCategory} required className={inputStyle} onChange={handleChange}>
@@ -149,21 +150,39 @@ export default function RegisterSeller() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className={labelStyle}>Plan de Suscripción</label>
-                  <select
-                    name="planId"
-                    value={form.planId}
-                    required
-                    className={inputStyle}
-                    onChange={handleChange}
-                  >
-                    <option value="">Seleccionar plan...</option>
-                    {planes.map((p) => (
-                      <option key={p._id} value={p._id} className="bg-[#1F2937]">
-                        {p.nombre === "avanzado" ? "Plan Avanzado" : "Plan Básico"} — ${p.precio}
-                      </option>
-                    ))}
-                  </select>
-
+                  
+                  {/* LÓGICA DINÁMICA DEL PLAN */}
+                  {planFromUrl && planSeleccionado ? (
+                    <div className="bg-blue-600/10 border border-blue-500/30 p-3 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 size={16} className="text-blue-500" />
+                        <div>
+                          <p className="text-white text-xs font-black uppercase tracking-tighter">
+                            {planSeleccionado.nombre === "avanzado" ? "Plan Avanzado" : "Plan Emprendedor"}
+                          </p>
+                          <p className="text-blue-400 text-[10px] font-bold">Seleccionado</p>
+                        </div>
+                      </div>
+                      <Link to="/planes" className="text-[10px] text-gray-500 hover:text-white underline uppercase font-black tracking-widest">
+                        Cambiar
+                      </Link>
+                    </div>
+                  ) : (
+                    <select
+                      name="planId"
+                      value={form.planId}
+                      required
+                      className={inputStyle}
+                      onChange={handleChange}
+                    >
+                      <option value="">Seleccionar plan...</option>
+                      {planes.map((p) => (
+                        <option key={p._id} value={p._id} className="bg-[#1F2937]">
+                          {p.nombre === "avanzado" ? "Plan Avanzado" : "Plan Básico"} — ${p.precio}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 <div>
@@ -181,7 +200,6 @@ export default function RegisterSeller() {
               </div>
             </div>
 
-            {/* DATOS PERSONALES */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelStyle}>Nombre Responsable</label>
@@ -219,7 +237,6 @@ export default function RegisterSeller() {
               </div>
             </div>
 
-            {/* UBICACIÓN */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-[#374151]">
               <div className="md:col-span-2">
                 <label className={labelStyle}>Dirección Física</label>
@@ -227,7 +244,7 @@ export default function RegisterSeller() {
               </div>
               <div>
                 <label className={labelStyle}>Ciudad</label>
-                <input name="city" type="text" required placeholder="Ciudad" className={inputStyle} onChange={handleAddressChange} />
+                <input name="city" type="text" required placeholder="Cúcuta" className={inputStyle} onChange={handleAddressChange} />
               </div>
             </div>
 
@@ -245,7 +262,6 @@ export default function RegisterSeller() {
           </p>
         </div>
 
-        {/* COLUMNA DERECHA: DECO */}
         <div className="hidden md:flex md:w-5/12 bg-[#111827] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>
 
