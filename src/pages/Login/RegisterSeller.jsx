@@ -20,7 +20,7 @@ export default function RegisterSeller() {
     storeName: "",
     storeCategory: "", // <--- Nuevo campo
     planId: planFromUrl || "",
-    addresses: [{ street: "", city: "" }] 
+    addresses: [{ street: "", city: "" }]
   });
 
   const [storeLogo, setStoreLogo] = useState(null);
@@ -102,7 +102,7 @@ export default function RegisterSeller() {
   return (
     <div className="min-h-screen bg-[#111827] flex items-center justify-center p-4 md:p-10 font-sans text-gray-200 relative">
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-stretch bg-[#1F2937] rounded-[2.5rem] overflow-hidden shadow-2xl border border-[#374151] relative">
-        
+
         {/* Botón Cerrar */}
         <Link to="/" className="absolute top-6 right-6 text-gray-400 hover:text-white z-20">
           <X size={28} />
@@ -120,7 +120,7 @@ export default function RegisterSeller() {
           <p className="text-gray-400 mb-8">Regístrate y comienza a vender en nuestro marketplace.</p>
 
           <form onSubmit={handleRegister} className="space-y-6">
-            
+
             {/* SECCIÓN TIENDA */}
             <div className="bg-[#111827]/40 p-6 rounded-2xl border border-[#374151] space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -128,7 +128,7 @@ export default function RegisterSeller() {
                   <label className={labelStyle}>Nombre de la Tienda</label>
                   <input name="storeName" type="text" required placeholder="Nombre comercial" className={inputStyle} onChange={handleChange} />
                 </div>
-                
+
                 {/* NUEVO: CATEGORÍA */}
                 <div>
                   <label className={labelStyle}>Categoría del Negocio</label>
@@ -150,19 +150,19 @@ export default function RegisterSeller() {
                 <div>
                   <label className={labelStyle}>Plan de Suscripción</label>
                   <select
-  name="planId"
-  value={form.planId}
-  required
-  className={inputStyle}
-  onChange={handleChange}
->
-  <option value="">Seleccionar plan...</option>
-  {planes.map((p) => (
-    <option key={p._id} value={p._id} className="bg-[#1F2937]">
-      {p.nombre === "avanzado" ? "Plan Avanzado" : "Plan Básico"} — ${p.precio}
-    </option>
-  ))}
-</select>
+                    name="planId"
+                    value={form.planId}
+                    required
+                    className={inputStyle}
+                    onChange={handleChange}
+                  >
+                    <option value="">Seleccionar plan...</option>
+                    {planes.map((p) => (
+                      <option key={p._id} value={p._id} className="bg-[#1F2937]">
+                        {p.nombre === "avanzado" ? "Plan Avanzado" : "Plan Básico"} — ${p.precio}
+                      </option>
+                    ))}
+                  </select>
 
                 </div>
 
@@ -205,13 +205,13 @@ export default function RegisterSeller() {
               </div>
               <div className="md:col-span-2 relative">
                 <label className={labelStyle}>Contraseña</label>
-                <input 
-                  name="password" 
-                  type={showPass ? "text" : "password"} 
-                  required 
-                  minLength={8} 
-                  className={inputStyle} 
-                  onChange={handleChange} 
+                <input
+                  name="password"
+                  type={showPass ? "text" : "password"}
+                  required
+                  minLength={8}
+                  className={inputStyle}
+                  onChange={handleChange}
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-[34px] text-gray-500 hover:text-white transition-colors">
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -248,19 +248,19 @@ export default function RegisterSeller() {
         {/* COLUMNA DERECHA: DECO */}
         <div className="hidden md:flex md:w-5/12 bg-[#111827] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>
-          
+
           <div className="relative z-10 space-y-4">
             <h3 className="text-2xl font-bold text-white leading-tight">Impulsa tu comercio en Cúcuta</h3>
             <p className="text-gray-400 text-sm max-w-xs mx-auto leading-relaxed">
               Registra tu sector y haz que los clientes te encuentren por categorías: Tecnología, Moda, Ferretería y más.
             </p>
             <div className="pt-8 flex flex-col items-center gap-4">
-               <div className="flex items-center gap-2 text-blue-500 font-bold text-xs uppercase tracking-widest border border-blue-500/30 px-4 py-2 rounded-full bg-blue-500/5">
-                 <ShieldCheck size={18} /> Alianza Segura
-               </div>
-               <div className="flex items-center gap-2 text-gray-500 text-[10px] uppercase tracking-tighter">
-                 <LayoutGrid size={14} /> Categorización Inteligente
-               </div>
+              <div className="flex items-center gap-2 text-blue-500 font-bold text-xs uppercase tracking-widest border border-blue-500/30 px-4 py-2 rounded-full bg-blue-500/5">
+                <ShieldCheck size={18} /> Alianza Segura
+              </div>
+              <div className="flex items-center gap-2 text-gray-500 text-[10px] uppercase tracking-tighter">
+                <LayoutGrid size={14} /> Categorización Inteligente
+              </div>
             </div>
           </div>
         </div>

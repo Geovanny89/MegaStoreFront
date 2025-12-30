@@ -162,8 +162,8 @@ export default function Home() {
             <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
               Únete a la red comercial más grande de Cúcuta. Digitaliza tu tienda, gestiona pedidos y aumenta tus ventas hoy mismo.
             </p>
-            <Link to="/plans" className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all inline-block shadow-2xl shadow-blue-600/40 transform hover:scale-105">
-              Empezar ahora — Gratis 15 días
+            <Link to="/planes" className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all inline-block shadow-2xl shadow-blue-600/40 transform hover:scale-105">
+              Empezar ahora
             </Link>
           </div>
         </div>

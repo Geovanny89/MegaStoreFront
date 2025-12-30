@@ -51,6 +51,7 @@ import Terminos from "./components/Home/Terminos";
 import Privacidad from "./components/Home/Privacidad";
 import Contacto from "./components/Home/Contacto";
 import TodasTiendas from "./components/Home/TodasTiendas";
+import Planes from "./components/Planes/Planes";
 
 
 export default function AppRouter() {
@@ -69,6 +70,7 @@ export default function AppRouter() {
           <Route path="/privacidad" element={<Privacidad />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/tiendas" element={<TodasTiendas />} />
+          <Route path="/Planes" element={<Planes />} />
 
         </Route>
 
