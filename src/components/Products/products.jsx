@@ -6,6 +6,15 @@ import ProductQuestions from "../../components/Questions/ProductQuestions";
 import RatingStars from "../Ratings/RatingStars";
 import ProductReviews from "../User/Calificaciones/ProductReviews";
 
+// --- FUNCIÓN DE ALEATORIZACIÓN (Fuera del componente para evitar recreaciones) ---
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 export default function Products() {
   const [productos, setProductos] = useState([]);
@@ -19,7 +28,6 @@ export default function Products() {
   // FAVORITOS CONTEXT
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
-
   // MODAL
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,13 +38,15 @@ export default function Products() {
   // CANTIDAD
   const [cantidad, setCantidad] = useState(1);
 
-
   useEffect(() => {
     const fetchProductos = async () => {
       try {
         const res = await api.get("/user/allProducts");
-
-        setProductos(res.data);
+        
+        // ALEATORIZACIÓN: Mezclamos todos los productos recibidos
+        const productosMezclados = shuffleArray(res.data);
+        
+        setProductos(productosMezclados);
       } catch (error) {
         console.log(error);
         alert("No existen productos");
@@ -65,7 +75,7 @@ export default function Products() {
       // 1. Notifica a la pestaña actual
       window.dispatchEvent(new Event("cartUpdated"));
 
-      // 2. Notifica a OTRAS pestañas (esto dispara el evento 'storage' que ya tienes en el Navbar)
+      // 2. Notifica a OTRAS pestañas
       localStorage.setItem("cartTimestamp", Date.now().toString());
 
       alert("Producto agregado al carrito ✔");
@@ -108,7 +118,6 @@ export default function Products() {
         setSelectedImg(res.data.image[0].url);
       }
 
-
       setCantidad(1);
       setModalOpen(true);
 
@@ -141,7 +150,6 @@ export default function Products() {
                         alt={p.name}
                         className="h-full object-contain p-2"
                       />
-
                     </div>
 
                     {/* FAVORITO */}
@@ -210,7 +218,6 @@ export default function Products() {
               ))}
             </div>
 
-
             {/* PAGINACIÓN */}
             <div className="flex justify-center mt-10 space-x-2">
               <button
@@ -255,166 +262,135 @@ export default function Products() {
         )}
       </div>
 
-      {/* MODAL PROFESIONAL */}
+      {/* MODAL AJUSTADO (MANTENIDO ÍNTEGRO) */}
       {modalOpen && selectedProduct && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
-          <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl overflow-hidden">
-
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
+            
             {/* HEADER */}
-            <div className="flex items-center justify-between px-4 py-3 border-b">
-              <h3 className="text-base font-semibold text-gray-800 truncate">
+            <div className="flex items-center justify-between px-5 py-3 border-b bg-gray-50/50">
+              <h3 className="text-sm font-bold text-gray-800 truncate pr-6">
                 {selectedProduct.name}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-gray-400 hover:text-black text-lg"
+                className="text-gray-400 hover:text-black transition-colors"
               >
-                ✖
+                <span className="text-xl">✕</span>
               </button>
             </div>
 
             {/* CUERPO */}
-            <div className="max-h-[80vh] overflow-y-auto">
-
-              {/* PRODUCTO */}
-              <div className="p-4 border-b">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+            <div className="overflow-y-auto overflow-x-hidden">
+              <div className="p-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  
                   {/* IMÁGENES */}
-                  <div>
-                    <div className="bg-gray-50 border rounded-lg h-[320px] flex items-center justify-center">
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 border border-gray-100 rounded-xl h-48 flex items-center justify-center">
                       <img
                         src={selectedImg}
                         alt={selectedProduct.name}
-                        className="object-contain max-h-full"
+                        className="object-contain max-h-full p-2"
                       />
-
                     </div>
 
-                    <div className="grid grid-cols-4 gap-2 mt-3">
+                    <div className="flex gap-2 overflow-x-auto pb-1">
                       {selectedProduct.image.slice(0, 4).map((img, i) => (
                         <img
                           key={i}
                           src={img.url}
                           onClick={() => setSelectedImg(img.url)}
-                          className={`h-16 rounded-md object-cover cursor-pointer border ${selectedImg === img.url
-                              ? "border-blue-500 ring-2 ring-blue-500"
-                              : "border-gray-200"
-                            }`}
+                          className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all ${
+                            selectedImg === img.url ? "border-blue-500" : "border-transparent opacity-70"
+                          }`}
                         />
                       ))}
-
-
                     </div>
                   </div>
 
-                  {/* INFO */}
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900">
-                      {selectedProduct.name}
-                    </h2>
-
-                    <div className="mt-1">Calificación
-                      {selectedProduct.rating?.count > 0 ? (
-                        <RatingStars
-                          value={selectedProduct.rating.average}
-                          count={selectedProduct.rating.count}
-                          size="text-base"
-                        />
-                      ) : (
-                        <p className="text-xs text-gray-400">
-                          Sin calificaciones
-                        </p>
-                      )}
-                    </div>
-
-                    <p className="text-2xl font-bold text-blue-600 mt-3">Precio: $
-                      {selectedProduct.price}
-                    </p>
-
-                    <div className="mt-3 text-sm text-gray-600 space-y-1">
-                      <p>Marca: <span className="font-medium">{selectedProduct.brand}</span></p>
-
-                      <p className="flex items-center gap-2">
-                        Vendido por{" "}
-                        <span className="font-bold uppercase">
-                          {selectedProduct?.vendedor?.storeName}
-                        </span>
-                        {selectedProduct?.vendedor?.sellerRating?.count > 0 && (
+                  {/* INFO PRODUCTO */}
+                  <div className="flex flex-col">
+                    <div className="mb-2">
+                      <h2 className="text-lg font-black text-gray-900 leading-tight">
+                        {selectedProduct.name}
+                      </h2>
+                      <div className="flex items-center gap-1 mt-1 scale-90 origin-left">
+                        {selectedProduct.rating?.count > 0 ? (
                           <RatingStars
-                            value={selectedProduct.vendedor.sellerRating.average}
-                            count={selectedProduct.vendedor.sellerRating.count}
-                            size="text-xs"
+                            value={selectedProduct.rating.average}
+                            count={selectedProduct.rating.count}
+                            size="text-[10px]"
                           />
+                        ) : (
+                          <span className="text-[10px] text-gray-400">Sin calificaciones</span>
                         )}
-                      </p>
-
-                      <p>
-                        Stock:{" "}
-                        <span className="font-semibold">
-                          {selectedProduct.stock}
-                        </span>
-                      </p>
-                    </div>
-
-                    {/* CANTIDAD */}
-                    <div className="mt-4">
-                      <label className="text-sm font-medium">Cantidad</label>
-                      <div className="flex items-center gap-2 mt-1">
-                        <button
-                          onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                          className="w-9 h-9 rounded bg-gray-200"
-                        >
-                          −
-                        </button>
-
-                        <input
-                          type="number"
-                          value={cantidad}
-                          min="1"
-                          onChange={(e) =>
-                            setCantidad(Math.max(1, Number(e.target.value)))
-                          }
-                          className="w-14 text-center border rounded"
-                        />
-
-                        <button
-                          onClick={() => setCantidad(cantidad + 1)}
-                          className="w-9 h-9 rounded bg-gray-200"
-                        >
-                          +
-                        </button>
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
-                      className="mt-5 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold"
-                    >
-                      Agregar al carrito
-                    </button>
+                    <p className="text-xl font-black text-blue-600 mb-3">
+                      ${selectedProduct.price}
+                    </p>
+
+                    <div className="space-y-1.5 text-xs text-gray-600 mb-5">
+                      <p>Marca: <span className="font-semibold">{selectedProduct.brand}</span></p>
+                      <p className="flex items-center gap-1">
+                        Vendido por: <span className="font-bold uppercase text-blue-700">{selectedProduct?.vendedor?.storeName}</span>
+                      </p>
+                      <p>Stock: <span className="font-semibold text-green-600">{selectedProduct.stock}</span></p>
+                    </div>
+
+                    <div className="mt-auto space-y-2">
+                      <div className="flex items-center justify-between bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Cantidad</span>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                            className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50"
+                          >
+                            −
+                          </button>
+                          <span className="text-xs font-bold">{cantidad}</span>
+                          <button
+                            onClick={() => setCantidad(cantidad + 1)}
+                            className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-md transition-transform active:scale-95"
+                      >
+                        Agregar al carrito
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* REVIEWS */}
-              <div className="p-4 border-b">
-                <h3 className="text-lg font-semibold mb-3">
-                  Opiniones
-                </h3>
-                <ProductReviews productId={selectedProduct._id} />
-              </div>
+                {/* SECCIONES EXTRA */}
+                <div className="border-t border-gray-50 pt-5 space-y-6">
+                  <section>
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">Opiniones</h4>
+                    <div className="scale-95 origin-top-left">
+                      <ProductReviews productId={selectedProduct._id} />
+                    </div>
+                  </section>
 
-              {/* PREGUNTAS */}
-              <div className="p-4">
-                <ProductQuestions productId={selectedProduct._id} />
+                  <section>
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">Preguntas</h4>
+                    <div className="scale-95 origin-top-left">
+                      <ProductQuestions productId={selectedProduct._id} />
+                    </div>
+                  </section>
+                </div>
               </div>
-
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

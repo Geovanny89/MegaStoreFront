@@ -13,7 +13,7 @@ export default function Home() {
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
   const [categoriaActiva, setCategoriaActiva] = useState("Todas");
 
-  // Definición de categorías con diseño mejorado
+  // Definición de categorías
   const categorias = [
     { name: "Todas", icon: <ShoppingCart size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
     { name: "Tecnología", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },
@@ -58,16 +58,13 @@ export default function Home() {
         </div>
       )}
 
-      {/* 2. SECCIÓN DE CATEGORÍAS (DISEÑO GRANDE) */}
+      {/* 2. SECCIÓN DE CATEGORÍAS */}
       {!vendedorSeleccionado && (
         <section className="mb-20">
           <div className="flex items-end justify-between mb-10 px-2">
             <div>
               <h3 className="text-3xl font-black text-gray-900 tracking-tight">Busca por Sector</h3>
               <p className="text-gray-500 font-medium">Los mejores comercios de Cúcuta organizados para ti</p>
-            </div>
-            <div className="hidden sm:block h-1 w-20 bg-gray-100 rounded-full overflow-hidden">
-               <div className="h-full bg-blue-600 transition-all duration-500" style={{ width: `${(categorias.findIndex(c => c.name === categoriaActiva) + 1) * 14}%` }}></div>
             </div>
           </div>
 
@@ -107,27 +104,29 @@ export default function Home() {
         </div>
       )}
 
-      {/* 4. SECCIÓN DE TIENDAS FILTRADAS */}
+      {/* 4. SECCIÓN DE TIENDAS FILTRADAS (SOLO AVANZADAS) */}
       {!vendedorSeleccionado && (
         <section id="tiendas" className="mb-24 scroll-mt-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
-                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Tiendas Oficiales</span>
+                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Tiendas Destacadas</span>
               </div>
               <h2 className="text-4xl font-black text-gray-900 leading-none">
-                {categoriaActiva === "Todas" ? "Nuestros Vendedores" : `${categoriaActiva}`}
+                {categoriaActiva === "Todas" ? "Nuestros Vendedores Premium" : `${categoriaActiva} Premium`}
               </h2>
             </div>
-            <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-colors">
+            <Link to="/tiendas" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-colors">
               Ver el directorio <ChevronRight size={18} />
-            </button>
+            </Link>
           </div>
           
-          <Tienda 
+          {/* AQUÍ ESTÁ EL CAMBIO: Pasamos la prop soloAvanzados */}
+          <Tienda  
             setVendedorSeleccionado={setVendedorSeleccionado} 
             filtroCategoria={categoriaActiva} 
+            soloAvanzados={true} 
           />
         </section>
       )}
@@ -142,11 +141,11 @@ export default function Home() {
         </div>
       )}
 
-      {/* 6. PRODUCTOS DESTACADOS */}
+      {/* 6. PRODUCTOS DESTACADOS (DE TODAS LAS TIENDAS) */}
       {!vendedorSeleccionado && (
         <section id="productos" className="mb-24">
           <h2 className="text-3xl font-black text-gray-900 mb-10 px-2 flex items-center gap-4">
-            Lo más buscado en la ciudad <div className="h-px flex-1 bg-gray-100"></div>
+            Explora Productos <div className="h-px flex-1 bg-gray-100"></div>
           </h2>
           <Products />
         </section>
@@ -169,39 +168,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* FOOTER */}
-      <footer className="border-t border-gray-100 pt-16 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-4">
-            <h4 className="text-xl font-black text-gray-900">Marketplace<span className="text-blue-600">.</span></h4>
-            <p className="text-gray-500 leading-relaxed">Conectando el comercio local de Cúcuta con el mundo digital.</p>
-          </div>
-          <div>
-            <h4 className="font-black text-gray-900 mb-6 uppercase text-xs tracking-widest">Plataforma</h4>
-            <ul className="space-y-3 text-gray-500 font-medium">
-              <li><Link to="/stores" className="hover:text-blue-600 transition-colors">Directorio de Tiendas</Link></li>
-              <li><Link to="/register-vendedor" className="hover:text-blue-600 transition-colors">Panel de Vendedor</Link></li>
-              <li><Link to="/plans" className="hover:text-blue-600 transition-colors">Planes y Precios</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black text-gray-900 mb-6 uppercase text-xs tracking-widest">Ayuda</h4>
-            <ul className="space-y-3 text-gray-500 font-medium">
-              <li><Link to="/privacidad" className="hover:text-blue-600 transition-colors">Privacidad</Link></li>
-              <li><Link to="/terminos" className="hover:text-blue-600 transition-colors">Términos</Link></li>
-              <li><a href="mailto:soporte@cucuta.com" className="hover:text-blue-600 transition-colors">Soporte Técnico</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black text-gray-900 mb-6 uppercase text-xs tracking-widest">Ubicación</h4>
-            <p className="text-gray-500 font-medium">Cúcuta, Norte de Santander<br />Colombia 2026</p>
-          </div>
-        </div>
-        <div className="text-center text-gray-400 text-sm font-medium border-t border-gray-50 pt-10">
-          © 2026 Todos los derechos reservados. Hecho para el comercio local.
-        </div>
-      </footer>
     </div>
   );
 }

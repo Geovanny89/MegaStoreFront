@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import NavbarUser from "./NabvarUser/Nabvaruser.jsx";
 import api from "../../api/axios";
+import FooterUser from "./FooterUser/FooterUser.jsx";
 
 export default function LayoutUser() {
   const [categorias, setCategorias] = useState([]);
@@ -88,6 +89,8 @@ export default function LayoutUser() {
           <Outlet />
         </div>
       </main>
+       {/* FOOTER */}
+      <FooterUser/>
     </div>
   );
 }

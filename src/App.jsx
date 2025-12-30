@@ -50,6 +50,7 @@ import AboutUs from "./components/Home/AboutUs";
 import Terminos from "./components/Home/Terminos";
 import Privacidad from "./components/Home/Privacidad";
 import Contacto from "./components/Home/Contacto";
+import TodasTiendas from "./components/Home/TodasTiendas";
 
 
 export default function AppRouter() {
@@ -67,6 +68,7 @@ export default function AppRouter() {
           <Route path="/terminos-condiciones" element={<Terminos />} />
           <Route path="/privacidad" element={<Privacidad />} />
           <Route path="/contacto" element={<Contacto />} />
+          <Route path="/tiendas" element={<TodasTiendas />} />
 
         </Route>
 
@@ -126,6 +128,10 @@ export default function AppRouter() {
           <Route path="/user/tienda/:vendedorId" element={<Productosvendedor />} />
           <Route path="/user/notificaciones" element={<Notificacion />} />
           <Route path="/orders/:orderId/messages" element={<UserMessages />} />
+          <Route path="/user/sobre-nosotros" element={<AboutUs />} />
+    <Route path="/user/terminos-condiciones" element={<Terminos />} />
+    <Route path="/user/privacidad" element={<Privacidad />} />
+    <Route path="/user/contacto" element={<Contacto />} />
 
 
 

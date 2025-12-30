@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../api/axios"; // ajusta si tu instancia está en otra ruta
 
 export default function EditarPerfilUser() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // estados usuario y direcciones
   const [user, setUser] = useState(null); // datos básicos

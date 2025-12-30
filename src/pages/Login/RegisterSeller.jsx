@@ -149,14 +149,21 @@ export default function RegisterSeller() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className={labelStyle}>Plan de Suscripción</label>
-                  <select name="planId" value={form.planId} required className={inputStyle} onChange={handleChange}>
-                    <option value="">Seleccionar plan...</option>
-                    {planes.map((p) => (
-                      <option key={p._id} value={p._id} className="bg-[#1F2937]">
-                        {p.name} — ${p.precio}
-                      </option>
-                    ))}
-                  </select>
+                  <select
+  name="planId"
+  value={form.planId}
+  required
+  className={inputStyle}
+  onChange={handleChange}
+>
+  <option value="">Seleccionar plan...</option>
+  {planes.map((p) => (
+    <option key={p._id} value={p._id} className="bg-[#1F2937]">
+      {p.nombre === "avanzado" ? "Plan Avanzado" : "Plan Básico"} — ${p.precio}
+    </option>
+  ))}
+</select>
+
                 </div>
 
                 <div>

@@ -10,7 +10,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   const [vendedor, setVendedor] = useState(null);
   const [productos, setProductos] = useState([]);
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
-  
+
   // Estados de Carga y UI
   const [loadingId, setLoadingId] = useState(null);
   const [loadingProduct, setLoadingProduct] = useState(null);
@@ -41,7 +41,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
 
   // Lógica de Filtrado y Paginación
   const categorias = [...new Set(productos.map((p) => p.tipo?.name).filter(Boolean))];
-  
+
   const productosFiltrados = categoriaFiltro
     ? productos.filter((p) => p.tipo?.name === categoriaFiltro)
     : productos;
@@ -58,55 +58,56 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   };
 
   const handleToggleFavorite = async (product) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Inicia sesión para usar favoritos");
-    return;
-  }
-
-  try {
-    setLoadingId(product._id);
-    const isFav = favorites.some((f) => f._id === product._id);
-
-    if (isFav) {
-      await api.delete(`/favoriteDelete/${product._id}`);
-      removeFavorite(product._id);
-    } else {
-      await api.post(`/favorite/${product._id}`);
-      addFavorite(product);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Inicia sesión para usar favoritos");
+      return;
     }
-  } catch (e) {
-    alert("Error al actualizar favoritos");
-  } finally {
-    setLoadingId(null);
-  }
-};
+
+    try {
+      setLoadingId(product._id);
+      const isFav = favorites.some((f) => f._id === product._id);
+
+      if (isFav) {
+        await api.delete(`/favoriteDelete/${product._id}`);
+        removeFavorite(product._id);
+      } else {
+        await api.post(`/favorite/${product._id}`);
+        addFavorite(product);
+      }
+    } catch (e) {
+      alert("Error al actualizar favoritos");
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
 
-const agregarAlCarrito = async (productId, quantity = 1) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Inicia sesión para comprar");
-    return;
-  }
+  const agregarAlCarrito = async (productId, quantity = 1) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Inicia sesión para comprar");
+      return;
+    }
 
-  try {
-    setLoadingId(productId);
-    await api.post("/user/car", { productId, quantity });
-    window.dispatchEvent(new Event("cartUpdated"));
-    alert("Producto agregado al carrito ✔");
-  } catch (error) {
-    alert("Error al agregar al carrito ❌");
-  } finally {
-    setLoadingId(null);
-  }
-};
+    try {
+      setLoadingId(productId);
+      await api.post("/user/car", { productId, quantity });
+      window.dispatchEvent(new Event("cartUpdated"));
+      alert("Producto agregado al carrito ✔");
+    } catch (error) {
+      alert("Error al agregar al carrito ❌");
+    } finally {
+      setLoadingId(null);
+    }
+  };
   const verProducto = async (id) => {
     try {
       setLoadingProduct(id);
       const res = await api.get(`/product/${id}`);
       setSelectedProduct(res.data);
-      setSelectedImg(res.data.image?.[0] || "");
+      // Cambia esta línea para acceder a .url
+      setSelectedImg(res.data.image?.[0]?.url || "");
       setCantidad(1);
       setModalOpen(true);
     } catch (error) {
@@ -128,7 +129,7 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
       <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={volver}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
             >
@@ -175,7 +176,7 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                 <div key={p._id} className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   <div className="relative aspect-square bg-gray-50 flex justify-center items-center overflow-hidden">
                     <img
-                      src={p.image?.[1] || p.image?.[0]}
+                      src={p.image?.[0]?.url || p.image?.[1]?.url} // Accedemos a .url
                       alt={p.name}
                       className="h-full w-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
                     />
@@ -193,7 +194,7 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                     <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{p.tipo?.name || 'Producto'}</span>
                     <h2 className="text-base font-bold text-gray-800 line-clamp-1 mt-1">{p.name}</h2>
                     <p className="text-xs text-gray-500 mt-1 uppercase font-medium">{p.brand || 'Genérico'}</p>
-                    
+
                     <div className="flex items-center justify-between mt-4">
                       <p className="text-xl font-black text-slate-900">${p.price}</p>
                       <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${p.stock > 0 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}>
@@ -207,7 +208,7 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                         disabled={loadingProduct === p._id}
                         className="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
                       >
-                        {loadingProduct === p._id ? "..." : <><Info size={14}/> Detalles</>}
+                        {loadingProduct === p._id ? "..." : <><Info size={14} /> Detalles</>}
                       </button>
                       <button
                         onClick={() => agregarAlCarrito(p._id, 1)}
@@ -215,7 +216,7 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                         className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2
                           ${loadingId === p._id ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100"}`}
                       >
-                        {loadingId === p._id ? "..." : <><ShoppingCart size={14}/> Comprar</>}
+                        {loadingId === p._id ? "..." : <><ShoppingCart size={14} /> Comprar</>}
                       </button>
                     </div>
                   </div>
@@ -278,13 +279,13 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                       <img src={selectedImg} className="max-h-full object-contain hover:scale-105 transition-transform duration-500" alt="Selected" />
                     </div>
                     <div className="flex gap-3 overflow-x-auto pb-2">
-                      {selectedProduct.image?.map((img, i) => (
+                      {selectedProduct.image?.map((imgObj, i) => ( // imgObj es el objeto {url, public_id}
                         <img
                           key={i}
-                          src={img}
-                          onClick={() => setSelectedImg(img)}
+                          src={imgObj.url} // Usamos imgObj.url
+                          onClick={() => setSelectedImg(imgObj.url)}
                           className={`w-20 h-20 rounded-xl object-cover cursor-pointer border-2 transition-all 
-                            ${selectedImg === img ? "border-blue-500 ring-4 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
+      ${selectedImg === imgObj.url ? "border-blue-500 ring-4 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
                         />
                       ))}
                     </div>
@@ -300,12 +301,12 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                       </div>
                       <h2 className="text-3xl font-black text-slate-900 leading-tight mb-4">{selectedProduct.name}</h2>
                       <p className="text-4xl font-black text-blue-600 mb-6">${selectedProduct.price}</p>
-                      
+
                       <div className="bg-slate-50 rounded-2xl p-5 space-y-3 border border-slate-100">
                         <p className="text-sm text-slate-600 leading-relaxed italic">"{selectedProduct.description || 'Sin descripción disponible'}"</p>
                         <div className="pt-3 border-t border-slate-200 grid grid-cols-2 gap-4 text-xs">
-                          <p><span className="text-slate-400 font-medium">Vendio por:</span> <br/> <strong className="text-slate-700">{selectedProduct.vendedor?.storeName}</strong></p>
-                          <p><span className="text-slate-400 font-medium">Disponibles:</span> <br/> <strong className="text-slate-700">{selectedProduct.stock} Unidades</strong></p>
+                          <p><span className="text-slate-400 font-medium">Vendio por:</span> <br /> <strong className="text-slate-700">{selectedProduct.vendedor?.storeName}</strong></p>
+                          <p><span className="text-slate-400 font-medium">Disponibles:</span> <br /> <strong className="text-slate-700">{selectedProduct.stock} Unidades</strong></p>
                         </div>
                       </div>
                     </div>
@@ -332,7 +333,7 @@ const agregarAlCarrito = async (productId, quantity = 1) => {
                 <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
                   <div className="bg-slate-50/50 rounded-3xl p-8 border border-slate-100">
                     <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
-                       Experiencias de Clientes
+                      Experiencias de Clientes
                     </h3>
                     <ProductReviews productId={selectedProduct._id} />
                   </div>

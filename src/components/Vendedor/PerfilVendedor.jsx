@@ -1,82 +1,24 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import {
-  User,
-  Mail,
-  Phone,
-  Store,
-  Pencil,
-  QrCode
+  User, Mail, Phone, Store, Settings, 
+  QrCode, ShieldCheck, Loader2
 } from "lucide-react";
 
 export default function PerfilVendedor() {
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
+  const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    lastName: "",
-    phone: "",
-    storeName: "",
-    nequiPhone: "",
-    daviplataPhone: ""
-  });
-
-  const [qrFiles, setQrFiles] = useState({
-    nequi: null,
-    daviplata: null
-  });
-
-  /* ================= OBTENER PERFIL ================= */
   const fetchPerfil = async () => {
     try {
       const res = await api.get("/vendedor/perfil");
-      const data = res.data;
-
-      setPerfil(data);
-      setForm({
-        name: data.name || "",
-        lastName: data.lastName || "",
-        phone: data.phone || "",
-        storeName: data.storeName || "",
-        nequiPhone: data.paymentMethods?.nequi?.phone || "",
-        daviplataPhone: data.paymentMethods?.daviplata?.phone || ""
-      });
+      setPerfil(res.data);
     } catch (error) {
       console.error("Error cargando perfil:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  /* ================= ACTUALIZAR PERFIL ================= */
-  const updatePerfil = async () => {
-    try {
-      const formData = new FormData();
-
-      formData.append("name", form.name);
-      formData.append("lastName", form.lastName);
-      formData.append("phone", form.phone);
-      formData.append("storeName", form.storeName);
-
-      // 📱 NÚMEROS DE PAGO
-      formData.append("paymentMethods.nequi.phone", form.nequiPhone);
-      formData.append("paymentMethods.daviplata.phone", form.daviplataPhone);
-
-      // 📷 QR
-      if (qrFiles.nequi) formData.append("nequiQR", qrFiles.nequi);
-      if (qrFiles.daviplata) formData.append("daviplataQR", qrFiles.daviplata);
-
-      const res = await api.put("/vendedor/update", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      setPerfil(res.data.data);
-      setEditing(false);
-      setQrFiles({ nequi: null, daviplata: null });
-    } catch (error) {
-      console.error("Error actualizando perfil:", error);
     }
   };
 
@@ -85,78 +27,83 @@ export default function PerfilVendedor() {
   }, []);
 
   if (loading) {
-    return <p className="text-center mt-10">Cargando perfil...</p>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin text-blue-600" size={40} />
+      </div>
+    );
   }
 
-  return (
-    <div className="max-w-4xl mx-auto mt-10 px-2">
-      <div className="bg-white shadow-xl rounded-3xl p-8">
+  if (!perfil) return <p className="text-center mt-10">No se encontró el perfil.</p>;
 
+  // --- LÓGICA PARA BUSCAR EN EL ARRAY DE PAYMENT METHODS ---
+  // Buscamos los objetos dentro del array paymentMethods que coincidan con el proveedor
+  const nequiData = perfil.paymentMethods?.find(m => m.provider === "nequi");
+  const llavesData = perfil.paymentMethods?.find(m => m.provider === "llaves");
+
+  return (
+    <div className="max-w-4xl mx-auto mt-10 px-4 pb-20">
+      <div className="bg-white shadow-2xl rounded-[40px] overflow-hidden">
+        
         {/* HEADER */}
-        <div className="flex items-center gap-6 mb-8">
-          <div className="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-4xl font-bold">
+        <div className="bg-slate-900 p-8 text-white flex flex-col md:flex-row items-center gap-6">
+          <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center text-4xl font-black shadow-lg">
             {perfil.name?.charAt(0)}
           </div>
 
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold">
-              {perfil.name} {perfil.lastName}
-            </h1>
-            <p className="text-gray-500">{perfil.storeName}</p>
-            <p className="text-gray-400 text-sm">{perfil.email}</p>
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+              <h1 className="text-3xl font-black tracking-tight">
+                {perfil.name} {perfil.lastName}
+              </h1>
+              {perfil.sellerStatus === "active" && (
+                <ShieldCheck size={20} className="text-green-400" />
+              )}
+            </div>
+            <p className="text-blue-400 font-bold uppercase text-xs tracking-widest flex items-center justify-center md:justify-start gap-2">
+              <Store size={14} /> {perfil.storeName || "Sin nombre de tienda"}
+            </p>
           </div>
 
-          {!editing ? (
-            <button
-              onClick={() => setEditing(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-xl"
-            >
-              <Pencil size={16} /> Editar
-            </button>
-          ) : (
-            <div className="flex gap-2">
-              <button onClick={() => setEditing(false)} className="px-4 py-2 bg-gray-300 rounded-xl">
-                Cancelar
-              </button>
-              <button onClick={updatePerfil} className="px-4 py-2 bg-green-600 text-white rounded-xl">
-                Guardar
-              </button>
+          <button
+            onClick={() => navigate("/editarVendedor")} 
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-all px-6 py-3 rounded-2xl font-bold text-sm border border-white/10"
+          >
+            <Settings size={18} /> Configurar Perfil
+          </button>
+        </div>
+
+        <div className="p-8">
+          {/* INFORMACIÓN BÁSICA */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <InfoItem icon={<User size={18}/>} label="Nombre Completo" value={`${perfil.name} ${perfil.lastName}`} />
+            <InfoItem icon={<Mail size={18}/>} label="Correo Electrónico" value={perfil.email} />
+            <InfoItem icon={<Phone size={18}/>} label="Teléfono de Contacto" value={perfil.phone || "No asignado"} />
+          </div>
+
+          <hr className="border-slate-100 mb-10" />
+
+          {/* MÉTODOS DE PAGO */}
+          <h2 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
+            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                <QrCode size={20} />
             </div>
-          )}
-        </div>
-
-        {/* INFO */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <CardItem label="Nombre" value={form.name} editable={editing} onChange={v => setForm({ ...form, name: v })} />
-          <CardItem label="Apellido" value={form.lastName} editable={editing} onChange={v => setForm({ ...form, lastName: v })} />
-          <CardItem label="Teléfono" value={form.phone} editable={editing} onChange={v => setForm({ ...form, phone: v })} />
-          <CardItem label="Tienda" value={form.storeName} editable={editing} onChange={v => setForm({ ...form, storeName: v })} />
-        </div>
-
-        {/* PAGOS */}
-        <div className="mt-10">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <QrCode className="text-blue-600" />
-            Métodos de pago
+            Métodos de Recaudo
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <PaymentCard
-              title="Nequi"
-              phone={form.nequiPhone}
-              qr={perfil.paymentMethods?.nequi?.qr}
-              editing={editing}
-              onPhoneChange={v => setForm({ ...form, nequiPhone: v })}
-              onQrChange={file => setQrFiles({ ...qrFiles, nequi: file })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <PaymentDisplay 
+                title="Nequi" 
+                // Usamos .value porque así lo guarda tu controlador
+                value={nequiData?.value} 
+                qr={nequiData?.qr}
+                color="bg-purple-50 text-purple-700 border-purple-100"
             />
-
-            <PaymentCard
-              title="Daviplata"
-              phone={form.daviplataPhone}
-              qr={perfil.paymentMethods?.daviplata?.qr}
-              editing={editing}
-              onPhoneChange={v => setForm({ ...form, daviplataPhone: v })}
-              onQrChange={file => setQrFiles({ ...qrFiles, daviplata: file })}
+            <PaymentDisplay 
+                title="Llaves (Daviplata/Otro)" 
+                value={llavesData?.value} 
+                qr={llavesData?.qr}
+                color="bg-blue-50 text-blue-700 border-blue-100"
             />
           </div>
         </div>
@@ -165,42 +112,34 @@ export default function PerfilVendedor() {
   );
 }
 
-/* ================= COMPONENTES ================= */
+/* ================= COMPONENTES INTERNOS ================= */
 
-function CardItem({ label, value, editable, onChange }) {
+function InfoItem({ icon, label, value }) {
   return (
-    <div className="p-4 bg-gray-50 rounded-xl">
-      <p className="text-gray-400 text-sm">{label}</p>
-      {editable ? (
-        <input value={value} onChange={e => onChange(e.target.value)} className="w-full border px-3 py-1 rounded" />
-      ) : (
-        <p className="font-semibold">{value}</p>
-      )}
+    <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 shadow-sm">
+      <div className="text-slate-400 mb-3">{icon}</div>
+      <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-slate-900 font-bold">{value || "---"}</p>
     </div>
   );
 }
 
-function PaymentCard({ title, phone, qr, editing, onPhoneChange, onQrChange }) {
+function PaymentDisplay({ title, value, qr, color }) {
   return (
-    <div className="bg-gray-50 p-4 rounded-xl text-center">
-      <p className="font-semibold mb-2">{title}</p>
-
-      {editing ? (
-        <input
-          type="text"
-          placeholder={`Número ${title}`}
-          value={phone}
-          onChange={e => onPhoneChange(e.target.value)}
-          className="w-full border px-3 py-2 rounded mb-3"
-        />
+    <div className={`p-8 rounded-[3rem] border-2 flex flex-col items-center text-center transition-all ${color}`}>
+      <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 opacity-70">Cuenta {title}</span>
+      <h3 className="text-2xl font-black mb-6">{value || "No registrado"}</h3>
+      
+      {qr ? (
+        <div className="bg-white p-4 rounded-3xl shadow-md border border-slate-100">
+          <img src={qr} alt={`QR ${title}`} className="w-44 h-44 object-contain" />
+          <p className="mt-2 text-[9px] font-bold uppercase opacity-50">Código QR Activo</p>
+        </div>
       ) : (
-        <p className="mb-3">{phone || "No registrado"}</p>
-      )}
-
-      {qr && <img src={qr} alt={`QR ${title}`} className="w-32 mx-auto mb-2" />}
-
-      {editing && (
-        <input type="file" accept="image/*,application/pdf" onChange={e => onQrChange(e.target.files[0])} />
+        <div className="w-44 h-44 bg-white/50 rounded-3xl flex flex-col items-center justify-center border-2 border-dashed border-slate-300">
+           <QrCode size={40} className="text-slate-300 mb-2" />
+           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Sin código QR</p>
+        </div>
       )}
     </div>
   );
