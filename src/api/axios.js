@@ -2,7 +2,8 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: "http://localhost:3001/api",
-  baseURL: "https://megastoreback.onrender.com/api",
+  // baseURL: "https://megastoreback.onrender.com/api",
+   baseURL: "https://api.k-dice.com/api",
 });
 
 // 🔹 Interceptor de REQUEST (ya lo tienes)
