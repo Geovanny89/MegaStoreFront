@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import logo from "../../assets/Logo3.png";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User, ChevronRight, Store } from "lucide-react";
+import { Menu, X, User, ChevronRight, Store, Mail } from "lucide-react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -14,18 +14,17 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Cerrar el menú automáticamente cuando cambie la ruta
   useEffect(() => setOpen(false), [location]);
 
   return (
     <>
       <style>{`
-        /* Onda que nace específicamente del punto de contacto (la mano) */
         @keyframes ripple-from-hand {
           0% { transform: scale(0.2); opacity: 0.8; }
           100% { transform: scale(2.5); opacity: 0; }
         }
 
-        /* Movimiento de hundimiento del logo simula el clic físico */
         @keyframes logo-click-movement {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(0.95); }
@@ -34,12 +33,11 @@ export default function Navbar() {
         .hand-ripple {
           position: absolute;
           border-radius: 50%;
-          background: rgba(168, 85, 247, 0.5); /* Morado traslúcido */
+          background: rgba(168, 85, 247, 0.5);
           width: 40px;
           height: 40px;
-          /* AJUSTE DE POSICIÓN SOBRE LA MANO */
           top: 50%; 
-          left: 28px; /* Mueve la onda hacia la izquierda donde está el ícono */
+          left: 28px;
           transform: translate(-50%, -50%);
           animation: ripple-from-hand 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
           pointer-events: none;
@@ -58,14 +56,10 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           
-          {/* CONTENEDOR DEL LOGO */}
+          {/* LOGO SECTION */}
           <Link to="/" className="relative flex items-center group overflow-visible">
-            
-            {/* EFECTO DE ONDA DESDE LA MANO */}
             <div className="hand-ripple"></div>
             <div className="hand-ripple" style={{ animationDelay: '1s' }}></div>
-
-            {/* IMAGEN DEL LOGO (Más grande y centrada) */}
             <div className="relative z-10 animate-logo-active">
               <img 
                 src={logo} 
@@ -83,7 +77,7 @@ export default function Navbar() {
             <NavLink to="/contacto">Contacto</NavLink>
           </div>
 
-          {/* ACCIONES */}
+          {/* ACCIONES DESKTOP (Se ocultan en móvil) */}
           <div className="hidden md:flex items-center gap-4">
             <Link 
               to="/login" 
@@ -101,35 +95,77 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* MOBILE TOGGLE */}
-          <button className="lg:hidden text-gray-900" onClick={() => setOpen(!open)}>
-            {open ? <X size={30} /> : <Menu size={30} />}
+          {/* BOTÓN HAMBURGUESA MÓVIL */}
+          <button className="lg:hidden text-gray-900 p-2" onClick={() => setOpen(!open)}>
+            {open ? <X size={32} /> : <Menu size={32} />}
           </button>
         </div>
       </nav>
 
-      {/* ASIDE MOBILE (Sigue tu lógica original) */}
+      {/* OVERLAY PARA CERRAR EL MENÚ AL DAR CLIC FUERA */}
+      {open && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[110] lg:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* ASIDE MOBILE COMPLETO */}
       <aside
-        className={`fixed top-0 right-0 h-full w-[280px] bg-white z-[120] shadow-2xl transition-transform duration-300 lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-[300px] bg-white z-[120] shadow-2xl transition-transform duration-500 ease-in-out lg:hidden ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-6 flex flex-col h-full">
+        <div className="p-8 flex flex-col h-full">
+          {/* Cabecera del menú lateral */}
           <div className="flex justify-between items-center mb-10">
-             <img src={logo} alt="Logo" className="h-12 w-auto" />
-             <button onClick={() => setOpen(false)}><X size={28}/></button>
+             <img src={logo} alt="Logo" className="h-14 w-auto" />
+             <button 
+               onClick={() => setOpen(false)}
+               className="p-2 bg-gray-50 rounded-full text-gray-500"
+             >
+               <X size={24}/>
+             </button>
           </div>
-          <nav className="flex flex-col gap-2">
+
+          {/* Links de navegación móviles */}
+          <nav className="flex flex-col gap-1 mb-10">
             <MobileLink to="/">Inicio</MobileLink>
             <MobileLink to="/productos">Productos</MobileLink>
             <MobileLink to="/sobre-nosotros">Sobre nosotros</MobileLink>
+            <MobileLink to="/contacto">Contacto</MobileLink>
           </nav>
+
+          {/* SECCIÓN DE ACCIONES MÓVILES (Aquí aparecen el Login y Registro) */}
+          <div className="mt-auto space-y-4">
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest px-2">Mi Cuenta</p>
+            
+            <Link 
+              to="/login" 
+              className="flex items-center justify-between w-full p-4 bg-gray-50 rounded-2xl text-gray-800 font-bold hover:bg-blue-50 hover:text-blue-600 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <User size={20} className="text-blue-600" />
+                <span>Iniciar Sesión</span>
+              </div>
+              <ChevronRight size={18} />
+            </Link>
+
+            <Link 
+              to="/register-vendedor" 
+              className="flex items-center justify-center gap-3 w-full p-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs tracking-tighter shadow-lg shadow-blue-200 active:scale-95 transition-all"
+            >
+              <Store size={20} />
+              Vender en K-DICE
+            </Link>
+          </div>
         </div>
       </aside>
     </>
   );
 }
 
+// Componentes auxiliares para limpieza de código
 function NavLink({ to, children }) {
   return (
     <Link to={to} className="text-[15px] font-bold text-gray-500 hover:text-blue-600 transition-colors relative group">
@@ -141,8 +177,12 @@ function NavLink({ to, children }) {
 
 function MobileLink({ to, children }) {
   return (
-    <Link to={to} className="flex items-center justify-between py-4 text-gray-800 font-bold border-b border-gray-100">
-      {children} <ChevronRight size={18} className="text-gray-400" />
+    <Link 
+      to={to} 
+      className="flex items-center justify-between py-4 px-2 text-gray-800 font-bold border-b border-gray-50 hover:text-blue-600 transition-all"
+    >
+      {children} 
+      <ChevronRight size={18} className="text-gray-300" />
     </Link>
   );
 }
