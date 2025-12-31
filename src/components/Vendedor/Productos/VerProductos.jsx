@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../api/axios";
-import { Trash2, Pencil, X } from "lucide-react";
+import { Trash2, Pencil, X, Package, Tag, Layers, Palette, ChevronLeft, ChevronRight, Image as ImageIcon, Plus } from "lucide-react";
 
 export default function VerProductos() {
   const [productos, setProductos] = useState([]);
@@ -163,56 +163,73 @@ export default function VerProductos() {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
-  if (loading) return <p className="text-center mt-10">Cargando productos...</p>;
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
+  if (loading) return (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+  );
+  
+  if (error) return <p className="text-center mt-10 text-red-500 font-bold">{error}</p>;
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 px-2">
-      <h2 className="text-3xl font-bold mb-6">Mis Productos</h2>
+    <div className="max-w-6xl mx-auto mt-10 px-4 pb-10 font-sans text-gray-800">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <h2 className="text-4xl font-black text-gray-900 tracking-tight">Mis Productos</h2>
+          <p className="text-gray-500 font-medium">Gestiona tu inventario y catálogo</p>
+        </div>
+        <div className="bg-white border border-gray-100 px-5 py-2 rounded-2xl shadow-sm text-sm font-bold text-blue-600">
+          Total: {productos.length} items
+        </div>
+      </div>
 
-      <div className="space-y-3">
+      <div className="grid gap-4">
         {currentProducts.map((producto) => (
           <div
             key={producto._id}
-            className="flex items-center gap-3 bg-white shadow-sm rounded-lg p-3 hover:shadow-md transition-shadow text-sm"
+            className="flex flex-col md:flex-row items-center gap-5 bg-white border border-gray-100 shadow-sm rounded-[2rem] p-4 hover:shadow-md transition-all group"
           >
-            <div className="w-16 h-16 flex-shrink-0">
+            <div className="w-24 h-24 flex-shrink-0 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
               {producto.image && producto.image[0] ? (
                 <img
-  src={producto.image[0]?.url}
-  alt={producto.name}
-  className="w-full h-full object-cover rounded-md"
-/>
-
+                  src={producto.image[0]?.url}
+                  alt={producto.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
               ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-md text-gray-500 text-xs">
-                  Sin imagen
+                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                  <ImageIcon size={30} />
                 </div>
               )}
             </div>
 
-            <div className="flex-1">
-              <h3 className="font-semibold">{producto.name}</h3>
-              <p className="text-gray-600">Precio: ${producto.price}</p>
-              <p className="text-gray-600">Stock: {producto.stock}</p>
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-lg font-bold text-gray-900 mb-1">{producto.name}</h3>
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm font-medium">
+                <span className="flex items-center text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">{producto.brand}</span>
+                <span className="flex items-center text-gray-500"><Tag size={14} className="mr-1" /> ${producto.price}</span>
+                <span className={`flex items-center ${producto.stock < 5 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
+                  <Package size={14} className="mr-1" /> Stock: {producto.stock}
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex gap-2 w-full md:w-auto">
               <button
-                className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs"
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 text-white rounded-2xl font-bold hover:bg-blue-600 transition-all text-xs"
                 onClick={() => handleEdit(producto)}
               >
                 <Pencil size={14} /> Editar
               </button>
               <button
-                className={`flex items-center gap-1 px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-xs ${
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-red-50 text-red-600 rounded-2xl font-bold hover:bg-red-100 transition-all text-xs ${
                   deletingId === producto._id ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 onClick={() => handleDelete(producto._id)}
                 disabled={deletingId === producto._id}
               >
-                <Trash2 size={14} />{" "}
-                {deletingId === producto._id ? "Eliminando..." : "Eliminar"}
+                <Trash2 size={14} />
+                {deletingId === producto._id ? "..." : "Eliminar"}
               </button>
             </div>
           </div>
@@ -220,19 +237,19 @@ export default function VerProductos() {
       </div>
 
       {/* Paginación */}
-      <div className="flex justify-center mt-6 gap-2 flex-wrap">
+      <div className="flex justify-center items-center mt-10 gap-2">
         <button
-          className="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+          className="p-2 rounded-xl border border-gray-200 hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          Anterior
+          <ChevronLeft />
         </button>
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}
-            className={`px-3 py-1 border rounded-md ${
-              currentPage === i + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100"
+            className={`w-10 h-10 rounded-xl font-black transition-all ${
+              currentPage === i + 1 ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "text-gray-400 hover:bg-gray-100"
             }`}
             onClick={() => handlePageChange(i + 1)}
           >
@@ -240,168 +257,183 @@ export default function VerProductos() {
           </button>
         ))}
         <button
-          className="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+          className="p-2 rounded-xl border border-gray-200 hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Siguiente
+          <ChevronRight />
         </button>
       </div>
 
-      {/* Modal */}
+      {/* Modal PROFESIONAL */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-xl p-6 max-w-3xl w-full relative overflow-auto max-h-[90vh]">
-            <button
-              className="absolute top-3 right-3 text-gray-700 hover:text-gray-900"
-              onClick={() => setModalOpen(false)}
-            >
-              <X size={20} />
-            </button>
-            <h2 className="text-2xl font-bold mb-4">Actualizar Producto</h2>
-
-            {message && (
-              <p className="mb-2 text-green-600 font-medium">{message}</p>
-            )}
-
-            <div className="space-y-4">
+        <div className="fixed inset-0 z-50 bg-gray-900/60 backdrop-blur-sm flex justify-center items-center p-4">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200">
+            
+            {/* Header */}
+            <div className="p-8 border-b border-gray-100 flex justify-between items-center">
               <div>
-                <label className="font-medium text-gray-700">Nombre</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleFormChange}
-                  className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                />
+                <h2 className="text-2xl font-black text-gray-900">Editar Producto</h2>
+                <p className="text-gray-500 text-sm font-medium">Modifica los detalles del artículo seleccionado</p>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="font-medium text-gray-700">Precio</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={form.price}
-                    onChange={handleFormChange}
-                    className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                  />
-                </div>
-                <div>
-                  <label className="font-medium text-gray-700">Stock</label>
-                  <input
-                    type="number"
-                    name="stock"
-                    value={form.stock}
-                    onChange={handleFormChange}
-                    className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="font-medium text-gray-700">Marca</label>
-                <input
-                  type="text"
-                  name="brand"
-                  value={form.brand}
-                  onChange={handleFormChange}
-                  className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                />
-              </div>
-
-              <div>
-                <label className="font-medium text-gray-700">Colores (separados por coma)</label>
-                <input
-                  type="text"
-                  name="color"
-                  value={form.color}
-                  onChange={handleFormChange}
-                  className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                />
-              </div>
-
-              <div>
-                <label className="font-medium text-gray-700">Tallas (separadas por coma)</label>
-                <input
-                  type="text"
-                  name="sise"
-                  value={form.sise}
-                  onChange={handleFormChange}
-                  className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                />
-              </div>
-
-              <div>
-                <label className="font-medium text-gray-700">Descripción</label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={handleFormChange}
-                  className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                  rows={4}
-                />
-              </div>
-
-               {/* IMÁGENES EXISTENTES */}
-            {existingImages.length > 0 && (
-              <div className="flex gap-2 flex-wrap mb-4">
-                {existingImages.map((img, i) => (
-                  <div key={i} className="relative">
-                    <img
-                      src={img.url}
-                      alt="existente"
-                      className="w-24 h-24 object-cover rounded-lg"
-                    />
-                    <button
-                      onClick={() => handleRemoveExistingImage(i)}
-                      className="absolute top-0 right-0 bg-red-600 text-white w-6 h-6 rounded-full"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-              {/* Nuevas imágenes */}
-              <div>
-                <label className="font-medium text-gray-700">Agregar nuevas imágenes</label>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleImageChange}
-                  className="w-full border px-3 py-2 rounded-lg text-gray-800"
-                />
-                {preview.length > 0 && (
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {preview.map((url, idx) => (
-                      <div key={idx} className="relative">
-                        <img
-                          src={url}
-                          alt="preview"
-                          className="w-24 h-24 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveNewImage(idx)}
-                          className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
               <button
-                type="button"
+                className="p-2 bg-gray-100 text-gray-500 hover:text-red-500 rounded-full transition-colors"
+                onClick={() => setModalOpen(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-8 overflow-y-auto flex-1 space-y-8">
+              {message && (
+                <div className="p-4 bg-green-50 border border-green-100 text-green-700 rounded-2xl font-bold text-center">
+                  {message}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Columna 1 */}
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Nombre</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleFormChange}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Precio ($)</label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={form.price}
+                        onChange={handleFormChange}
+                        className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Stock</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={form.stock}
+                        onChange={handleFormChange}
+                        className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Marca</label>
+                    <input
+                      type="text"
+                      name="brand"
+                      value={form.brand}
+                      onChange={handleFormChange}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Descripción</label>
+                    <textarea
+                      name="description"
+                      value={form.description}
+                      onChange={handleFormChange}
+                      rows={4}
+                      className="w-full bg-gray-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Columna 2 */}
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Colores (coma)</label>
+                    <div className="relative">
+                      <Palette size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        name="color"
+                        value={form.color}
+                        onChange={handleFormChange}
+                        className="w-full bg-gray-50 border-none rounded-2xl pl-11 pr-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Tallas (coma)</label>
+                    <div className="relative">
+                      <Layers size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        name="sise"
+                        value={form.sise}
+                        onChange={handleFormChange}
+                        className="w-full bg-gray-50 border-none rounded-2xl pl-11 pr-5 py-3.5 focus:ring-2 focus:ring-blue-500 transition-all font-semibold outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-4 ml-1">Imágenes</label>
+                    
+                    {/* Grid de imágenes */}
+                    <div className="grid grid-cols-4 gap-3 mb-4">
+                      {existingImages.map((img, i) => (
+                        <div key={i} className="relative group aspect-square rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                          <img src={img.url} className="w-full h-full object-cover" alt="" />
+                          <button
+                            onClick={() => handleRemoveExistingImage(i)}
+                            className="absolute inset-0 bg-red-600/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ))}
+                      {preview.map((url, idx) => (
+                        <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border-2 border-blue-400">
+                          <img src={url} className="w-full h-full object-cover" alt="" />
+                          <button
+                            onClick={() => handleRemoveNewImage(idx)}
+                            className="absolute inset-0 bg-red-600/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      ))}
+                      <label className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-gray-400 hover:text-blue-500 hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer">
+                        <Plus size={20} />
+                        <span className="text-[10px] font-black uppercase mt-1">Subir</span>
+                        <input type="file" multiple onChange={handleImageChange} className="hidden" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-8 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+              <button
+                onClick={() => setModalOpen(false)}
+                className="px-8 py-3.5 rounded-2xl font-bold text-gray-500 hover:bg-gray-200 transition-all"
+              >
+                Cerrar
+              </button>
+              <button
                 onClick={handleUpdate}
                 disabled={saving}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="px-10 py-3.5 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 shadow-xl shadow-blue-100 disabled:opacity-50 transition-all active:scale-95"
               >
-                {saving ? "Actualizando..." : "Actualizar Producto"}
+                {saving ? "Actualizando..." : "Guardar Cambios"}
               </button>
             </div>
           </div>

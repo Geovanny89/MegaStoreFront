@@ -1,63 +1,84 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Rocket, Crown, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { Check, Rocket, Crown, ArrowRight, ShieldCheck, Zap, Loader2 } from 'lucide-react';
+import api from "../../api/axios";
 
 export default function Planes() {
   const navigate = useNavigate();
+  const [planes, setPlanes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Estos IDs deben coincidir con los que genera tu base de datos (Seed)
-  // En un entorno real, podrías hacer un fetch a /user/planes para obtenerlos
-  const planesData = [
-    {
-      id: "id_del_plan_basico", // Reemplaza con un ID real o deja que el fetch lo llene
-      nombre: "Emprendedor",
-      slug: "basico",
-      precio: "39.900",
-      productos: 20,
-      icon: <Rocket className="text-blue-500" size={32} />,
-      features: [
-        "Hasta 20 productos activos",
-        "Panel de ventas básico",
-        "Soporte por correo",
-        "1 Sucursal física",
-        "Visibilidad estándar"
-      ],
-      color: "from-blue-500/10 to-transparent",
-      border: "border-gray-700",
-      btnClass: "bg-gray-800 hover:bg-gray-700 text-white"
-    },
-    {
-      id: "id_del_plan_avanzado", 
-      nombre: "Empresarial",
-      slug: "avanzado",
-      precio: "79.900",
-      productos: 80,
-      popular: true,
+  useEffect(() => {
+    const fetchPlanes = async () => {
+      try {
+        const response = await api.get('/vendedor/planes');
+        setPlanes(response.data);
+        console.log(response)
+      } catch (error) {
+        console.error("Error cargando planes de la DB:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPlanes();
+  }, []);
+
+  // Esta función es el "puente" entre tus datos de MongoDB y tu diseño visual
+  const getPlanVisualConfig = (nombre, productos) => {
+    if (nombre === "Emprendedor") {
+      return {
+        icon: <Rocket className="text-blue-500" size={32} />,
+        color: "from-blue-500/10 to-transparent",
+        border: "border-gray-700",
+        btnClass: "bg-gray-800 hover:bg-gray-700 text-white",
+        slug: "basico",
+        popular: false,
+        features: [
+          `Hasta ${productos} productos activos`,
+          "Panel de ventas básico",
+          "Soporte por correo",
+          "1 Sucursal física",
+          "Visibilidad estándar"
+        ]
+      };
+    }
+    // Asumimos que cualquier otro (como "Premium") usa el diseño "Empresarial"
+    return {
       icon: <Crown className="text-amber-500" size={32} />,
+      color: "from-blue-600/20 to-blue-900/10",
+      border: "border-blue-500",
+      btnClass: "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40",
+      slug: "avanzado",
+      popular: true, // El plan más caro suele marcarse como popular
       features: [
-        "Hasta 80 productos activos",
+        `Hasta ${productos} productos activos`,
         "Estadísticas avanzadas",
         "Soporte prioritario 24/7",
         "Múltiples sucursales",
         "Visibilidad destacada",
         "Gestión de mensajes PRO"
-      ],
-      color: "from-blue-600/20 to-blue-900/10",
-      border: "border-blue-500",
-      btnClass: "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
-    }
-  ];
+      ]
+    };
+  };
 
   const seleccionarPlan = (planId) => {
-    // Redirige al registro pasando el ID del plan por la URL
     navigate(`/register-vendedor?plan=${planId}`);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#111827] flex items-center justify-center">
+        <Loader2 className="animate-spin text-blue-500" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#111827] text-gray-200 py-20 px-6">
       <div className="max-w-6xl mx-auto">
-        
-        {/* Encabezado */}
+
+        {/* Encabezado Estilizado */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-6">
             <Zap size={14} /> Membresías Marketplace
@@ -70,54 +91,62 @@ export default function Planes() {
           </p>
         </div>
 
-        {/* Grid de Tarjetas */}
+        {/* Grid de Tarjetas (Iterando sobre los datos de la DB) */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {planesData.map((plan) => (
-            <div
-              key={plan.slug}
-              className={`relative rounded-[2.5rem] p-10 border-2 transition-all duration-500 hover:-translate-y-2 bg-[#1F2937] ${plan.border} flex flex-col`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
-                  Más Recomendado
-                </div>
-              )}
+          {planes.map((plan) => {
+            const visual = getPlanVisualConfig(plan.nombre, plan.productos_permitidos);
 
-              <div className="flex justify-between items-start mb-8">
-                <div className={`p-4 rounded-2xl bg-gradient-to-br ${plan.color}`}>
-                  {plan.icon}
-                </div>
-                <div className="text-right">
-                  <span className="text-4xl font-black text-white">${plan.precio}</span>
-                  <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">COP / Mes</p>
-                </div>
-              </div>
-
-              <h2 className="text-2xl font-black text-white mb-2">{plan.nombre}</h2>
-              <p className="text-gray-400 text-sm mb-8">Perfecto para negocios que buscan {plan.slug === 'basico' ? 'iniciarse' : 'liderar'} el mercado digital.</p>
-
-              {/* Lista de Características */}
-              <div className="space-y-4 mb-10 flex-grow">
-                {plan.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div className="bg-emerald-500/10 p-1 rounded-full">
-                      <Check size={14} className="text-emerald-500" strokeWidth={3} />
-                    </div>
-                    <span className="text-gray-300 text-sm font-medium">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Botón de Acción */}
-              <button
-                onClick={() => seleccionarPlan(plan.id)}
-                className={`w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all active:scale-95 group ${plan.btnClass}`}
+            return (
+              <div
+                key={plan._id}
+                className={`relative rounded-[2.5rem] p-10 border-2 transition-all duration-500 hover:-translate-y-2 bg-[#1F2937] ${visual.border} flex flex-col`}
               >
-                Elegir este plan
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          ))}
+                {visual.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
+                    Más Recomendado
+                  </div>
+                )}
+
+                <div className="flex justify-between items-start mb-8">
+                  <div className={`p-4 rounded-2xl bg-gradient-to-br ${visual.color}`}>
+                    {visual.icon}
+                  </div>
+                  <div className="text-right">
+                    <span className="text-4xl font-black text-white">
+                      ${plan.precio.toLocaleString('de-DE')}
+                    </span>
+                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">COP / Mes</p>
+                  </div>
+                </div>
+
+                <h2 className="text-2xl font-black text-white mb-2">{plan.nombre}</h2>
+                <p className="text-gray-400 text-sm mb-8">
+                  Perfecto para negocios que buscan {visual.slug === 'basico' ? 'iniciarse' : 'liderar'} el mercado digital.
+                </p>
+
+                {/* Lista de Características Dinámicas */}
+                <div className="space-y-4 mb-10 flex-grow">
+                  {visual.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="bg-emerald-500/10 p-1 rounded-full">
+                        <Check size={14} className="text-emerald-500" strokeWidth={3} />
+                      </div>
+                      <span className="text-gray-300 text-sm font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Botón de Acción con ID de MongoDB */}
+                <button
+                  onClick={() => seleccionarPlan(plan._id)}
+                  className={`w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all active:scale-95 group ${visual.btnClass}`}
+                >
+                  Elegir este plan
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Footer de Confianza */}

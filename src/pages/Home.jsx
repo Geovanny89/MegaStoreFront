@@ -12,8 +12,7 @@ import { Link } from "react-router-dom";
 export default function Home() {
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
   const [categoriaActiva, setCategoriaActiva] = useState("Todas");
-
-  // Definición de categorías
+console.log("soy el vendedor",vendedorSeleccionado)
   const categorias = [
     { name: "Todas", icon: <ShoppingCart size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
     { name: "Tecnología", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },
@@ -104,7 +103,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 4. SECCIÓN DE TIENDAS FILTRADAS (SOLO AVANZADAS) */}
+      {/* 4. SECCIÓN DE TIENDAS FILTRADAS (PLAN PREMIUM) */}
       {!vendedorSeleccionado && (
         <section id="tiendas" className="mb-24 scroll-mt-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
@@ -122,11 +121,11 @@ export default function Home() {
             </Link>
           </div>
           
-          {/* AQUÍ ESTÁ EL CAMBIO: Pasamos la prop soloAvanzados */}
+          {/* Lógica: soloPremium={true} para que coincida con el Seed */}
           <Tienda  
             setVendedorSeleccionado={setVendedorSeleccionado} 
             filtroCategoria={categoriaActiva} 
-            soloAvanzados={true} 
+            soloPremium={true} 
           />
         </section>
       )}
@@ -141,7 +140,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 6. PRODUCTOS DESTACADOS (DE TODAS LAS TIENDAS) */}
+      {/* 6. PRODUCTOS DESTACADOS */}
       {!vendedorSeleccionado && (
         <section id="productos" className="mb-24">
           <h2 className="text-3xl font-black text-gray-900 mb-10 px-2 flex items-center gap-4">
@@ -151,7 +150,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* 7. CALL TO ACTION PARA VENDEDORES */}
+      {/* 7. CALL TO ACTION */}
       {!vendedorSeleccionado && (
         <div className="bg-[#111827] rounded-[3.5rem] p-10 md:p-20 text-center text-white mb-24 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
@@ -160,7 +159,7 @@ export default function Home() {
           <div className="relative z-10">
             <h2 className="text-4xl md:text-5xl font-black mb-6">¿Tu negocio aún no está aquí?</h2>
             <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-              Únete a la red comercial más grande de Cúcuta. Digitaliza tu tienda, gestiona pedidos y aumenta tus ventas hoy mismo.
+              Únete a la red comercial más grande de Cúcuta. Digitaliza tu tienda y aumenta tus ventas hoy mismo.
             </p>
             <Link to="/planes" className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all inline-block shadow-2xl shadow-blue-600/40 transform hover:scale-105">
               Empezar ahora

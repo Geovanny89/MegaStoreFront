@@ -1,5 +1,4 @@
 import React from "react";
-import Layout from "../layout/Layout";
 import { ArrowLeft, ShieldAlert, Scale, FileText, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

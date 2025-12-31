@@ -3,8 +3,8 @@ import { useState } from "react";
 import Products from "../../components/Products/products.jsx"; // Ajustada la ruta
 import Tienda from "../Tienda.jsx"; // Componente que modificamos antes
 import ProductosTienda from "../ProductosTienda.jsx";
-import { 
-  ShieldCheck, Truck, Headphones, CreditCard, ChevronRight, 
+import {
+  ShieldCheck, Truck, Headphones, CreditCard, ChevronRight,
   Laptop, Shirt, Hammer, ShoppingCart, Home as HomeIcon, Heart,
   ArrowRight
 } from "lucide-react";
@@ -27,12 +27,12 @@ export default function HomeComprador() {
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans">
-      
+
       {/* 1. HERO SECTION (Banner Principal) */}
       {!vendedorSeleccionado && (
         <div className="relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
-          <img 
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070" 
+          <img
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             alt="Marketplace Banner"
           />
@@ -45,14 +45,14 @@ export default function HomeComprador() {
               Cúcuta está vendiendo
             </div>
             <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
-              Tu ciudad, <br /> 
+              Tu ciudad, <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">tus tiendas.</span>
             </h1>
             <div className="flex flex-wrap gap-4">
               <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
                 Explorar Tiendas <ArrowRight size={20} />
               </a>
-              
+
             </div>
           </div>
         </div>
@@ -73,11 +73,10 @@ export default function HomeComprador() {
               <button
                 key={cat.name}
                 onClick={() => setCategoriaActiva(cat.name)}
-                className={`relative flex flex-col items-center justify-center min-w-[150px] h-[170px] rounded-[3rem] transition-all duration-500 group ${
-                  categoriaActiva === cat.name 
-                  ? "bg-white shadow-2xl shadow-blue-200/60 border-2 border-blue-500 transform -translate-y-3" 
-                  : "bg-white border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1"
-                }`}
+                className={`relative flex flex-col items-center justify-center min-w-[150px] h-[170px] rounded-[3rem] transition-all duration-500 group ${categoriaActiva === cat.name
+                    ? "bg-white shadow-2xl shadow-blue-200/60 border-2 border-blue-500 transform -translate-y-3"
+                    : "bg-white border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1"
+                  }`}
               >
                 <div className={`p-5 rounded-[2rem] mb-4 bg-gradient-to-br ${cat.gradient} ${cat.text} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                   {cat.icon}
@@ -118,15 +117,16 @@ export default function HomeComprador() {
               </h2>
             </div>
             {/* ENLACE AL DIRECTORIO QUE CREAMOS ANTES */}
-            <Link to="/todas-tiendas" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-colors">
+            <Link to="/user/tienda" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-colors">
               Ver todas las tiendas <ChevronRight size={18} />
             </Link>
           </div>
-          
-          <Tienda  
-            setVendedorSeleccionado={setVendedorSeleccionado} 
-            filtroCategoria={categoriaActiva} 
-            soloAvanzados={true} // Solo muestra las premium en el home
+
+          {/* Busca esta parte en tu HomeComprador */}
+          <Tienda
+            setVendedorSeleccionado={setVendedorSeleccionado}
+            filtroCategoria={categoriaActiva}
+            soloPremium={true} // <--- CAMBIAR ESTO (antes decía soloAvanzados)
           />
         </section>
       )}

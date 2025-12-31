@@ -129,6 +129,7 @@ export default function AppRouter() {
           <Route path="/perfil/editar" element={<EditarPerfilUser />} />
           <Route path="/cambiar-password" element={<ChangePassword />} />
           <Route path="/user/tienda/:vendedorId" element={<Productosvendedor />} />
+          <Route path="/user/tienda" element={<TodasTiendas />} />
           <Route path="/user/notificaciones" element={<Notificacion />} />
           <Route path="/orders/:orderId/messages" element={<UserMessages />} />
           <Route path="/user/sobre-nosotros" element={<AboutUs />} />

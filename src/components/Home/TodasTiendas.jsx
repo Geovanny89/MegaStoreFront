@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Importamos Link para la navegación
+import { Link } from "react-router-dom"; 
 import Tienda from "../../pages/Tienda"; 
+
 import api from "../../api/axios";
 import { ChevronLeft, ChevronRight, Search, Store, ArrowLeft } from "lucide-react";
+import ProductosTienda from "../../pages/ProductosTienda";
 
 export default function TodasTiendas() {
   const [tiendas, setTiendas] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(true);
+  
+  // Este es el estado que controlará si vemos el directorio o la tienda específica
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
 
   // --- ESTADOS DE PAGINACIÓN ---
@@ -23,12 +27,16 @@ export default function TodasTiendas() {
       setLoading(true);
       const res = await api.get("/vendedor/all");
 
+      /* ==================== LÓGICA DE ORDENAMIENTO PRIORITARIO ==================== */
       const ordenadas = [...res.data].sort((a, b) => {
-        const planA = a.subscriptionPlan?.nombre?.toLowerCase() || "";
-        const planB = b.subscriptionPlan?.nombre?.toLowerCase() || "";
-        const esPremiumA = planA === "avanzado" ? 1 : 0;
-        const esPremiumB = planB === "avanzado" ? 1 : 0;
-        return esPremiumB - esPremiumA;
+        const planA = a.subscriptionPlan?.nombre?.toLowerCase() || a.planId?.nombre?.toLowerCase() || "";
+        const planB = b.subscriptionPlan?.nombre?.toLowerCase() || b.planId?.nombre?.toLowerCase() || "";
+        
+        const esTopA = (planA === "premium" || planA === "avanzado") ? 1 : 0;
+        const esTopB = (planB === "premium" || planB === "avanzado") ? 1 : 0;
+        
+        if (esTopA !== esTopB) return esTopB - esTopA;
+        return a.storeName.localeCompare(b.storeName);
       });
 
       setTiendas(ordenadas);
@@ -44,7 +52,7 @@ export default function TodasTiendas() {
     t.storeName?.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  // --- LÓGICA DE PAGINACIÓN (Basada en el filtro) ---
+  // --- LÓGICA DE PAGINACIÓN ---
   const ultimoIndice = paginaActual * tiendasPorPagina;
   const primerIndice = ultimoIndice - tiendasPorPagina;
   const tiendasPaginadas = tiendasFiltradas.slice(primerIndice, ultimoIndice);
@@ -69,10 +77,24 @@ export default function TodasTiendas() {
     );
   }
 
+  /* ==================== RENDERIZADO CONDICIONAL ==================== */
+  // Si el usuario hizo clic en una tienda, mostramos sus productos
+  if (vendedorSeleccionado) {
+    return (
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-10 font-sans animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <ProductosTienda
+          vendedorId={vendedorSeleccionado._id}
+          volver={() => setVendedorSeleccionado(null)} // Función para regresar al listado
+        />
+      </div>
+    );
+  }
+
+  // Si no hay vendedor seleccionado, mostramos el Directorio normal
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-10 font-sans">
       
-      {/* 1. BOTÓN VOLVER AL INICIO */}
+      {/* 1. BOTÓN VOLVER AL HOME */}
       <Link 
         to="/" 
         className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold mb-8 transition-colors group"
@@ -83,7 +105,7 @@ export default function TodasTiendas() {
         Volver al Inicio
       </Link>
 
-      {/* 2. CABECERA Y BUSCADOR */}
+      {/* 2. CABECERA */}
       <div className="mb-12 border-b border-gray-100 pb-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
@@ -99,7 +121,6 @@ export default function TodasTiendas() {
             </p>
           </div>
 
-          {/* INPUT DE BÚSQUEDA */}
           <div className="relative w-full md:w-96">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
@@ -118,8 +139,8 @@ export default function TodasTiendas() {
         {tiendasFiltradas.length > 0 ? (
           <Tienda
             vendedoresData={tiendasPaginadas} 
-            setVendedorSeleccionado={setVendedorSeleccionado}
-            soloAvanzados={false} 
+            setVendedorSeleccionado={setVendedorSeleccionado} // Se activa al dar clic en el botón de la card
+            soloPremium={false} 
           />
         ) : (
           <div className="text-center py-20 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200">
@@ -130,7 +151,7 @@ export default function TodasTiendas() {
         )}
       </section>
 
-      {/* 4. CONTROLES DE PAGINACIÓN */}
+      {/* 4. PAGINACIÓN */}
       {totalPaginas > 1 && (
         <div className="mt-16 flex justify-center items-center gap-2">
           <button
@@ -156,10 +177,6 @@ export default function TodasTiendas() {
               </button>
             ))}
           </div>
-
-          <span className="sm:hidden font-bold text-gray-600">
-            Página {paginaActual} de {totalPaginas}
-          </span>
 
           <button
             onClick={() => cambiarPagina(paginaActual + 1)}

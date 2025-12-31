@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  BarChart2,
   ShoppingBag,
   Users,
   DollarSign,
 } from "lucide-react";
-import api from "../../api/axios"; // AJUSTA el path según tu estructura
+import api from "../../api/axios"; 
 
 export default function Dashboard() {
   const [users, setUsers] = useState([]);
@@ -28,8 +27,11 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="p-6 text-center text-gray-600">
-        Cargando datos del dashboard...
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600 font-medium">Cargando métricas...</p>
+        </div>
       </div>
     );
   }
@@ -39,79 +41,70 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold">Panel de Control</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Resumen general de actividad y métricas clave.
+          Resumen general de actividad y métricas clave del marketplace.
         </p>
       </div>
 
-      {/* STATS CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* STATS CARDS - Ahora en grid de 3 columnas para que se vea balanceado */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
         {/* Ventas – Azul */}
-        <div className="bg-white shadow-sm p-5 rounded-xl border border-gray-100">
+        <div className="bg-white shadow-sm p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-blue-600 font-medium text-sm">Ventas Totales</p>
-              <h3 className="text-3xl font-bold mt-1 text-blue-700">$12,450</h3>
+              <p className="text-blue-600 font-bold text-xs uppercase tracking-wider">Ventas Totales</p>
+              <h3 className="text-3xl font-black mt-2 text-slate-800">$12,450</h3>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
+            <div className="p-3 bg-blue-50 rounded-xl">
               <DollarSign className="w-6 h-6 text-blue-600" />
             </div>
           </div>
         </div>
 
         {/* Productos – Naranja */}
-        <div className="bg-white shadow-sm p-5 rounded-xl border border-gray-100">
+        <div className="bg-white shadow-sm p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-orange-500 font-medium text-sm">Productos Activos</p>
-              <h3 className="text-3xl font-bold mt-1 text-orange-600">245</h3>
+              <p className="text-orange-500 font-bold text-xs uppercase tracking-wider">Productos Activos</p>
+              <h3 className="text-3xl font-black mt-2 text-slate-800">245</h3>
             </div>
-            <div className="p-3 bg-orange-100 rounded-lg">
+            <div className="p-3 bg-orange-50 rounded-xl">
               <ShoppingBag className="w-6 h-6 text-orange-500" />
             </div>
           </div>
         </div>
 
-        {/* Usuarios – ROJO (DINÁMICO) */}
-        <div className="bg-white shadow-sm p-5 rounded-xl border border-gray-100">
+        {/* Usuarios – Rojo */}
+        <div className="bg-white shadow-sm p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-red-500 font-medium text-sm">Usuarios Registrados</p>
-              <h3 className="text-3xl font-bold mt-1 text-red-600">
+              <p className="text-red-500 font-bold text-xs uppercase tracking-wider">Usuarios Registrados</p>
+              <h3 className="text-3xl font-black mt-2 text-slate-800">
                 {users.length}
               </h3>
             </div>
-            <div className="p-3 bg-red-100 rounded-lg">
+            <div className="p-3 bg-red-50 rounded-xl">
               <Users className="w-6 h-6 text-red-500" />
-            </div>
-          </div>
-        </div>
-
-        {/* Visitas Hoy – Verde */}
-        <div className="bg-white shadow-sm p-5 rounded-xl border border-gray-100">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-green-500 font-medium text-sm">Visitas Hoy</p>
-              <h3 className="text-3xl font-bold mt-1 text-green-600">
-                1,532
-              </h3>
-            </div>
-            <div className="p-3 bg-green-100 rounded-lg">
-              <BarChart2 className="w-6 h-6 text-green-600" />
             </div>
           </div>
         </div>
 
       </div>
 
-      {/* GRAFICA FUTURA */}
-      <div className="bg-white shadow-sm p-6 rounded-xl border border-gray-100">
-        <h2 className="text-lg font-semibold mb-4">Actividad Reciente</h2>
+      {/* SECCIÓN INFERIOR */}
+      <div className="bg-white shadow-sm p-8 rounded-2xl border border-gray-100">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-slate-800">Actividad Reciente</h2>
+          <span className="text-xs font-medium text-gray-400">Próxima actualización: Gráficas de ventas</span>
+        </div>
 
-        <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-          Gráfica próximamente
+        <div className="w-full h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center text-slate-400">
+          <div className="p-4 bg-white rounded-full shadow-sm mb-3">
+             <BarChart2 className="w-8 h-8 text-slate-300" />
+          </div>
+          <p className="text-sm font-medium">El módulo de gráficas se activará tras procesar más datos.</p>
         </div>
       </div>
     </div>

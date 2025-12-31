@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../layout/Layout";
+
 import { ArrowLeft, Lock, EyeOff, UserCheck, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
