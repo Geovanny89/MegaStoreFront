@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import logo from "../../../assets/Logo2.png";
+import logo from "../../../assets/Logo3.png";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ShoppingCart,
@@ -160,7 +160,7 @@ export default function NavbarUser({ name, categorias = [] }) {
             className="flex items-center gap-3 flex-shrink-0 cursor-pointer"
             onClick={() => navigate("/homeUser")}
           >
-            <img src={logo} className="h-10 md:h-12 object-contain" alt="Logo" />
+            <img src={logo} className="h-10 md:h-12 object-contain scale-180" alt="Logo" />
           </div>
 
           {/* SEARCH DESKTOP */}

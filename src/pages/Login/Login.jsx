@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { Eye, EyeOff, ArrowRight, X, LogIn } from "lucide-react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import Logo from "../../assets/Logo3.png";
+import Logo from "../../assets/Logo31.png";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#111827] flex items-center justify-center p-4 md:p-10 font-sans text-gray-200">
       <div className="max-w-4xl w-full flex flex-col md:flex-row items-stretch bg-[#1F2937] rounded-[2.5rem] overflow-hidden shadow-2xl border border-[#374151] relative">
-        
+
         {/* Botón Cerrar */}
         <Link to="/" className="absolute top-6 right-6 text-gray-400 hover:text-white z-20">
           <X size={28} />
@@ -67,10 +67,20 @@ export default function Login() {
 
         {/* COLUMNA IZQUIERDA: FORMULARIO */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
-          <div className="flex items-center gap-3 mb-8">
-            <img src={Logo} alt="Logo" className="h-10 w-auto" />
-            <div className="h-6 w-px bg-gray-700"></div>
-            <span className="text-blue-500 text-[10px] font-black uppercase tracking-widest">Acceso Seguro</span>
+
+          {/* SECCIÓN DEL LOGO - Aumentada de h-10 a h-16/h-20 */}
+          <div className="flex items-center gap-4 mb-10">
+            <img
+              src={Logo}
+              alt="Logo"
+              className="h-24 md:h-32 w-auto object-contain scale-175 "
+            />
+
+            <div className="h-10 w-px bg-gray-700 hidden sm:block"></div>
+            <div className="hidden sm:flex flex-col">
+              <span className="text-blue-500 text-[10px] font-black uppercase tracking-[0.2em]">Acceso Seguro</span>
+              <span className="text-gray-500 text-[9px] uppercase font-bold">K-Dice Marketplace</span>
+            </div>
           </div>
 
           <h2 className="text-3xl font-black text-white tracking-tight mb-2">Bienvenido</h2>
@@ -131,22 +141,22 @@ export default function Login() {
         <div className="hidden md:flex md:w-1/2 bg-[#111827] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
           {/* Efecto de luz azul de fondo */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px]"></div>
-          
+
           <div className="relative z-10 space-y-6">
             <div className="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto border border-blue-500/20">
               <LogIn className="text-blue-500" size={40} />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2">Marketplace Oficial</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">K-DICE Oficial</h3>
               <p className="text-gray-400 text-sm max-w-[250px] mx-auto leading-relaxed">
                 Gestiona tus compras y ventas desde un solo lugar con la seguridad que necesitas.
               </p>
             </div>
-            
+
             <div className="pt-4">
-               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black uppercase tracking-widest">
-                 Sessión Encriptada
-               </div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black uppercase tracking-widest">
+                Sesión Encriptada
+              </div>
             </div>
           </div>
         </div>

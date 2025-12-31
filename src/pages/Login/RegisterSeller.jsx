@@ -3,10 +3,9 @@ import api from "../../api/axios";
 import { 
   Eye, EyeOff, Store, Upload, ArrowRight, ShieldCheck, 
   X, LayoutGrid, CheckCircle2, CreditCard, Copy, Check,
-  ArrowLeft, Lock, UserCheck, ShieldAlert, Scale, FileText, AlertCircle
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Logo from "../../assets/Logo3.png";
+import Logo from "../../assets/Logo31.png";
 
 // --- SUB-COMPONENTES PARA LOS MODALES ---
 
@@ -46,7 +45,7 @@ const TerminosContent = () => {
       </header>
       <div className="space-y-6 text-sm">
         <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-xl">
-          <p className="text-orange-900 font-bold text-xs uppercase mb-1">Aviso SaaS</p>
+          <p className="text-orange-900 font-bold text-xs uppercase mb-1">Aviso K-DICE</p>
           <p className="text-orange-800">Actuamos solo como proveedor tecnológico. La relación comercial ocurre exclusivamente entre Comprador y Vendedor.</p>
         </div>
         <section>
@@ -197,11 +196,11 @@ export default function RegisterSeller() {
         </Link>
 
         <div className="w-full md:w-7/12 p-8 md:p-12 overflow-y-auto max-h-[90vh] md:max-h-none custom-scrollbar">
-          <div className="flex items-center gap-3 mb-8">
-            <img src={Logo} alt="Logo" className="h-10 w-auto" />
-            <div className="h-6 w-px bg-gray-700"></div>
-            <span className="text-blue-500 text-[10px] font-black uppercase tracking-widest">Seller Hub</span>
-          </div>
+          <div className="flex items-center justify-center gap-3 mb-8">
+  <img src={Logo} alt="Logo" className="h-10 w-auto scale-600" />
+ 
+  
+</div>
 
           <h2 className="text-3xl font-black text-white tracking-tight mb-2">Crea tu Tienda</h2>
           <p className="text-gray-400 mb-8">Regístrate y comienza a vender en nuestro marketplace.</p>
@@ -402,8 +401,8 @@ export default function RegisterSeller() {
         <div className="hidden md:flex md:w-5/12 bg-[#111827] flex-col items-center justify-center p-12 text-center relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>
           <div className="relative z-10 space-y-4">
-            <h3 className="text-2xl font-bold text-white leading-tight">Impulsa tu comercio en Cúcuta</h3>
-            <p className="text-gray-400 text-sm max-w-xs mx-auto leading-relaxed">Únete a la vitrina digital más importante de la región y gestiona tus pedidos de forma profesional.</p>
+            <h3 className="text-2xl font-bold text-white leading-tight">Impulsa tu comercio </h3>
+            <p className="text-gray-400 text-sm max-w-xs mx-auto leading-relaxed">Únete a la vitrina digital más importante  y gestiona tus pedidos de forma profesional.</p>
             <div className="pt-8 flex flex-col items-center gap-4">
               <div className="flex items-center gap-2 text-blue-500 font-bold text-xs uppercase tracking-widest border border-blue-500/30 px-4 py-2 rounded-full bg-blue-500/5">
                 <ShieldCheck size={18} /> Alianza Segura

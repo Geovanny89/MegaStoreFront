@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "../../api/axios";
 import { Eye, EyeOff, MapPin, User, Mail, Phone, CreditCard, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../../assets/Logo3.png";
+import Logo from "../../assets/Logo31.png";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -65,7 +65,14 @@ export default function Register() {
         {/* COLUMNA IZQUIERDA: FORMULARIO */}
         <div className="w-full md:w-7/12 p-8 md:p-14">
           <div className="mb-10">
-            <img src={Logo} alt="Logo" className="h-10 w-auto mb-6" />
+           <div className="flex justify-center mb-6">
+  <img
+    src={Logo}
+    alt="Logo"
+    className="h-24 w-auto scale-350"
+  />
+</div>
+
             <h2 className="text-3xl font-extrabold text-white tracking-tight">Crear cuenta</h2>
             <p className="text-gray-400 mt-2">Completa tus datos para empezar a comprar.</p>
           </div>
@@ -156,7 +163,7 @@ export default function Register() {
           
           
           <div className="relative z-10 text-center mt-8">
-            <h3 className="text-2xl font-bold text-white">Únete al Marketplace</h3>
+            <h3 className="text-2xl font-bold text-white">Únete a K-DICE</h3>
             <p className="text-gray-400 mt-2 text-sm max-w-xs">
               Tu cuenta de usuario te permite realizar compras seguras y gestionar tus pedidos fácilmente.
             </p>
