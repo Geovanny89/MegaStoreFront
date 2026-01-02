@@ -71,9 +71,7 @@ export default function CrearProductos() {
         formData.append("image", image);
       });
 
-      await api.post("/seller/productos", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await api.post("/seller/productos", formData);
 
       setMessage("Producto creado correctamente!");
       setTimeout(() => setMessage(""), 5000);
