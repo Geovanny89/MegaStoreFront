@@ -21,8 +21,9 @@ export default function Tienda({
         try {
           setLoading(true);
           const res = await api.get("/vendedor/all");
+     
           setVendedores(res.data || []);
-          console.log("mis tiendas", res)
+          
         } catch (error) {
           console.error("Error cargando tiendas:", error);
         } finally {
@@ -46,8 +47,7 @@ export default function Tienda({
 
  /* ==================== FILTRO CORREGIDO ==================== */
 const vendedoresAMostrar = vendedores.filter(v => {
-  // 1. Ajuste de Activo: 
-  // Si el campo 'active' no existe, lo tomamos como true para que no desaparezca.
+  // 1. Estado de actividad
   const estaActivo = v.active !== undefined ? v.active : true;
   const tieneStatusActivo = v.status ? (v.status === 'activo' || v.status === 'active') : true;
 
@@ -57,16 +57,16 @@ const vendedoresAMostrar = vendedores.filter(v => {
       ? true
       : v.storeCategory?.toLowerCase() === filtroCategoria.toLowerCase();
 
-  // 3. Filtro por plan Premium
+  // 3. Ajuste de Planes (Aquí estaba el error)
   const nombrePlan = obtenerNombrePlan(v).toLowerCase();
   
-  // Tu log muestra planes como "Emprendedor". 
-  // Si 'soloPremium' es true, solo mostrará "premium" o "avanzado".
-  const esPremiumParaFiltro = soloPremium 
-    ? (nombrePlan === "premium" || nombrePlan === "avanzado") 
-    : true;
+  // Definimos qué planes queremos mostrar en el Home (los destacados)
+  // Incluimos 'emprendedor' porque es el que tiene los 5 días gratis
+  const esPlanAceptado = (nombrePlan === "premium" || nombrePlan === "avanzado" || nombrePlan === "emprendedor");
 
-  return estaActivo && tieneStatusActivo && coincideCategoria && esPremiumParaFiltro;
+  const cumpleFiltroPlan = soloPremium ? esPlanAceptado : true;
+
+  return estaActivo && tieneStatusActivo && coincideCategoria && cumpleFiltroPlan;
 });
   /* ==================== UI DE CARGA (DISEÑO MODERNO) ==================== */
   if (loading) {

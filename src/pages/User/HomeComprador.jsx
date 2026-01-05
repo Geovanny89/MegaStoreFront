@@ -42,11 +42,11 @@ export default function HomeComprador() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              Cúcuta está vendiendo
+              El marketplace que impulsa negocios
+
             </div>
             <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
-              Tu ciudad, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">tus tiendas.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Tus tiendas.</span>
             </h1>
             <div className="flex flex-wrap gap-4">
               <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
@@ -64,7 +64,7 @@ export default function HomeComprador() {
           <div className="flex items-end justify-between mb-10 px-2">
             <div>
               <h3 className="text-3xl font-black text-gray-900 tracking-tight">Busca por Sector</h3>
-              <p className="text-gray-500 font-medium">Los mejores comercios de Cúcuta organizados para ti</p>
+              <p className="text-gray-500 font-medium">Los mejores comercios organizados para ti</p>
             </div>
           </div>
 

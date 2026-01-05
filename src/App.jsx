@@ -20,7 +20,7 @@ import Perfil from "./components/User/Perfil/Perfil";
 import ChangePassword from "./components/User/Contraseñas/ChangePassword";
 import Unauthorized from "./utils/Unauthorized";
 import LayoutSeller from "./components/Vendedor/LayautSeller";
-import HomeVendedor from "./pages/Vendedor/HomeVendedor";
+// import HomeVendedor from "./pages/Vendedor/HomeVendedor";
 import EditarPerfilVendedor from "./components/Vendedor/EditarPerfil";
 import PerfilVendedor from "./components/Vendedor/PerfilVendedor";
 import VerProductos from "./components/Vendedor/Productos/VerProductos";
@@ -52,43 +52,47 @@ import Privacidad from "./components/Home/Privacidad";
 import Contacto from "./components/Home/Contacto";
 import TodasTiendas from "./components/Home/TodasTiendas";
 import Planes from "./components/Planes/Planes";
+import VerificationGallery from "./components/Admin/VerificationGallery";
+import ValidarIdentidad from "./components/Admin/ValidarIdentidad";
+import Reports from "./components/Admin/Reports";
+import UploadIdentityDocuments from "./components/Vendedor/ValidarIdentidad/UploadIdentityDocuments";
 
 
 export default function AppRouter() {
   return (
     <Routes>
-      
+
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/register-vendedor" element={<RegisterSeller />} />
-        {/* ================= RUTAS PÚBLICAS CON LAYOUT ================= */}
-       <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/productos" element={<Products />} />
-          <Route path="/sobre-nosotros" element={<AboutUs />} />
-          <Route path="/terminos-condiciones" element={<Terminos />} />
-          <Route path="/privacidad" element={<Privacidad />} />
-          <Route path="/contacto" element={<Contacto />} />
-          <Route path="/tiendas" element={<TodasTiendas />} />
-          <Route path="/Planes" element={<Planes />} />
+      {/* ================= RUTAS PÚBLICAS CON LAYOUT ================= */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/productos" element={<Products />} />
+        <Route path="/sobre-nosotros" element={<AboutUs />} />
+        <Route path="/terminos-condiciones" element={<Terminos />} />
+        <Route path="/privacidad" element={<Privacidad />} />
+        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/tiendas" element={<TodasTiendas />} />
+        <Route path="/Planes" element={<Planes />} />
+
+      </Route>
+
+
+      {/* ================= TIENDA PÚBLICA ================= */}
+
+
+      <Route path="/:slug" element={<Storefront />}>
+        <Route element={<PrivateRoute rol={["user"]} />}>
+          <Route path="carrito" element={<Carrito />} />
+          <Route path="favoritos" element={<Favoritos />} />
+          <Route path="ordenes" element={<Orders />} />
+          <Route path="perfil" element={<Perfil />} />
+          <Route path="notificaciones" element={<Notificacion />} />
+
 
         </Route>
-
-
-        {/* ================= TIENDA PÚBLICA ================= */}
-
-
-      <Route path="/tienda/:slug" element={<Storefront />}>
-  <Route element={<PrivateRoute rol={["user"]} />}>
-    <Route path="carrito" element={<Carrito />} />
-    <Route path="favoritos" element={<Favoritos />} />
-    <Route path="ordenes" element={<Orders />} />
-    <Route path="perfil" element={<Perfil />} />
-    <Route path="notificaciones" element={<Notificacion />} />
-    
-
-  </Route>
-</Route>
+      </Route>
 
       {/* --- RUTAS DE RECUPERAR CONTRASEÑA --- */}
       <Route path="/forgot-password" element={<RecuperarContraseña />} />
@@ -98,7 +102,7 @@ export default function AppRouter() {
 
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      
+
 
       {/* TODAS las rutas del admin dentro de un solo LayoutUser */}
       <Route element={<PrivateRoute rol={["admin"]} />}>
@@ -109,6 +113,10 @@ export default function AppRouter() {
           <Route path="/admin/Categorias" element={<CategoriasAdmin />} />
           <Route path="/admin/editarUsuario" element={<AdminUser />} />
           <Route path="/admin/sellers/pagos" element={<ValidarPagos />} />
+          <Route path="/admin/sellers/verificar-identidad" element={<ValidarIdentidad />} />
+          <Route path="/admin/reportes" element={<Reports />} />
+
+
 
         </Route>
       </Route>
@@ -133,9 +141,9 @@ export default function AppRouter() {
           <Route path="/user/notificaciones" element={<Notificacion />} />
           <Route path="/orders/:orderId/messages" element={<UserMessages />} />
           <Route path="/user/sobre-nosotros" element={<AboutUs />} />
-    <Route path="/user/terminos-condiciones" element={<Terminos />} />
-    <Route path="/user/privacidad" element={<Privacidad />} />
-    <Route path="/user/contacto" element={<Contacto />} />
+          <Route path="/user/terminos-condiciones" element={<Terminos />} />
+          <Route path="/user/privacidad" element={<Privacidad />} />
+          <Route path="/user/contacto" element={<Contacto />} />
 
 
 
@@ -154,7 +162,9 @@ export default function AppRouter() {
           <Route path="/pedidosVendedor" element={<SellerOrders />} />
           <Route path="/notificaciones" element={<SellerNotifications />} />
           <Route path="/questions" element={<SellerQuestions />} />
-          <Route path="/pedidos/:orderId/messages" element={<SellerMessages />}/>
+          <Route path="/pedidos/:orderId/messages" element={<SellerMessages />} />
+          <Route path="/verificar/documento" element={<UploadIdentityDocuments />} />
+
 
 
 
@@ -168,7 +178,7 @@ export default function AppRouter() {
 
         </Route>
       </Route>
-      <Route element={<Layout />}></Route>
+
     </Routes>
   );
 }

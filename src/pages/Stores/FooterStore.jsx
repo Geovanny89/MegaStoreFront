@@ -19,7 +19,7 @@ export default function FooterStore() {
               MARKETPLACE<span className="text-blue-600">.</span>
             </h4>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Conectando el comercio local de Cúcuta con el mundo digital. La plataforma líder en Norte de Santander.
+              Conectando el comercio con el mundo digital. 
             </p>
             <div className="flex gap-4">
               {[Facebook, Instagram, Twitter].map((Icon, index) => (
@@ -32,7 +32,8 @@ export default function FooterStore() {
 
           <div className="bg-blue-50/50 p-8 rounded-2xl flex-1 max-w-xl">
             <h5 className="font-bold text-gray-900 mb-2">Únete a la comunidad</h5>
-            <p className="text-sm text-gray-500 mb-6">Recibe novedades sobre las mejores tiendas y ofertas de la ciudad.</p>
+            <p className="text-sm text-gray-500 mb-6">Recibe novedades y ofertas exclusivas de las mejores tiendas.
+</p>
             <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
               <input 
                 type="email" 

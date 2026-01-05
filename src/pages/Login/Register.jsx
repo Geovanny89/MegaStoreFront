@@ -18,9 +18,9 @@ export default function Register() {
     password: "",
     phone: "",
     rol: "user",
-    addresses: [{ 
-      street: "", 
-      city: "", 
+    addresses: [{
+      street: "",
+      city: "",
       state: "", // Agregado: lo pide tu validador del back
       country: "Colombia" // Valor por defecto para facilitar el registro
     }]
@@ -46,8 +46,8 @@ export default function Register() {
       navigate("/login");
     } catch (error) {
       // Manejo de errores basado en tu validateResult
-      const serverError = error.response?.data?.errors 
-        ? error.response.data.errors[0].msg 
+      const serverError = error.response?.data?.errors
+        ? error.response.data.errors[0].msg
         : error.response?.data?.error || "Error en el registro";
       alert(serverError);
     } finally {
@@ -61,17 +61,17 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-[#111827] flex items-center justify-center p-4 md:p-10 font-sans text-gray-200">
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-stretch gap-0 bg-[#1F2937] rounded-[2rem] overflow-hidden shadow-2xl border border-[#374151]">
-        
+
         {/* COLUMNA IZQUIERDA: FORMULARIO */}
         <div className="w-full md:w-7/12 p-8 md:p-14">
           <div className="mb-10">
-           <div className="flex justify-center mb-6">
-  <img
-    src={Logo}
-    alt="Logo"
-    className="h-24 w-auto scale-350"
-  />
-</div>
+            <div className="flex justify-center mb-6">
+              <img
+                src={Logo}
+                alt="Logo"
+                className="h-24 w-auto scale-350"
+              />
+            </div>
 
             <h2 className="text-3xl font-extrabold text-white tracking-tight">Crear cuenta</h2>
             <p className="text-gray-400 mt-2">Completa tus datos para empezar a comprar.</p>
@@ -79,7 +79,7 @@ export default function Register() {
 
           <form onSubmit={handleRegister} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              
+
               {/* Datos Personales */}
               <div>
                 <label className={labelStyle}>Nombre</label>
@@ -160,8 +160,8 @@ export default function Register() {
         {/* COLUMNA DERECHA: IMAGEN ALUSIVA */}
         <div className="hidden md:flex md:w-5/12 bg-[#111827] flex-col items-center justify-center p-12 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
-          
-          
+
+
           <div className="relative z-10 text-center mt-8">
             <h3 className="text-2xl font-bold text-white">Únete a K-DICE</h3>
             <p className="text-gray-400 mt-2 text-sm max-w-xs">

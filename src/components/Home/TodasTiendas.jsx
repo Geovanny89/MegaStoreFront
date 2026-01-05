@@ -111,13 +111,13 @@ export default function TodasTiendas() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <div className="h-1 w-10 bg-blue-600 rounded-full"></div>
-              <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Marketplace Cúcuta</span>
+              <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Marketplace</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-4">
               Directorio de Tiendas
             </h1>
             <p className="text-gray-500 text-lg max-w-xl font-medium">
-              Explora y encuentra tus comercios favoritos en la ciudad.
+              Explora y encuentra tus comercios favoritos.
             </p>
           </div>
 

@@ -24,7 +24,7 @@ export default function UploadPaymentProof() {
     const fetchSeller = async () => {
       try {
         const res = await api.get("/seller/me");
-
+console.log(" soy vendedor",res)
         setSellerStatus(res.data.sellerStatus);
         setPaymentStatus(res.data.paymentStatus);
       } catch (err) {

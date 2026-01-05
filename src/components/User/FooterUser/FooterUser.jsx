@@ -19,7 +19,7 @@ export default function FooterUser() {
               MARKETPLACE<span className="text-blue-600">.</span>
             </h4>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Tu espacio personal de compras en Cúcuta. Gestiona tus pedidos y descubre productos locales.
+              Tu espacio personal de compras. Gestiona tus pedidos y descubre productos.
             </p>
             <div className="flex gap-4">
               {[Facebook, Instagram, Twitter].map((Icon, index) => (

@@ -2,12 +2,35 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { Trash2, Pencil, CheckCircle, Plus } from "lucide-react";
 
+// Lista de rubros principales del marketplace para asignar a las subcategorías
+const SECTORES_MARKETPLACE = [
+  "Tecnología y Electrónica",
+  "Moda y Accesorios",
+  "Hogar y Muebles",
+  "Salud y Belleza",
+  "Deportes y Fitness",
+  "Supermercado y Alimentos",
+  "Restaurantes y Gastronomía",
+  "Juguetes y Bebés",
+  "Mascotas",
+  "Ferretería y Construcción",
+  "Automotriz",
+  "Papelería y Oficina",
+  "Arte y Artesanías",
+  "Servicios Profesionales",
+  "Otros"
+];
+
 export default function CategoriasAdmin() {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(null);
-  const [form, setForm] = useState({ name: "" });
+  const [form, setForm] = useState({ 
+    name: "", 
+    categoriaPadre: "", 
+    usaTalla: false 
+  });
   const [editingId, setEditingId] = useState(null);
-  const [message, setMessage] = useState(null); // ⭐ mensaje de éxito
+  const [message, setMessage] = useState(null);
 
   const [page, setPage] = useState(1);
   const perPage = 10;
@@ -31,9 +54,12 @@ export default function CategoriasAdmin() {
   }, []);
 
   const handleCreate = async () => {
+    if (!form.name || !form.categoriaPadre) {
+      return alert("Por favor completa el nombre y selecciona un rubro");
+    }
     try {
       await api.post("/createTipe", form);
-      setForm({ name: "" });
+      setForm({ name: "", categoriaPadre: "", usaTalla: false });
       fetchCategorias();
       showMessage("✔️ Categoría creada satisfactoriamente");
     } catch (error) {
@@ -62,9 +88,9 @@ export default function CategoriasAdmin() {
 
   const handleUpdate = async () => {
     try {
-      await api.put(`/update/tipe/${editingId}`, { name: form.name });
+      await api.put(`/update/tipe/${editingId}`, form);
       setEditingId(null);
-      setForm({ name: "" });
+      setForm({ name: "", categoriaPadre: "", usaTalla: false });
       fetchCategorias();
       showMessage("✏️ Actualizado satisfactoriamente");
     } catch (error) {
@@ -74,7 +100,11 @@ export default function CategoriasAdmin() {
 
   const startEdit = (cat) => {
     setEditingId(cat._id);
-    setForm({ name: cat.name });
+    setForm({ 
+      name: cat.name, 
+      categoriaPadre: cat.categoriaPadre || "", 
+      usaTalla: cat.usaTalla || false 
+    });
   };
 
   const totalPages = Math.ceil(categorias.length / perPage);
@@ -84,49 +114,91 @@ export default function CategoriasAdmin() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
-        Categorías
+        Gestión de Subcategorías
       </h1>
 
-      {/* ⭐ Mensaje de éxito */}
       {message && (
-        <div className="mb-4 bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-lg text-center">
+        <div className="mb-4 bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-lg text-center font-medium">
           {message}
         </div>
       )}
 
       <div className="bg-white shadow-lg rounded-xl p-4 md:p-6 border">
+        
+        {/* Formulario de Creación / Edición */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 items-end">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-600">Nombre del Producto</label>
+            <input
+              type="text"
+              placeholder="Ej: Camisas, Taladros..."
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
-          <input
-            type="text"
-            placeholder="Nombre de categoría"
-            value={form.name}
-            onChange={(e) => setForm({ name: e.target.value })}
-            className="border border-gray-300 px-4 py-2 rounded-lg w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-600">Rubro de la Tienda</label>
+            <select
+              value={form.categoriaPadre}
+              onChange={(e) => setForm({ ...form, categoriaPadre: e.target.value })}
+              className="border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            >
+              <option value="">Seleccionar Sector...</option>
+              {SECTORES_MARKETPLACE.map((sector) => (
+                <option key={sector} value={sector}>{sector}</option>
+              ))}
+            </select>
+          </div>
 
-          {editingId ? (
-            <button
-              onClick={handleUpdate}
-              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-lg shadow w-full sm:w-auto"
-            >
-              <CheckCircle size={18} /> Guardar
-            </button>
-          ) : (
-            <button
-              onClick={handleCreate}
-              className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-lg shadow w-full sm:w-auto"
-            >
-              <Plus size={18} /> Agregar
-            </button>
-          )}
+          <div className="flex items-center gap-2 pb-2">
+            <input
+              type="checkbox"
+              id="usaTalla"
+              checked={form.usaTalla}
+              onChange={(e) => setForm({ ...form, usaTalla: e.target.checked })}
+              className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+            />
+            <label htmlFor="usaTalla" className="text-sm font-medium text-gray-700 cursor-pointer">
+              ¿Requiere Tallas?
+            </label>
+          </div>
+
+          <div className="flex gap-2">
+            {editingId ? (
+              <button
+                onClick={handleUpdate}
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-lg shadow"
+              >
+                <CheckCircle size={18} /> Guardar
+              </button>
+            ) : (
+              <button
+                onClick={handleCreate}
+                className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-lg shadow"
+              >
+                <Plus size={18} /> Agregar
+              </button>
+            )}
+            {editingId && (
+              <button 
+                onClick={() => { setEditingId(null); setForm({name: "", categoriaPadre: "", usaTalla: false}); }}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[500px] border-collapse rounded-lg overflow-hidden shadow-sm">
+          <table className="w-full min-w-[600px] border-collapse rounded-lg overflow-hidden shadow-sm">
             <thead>
               <tr className="bg-gray-100 text-gray-700">
-                <th className="p-3 text-left">Nombre</th>
+                <th className="p-3 text-left">Subcategoría</th>
+                <th className="p-3 text-left">Sector (Padre)</th>
+                <th className="p-3 text-center">Tallas</th>
                 <th className="p-3 text-center w-32">Acciones</th>
               </tr>
             </thead>
@@ -134,22 +206,33 @@ export default function CategoriasAdmin() {
             <tbody>
               {paginated.map((cat) => (
                 <tr key={cat._id} className="border-b hover:bg-gray-50 transition">
-                  <td className="p-3 text-gray-800">{cat.name}</td>
-
+                  <td className="p-3 text-gray-800 font-medium">{cat.name}</td>
+                  <td className="p-3 text-gray-600">
+                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-bold border border-blue-100 uppercase">
+                      {cat.categoriaPadre || "No asignado"}
+                    </span>
+                  </td>
+                  <td className="p-3 text-center">
+                    {cat.usaTalla ? (
+                      <span className="text-green-600 text-xs font-bold uppercase bg-green-50 px-2 py-1 rounded border border-green-100">Sí</span>
+                    ) : (
+                      <span className="text-gray-400 text-xs">No</span>
+                    )}
+                  </td>
                   <td className="p-3 flex justify-center gap-3">
                     <button
                       onClick={() => startEdit(cat)}
-                      className="text-blue-600 hover:text-blue-800 transition"
+                      className="text-blue-600 hover:text-blue-800 transition p-1 hover:bg-blue-50 rounded"
                     >
                       <Pencil size={18} />
                     </button>
 
                     <button
                       onClick={() => handleDelete(cat._id)}
-                      className="text-red-600 hover:text-red-800 transition"
+                      className="text-red-600 hover:text-red-800 transition p-1 hover:bg-red-50 rounded"
                     >
                       {loading === cat._id ? (
-                        <span className="text-sm">...</span>
+                        <span className="animate-pulse text-sm">...</span>
                       ) : (
                         <Trash2 size={18} />
                       )}
@@ -161,14 +244,14 @@ export default function CategoriasAdmin() {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Paginación */}
         <div className="flex flex-col sm:flex-row justify-center items-center mt-6 gap-3">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             className={`px-3 py-1 rounded ${
               page === 1
-                ? "bg-gray-300 cursor-not-allowed"
+                ? "bg-gray-300 cursor-not-allowed text-gray-500"
                 : "bg-gray-800 text-white hover:bg-black"
             }`}
           >
@@ -176,15 +259,15 @@ export default function CategoriasAdmin() {
           </button>
 
           <span className="text-gray-700 font-medium text-center">
-            Página {page} de {totalPages}
+            Página {page} de {totalPages || 1}
           </span>
 
           <button
-            disabled={page === totalPages}
+            disabled={page === totalPages || totalPages === 0}
             onClick={() => setPage(page + 1)}
             className={`px-3 py-1 rounded ${
-              page === totalPages
-                ? "bg-gray-300 cursor-not-allowed"
+              page === totalPages || totalPages === 0
+                ? "bg-gray-300 cursor-not-allowed text-gray-500"
                 : "bg-gray-800 text-white hover:bg-black"
             }`}
           >

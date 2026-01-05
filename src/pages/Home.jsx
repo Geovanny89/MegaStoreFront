@@ -2,25 +2,42 @@ import { useState } from "react";
 import Products from "../components/Products/products.jsx";
 import Tienda from "./Tienda.jsx";
 import ProductosTienda from "./ProductosTienda.jsx";
-import { 
-  ShieldCheck, Truck, Headphones, CreditCard, ChevronRight, 
+import {
+  ShieldCheck, Truck, Headphones, CreditCard, ChevronRight,
   Laptop, Shirt, Hammer, ShoppingCart, Home as HomeIcon, Heart,
-  ArrowRight
+  ArrowRight,
+  LayoutGrid,
+  Brush,
+  Utensils,
+  Baby,
+  Dog,
+  Car,
+  FileText,
+  Palette,
+  Briefcase
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
   const [categoriaActiva, setCategoriaActiva] = useState("Todas");
-console.log("soy el vendedor",vendedorSeleccionado)
+
   const categorias = [
-    { name: "Todas", icon: <ShoppingCart size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
-    { name: "Tecnología", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },
-    { name: "Moda", icon: <Shirt size={28} />, gradient: "from-pink-50 to-pink-200", text: "text-pink-600" },
-    { name: "Ferretería", icon: <Hammer size={28} />, gradient: "from-orange-50 to-orange-200", text: "text-orange-600" },
-    { name: "Supermercado", icon: <ShoppingCart size={28} />, gradient: "from-green-50 to-green-200", text: "text-green-600" },
-    { name: "Hogar", icon: <HomeIcon size={28} />, gradient: "from-purple-50 to-purple-200", text: "text-purple-600" },
-    { name: "Belleza", icon: <Heart size={28} />, gradient: "from-red-50 to-red-200", text: "text-red-600" },
+    { name: "Todas", icon: <LayoutGrid size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
+    { name: "Tecnología y Electrónica", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },
+    { name: "Moda y Accesorios", icon: <Shirt size={28} />, gradient: "from-pink-50 to-pink-200", text: "text-pink-600" },
+    { name: "Hogar y Muebles", icon: <HomeIcon size={28} />, gradient: "from-purple-50 to-purple-200", text: "text-purple-600" },
+    { name: "Salud y Belleza", icon: <Brush size={28} />, gradient: "from-rose-50 to-rose-200", text: "text-rose-600" },
+    { name: "Deportes y Fitness", icon: <Heart size={28} />, gradient: "from-red-50 to-red-200", text: "text-red-600" },
+    { name: "Supermercado y Alimentos", icon: <ShoppingCart size={28} />, gradient: "from-green-50 to-green-200", text: "text-green-600" },
+    { name: "Restaurantes y Gastronomía", icon: <Utensils size={28} />, gradient: "from-orange-50 to-orange-200", text: "text-orange-600" },
+    { name: "Juguetes y Bebés", icon: <Baby size={28} />, gradient: "from-yellow-50 to-yellow-200", text: "text-yellow-600" },
+    { name: "Mascotas", icon: <Dog size={28} />, gradient: "from-amber-50 to-amber-200", text: "text-amber-600" },
+    { name: "Ferretería y Construcción", icon: <Hammer size={28} />, gradient: "from-stone-50 to-stone-200", text: "text-stone-600" },
+    { name: "Automotriz", icon: <Car size={28} />, gradient: "from-slate-50 to-slate-200", text: "text-slate-600" },
+    { name: "Papelería y Oficina", icon: <FileText size={28} />, gradient: "from-indigo-50 to-indigo-200", text: "text-indigo-600" },
+    { name: "Arte y Artesanías", icon: <Palette size={28} />, gradient: "from-violet-50 to-violet-200", text: "text-violet-600" },
+    { name: "Servicios Profesionales", icon: <Briefcase size={28} />, gradient: "from-cyan-50 to-cyan-200", text: "text-cyan-600" },
   ];
 
   return (
@@ -28,8 +45,8 @@ console.log("soy el vendedor",vendedorSeleccionado)
       {/* 1. HERO SECTION */}
       {!vendedorSeleccionado && (
         <div className="relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
-          <img 
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070" 
+          <img
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             alt="Marketplace Banner"
           />
@@ -39,11 +56,10 @@ console.log("soy el vendedor",vendedorSeleccionado)
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              Cúcuta está vendiendo
+              El marketplace que impulsa negocios
             </div>
             <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
-              Tu ciudad, <br /> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">tus tiendas.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Tus tiendas.</span>
             </h1>
             <div className="flex flex-wrap gap-4">
               <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
@@ -63,7 +79,7 @@ console.log("soy el vendedor",vendedorSeleccionado)
           <div className="flex items-end justify-between mb-10 px-2">
             <div>
               <h3 className="text-3xl font-black text-gray-900 tracking-tight">Busca por Sector</h3>
-              <p className="text-gray-500 font-medium">Los mejores comercios de Cúcuta organizados para ti</p>
+              <p className="text-gray-500 font-medium">Los mejores comercios organizados para ti</p>
             </div>
           </div>
 
@@ -72,16 +88,15 @@ console.log("soy el vendedor",vendedorSeleccionado)
               <button
                 key={cat.name}
                 onClick={() => setCategoriaActiva(cat.name)}
-                className={`relative flex flex-col items-center justify-center min-w-[150px] h-[170px] rounded-[3rem] transition-all duration-500 group ${
-                  categoriaActiva === cat.name 
-                  ? "bg-white shadow-2xl shadow-blue-200/60 border-2 border-blue-500 transform -translate-y-3" 
-                  : "bg-white border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1"
-                }`}
+                className={`relative flex flex-col items-center justify-center min-w-[160px] h-[180px] rounded-[3rem] transition-all duration-500 group snap-center ${categoriaActiva === cat.name
+                    ? "bg-white shadow-2xl shadow-blue-200/60 border-2 border-blue-500 transform -translate-y-3"
+                    : "bg-white border border-gray-100 hover:border-blue-200"
+                  }`}
               >
                 <div className={`p-5 rounded-[2rem] mb-4 bg-gradient-to-br ${cat.gradient} ${cat.text} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                   {cat.icon}
                 </div>
-                <span className={`text-sm font-black uppercase tracking-tighter ${categoriaActiva === cat.name ? "text-blue-600" : "text-gray-500"}`}>
+                <span className="text-[10px] px-2 text-center font-black uppercase tracking-tighter leading-tight">
                   {cat.name}
                 </span>
                 {categoriaActiva === cat.name && (
@@ -103,34 +118,33 @@ console.log("soy el vendedor",vendedorSeleccionado)
         </div>
       )}
 
-      {/* 4. SECCIÓN DE TIENDAS FILTRADAS (PLAN PREMIUM) */}
+      {/* 4. SECCIÓN DE TIENDAS (TRIAL + PREMIUM) */}
       {!vendedorSeleccionado && (
         <section id="tiendas" className="mb-24 scroll-mt-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
-                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Tiendas Destacadas</span>
+                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Exclusivo</span>
               </div>
               <h2 className="text-4xl font-black text-gray-900 leading-none">
-                {categoriaActiva === "Todas" ? "Nuestros Vendedores Premium" : `${categoriaActiva} Premium`}
+                {categoriaActiva === "Todas" ? "Tiendas Destacadas" : `${categoriaActiva}`}
               </h2>
             </div>
             <Link to="/tiendas" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-colors">
               Ver el directorio <ChevronRight size={18} />
             </Link>
           </div>
-          
-          {/* Lógica: soloPremium={true} para que coincida con el Seed */}
-          <Tienda  
-            setVendedorSeleccionado={setVendedorSeleccionado} 
-            filtroCategoria={categoriaActiva} 
+
+          <Tienda
+            setVendedorSeleccionado={setVendedorSeleccionado}
+            filtroCategoria={categoriaActiva === "Todas" ? "Todas" : categoriaActiva}
             soloPremium={true} 
           />
         </section>
       )}
 
-      {/* 5. VISTA DE PRODUCTOS DE UNA TIENDA SELECCIONADA */}
+      {/* 5. PRODUCTOS DE TIENDA SELECCIONADA */}
       {vendedorSeleccionado && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <ProductosTienda
@@ -140,11 +154,11 @@ console.log("soy el vendedor",vendedorSeleccionado)
         </div>
       )}
 
-      {/* 6. PRODUCTOS DESTACADOS */}
+      {/* 6. PRODUCTOS DESTACADOS GENERALES */}
       {!vendedorSeleccionado && (
         <section id="productos" className="mb-24">
           <h2 className="text-3xl font-black text-gray-900 mb-10 px-2 flex items-center gap-4">
-            Explora Productos <div className="h-px flex-1 bg-gray-100"></div>
+            Nuevos Productos <div className="h-px flex-1 bg-gray-100"></div>
           </h2>
           <Products />
         </section>
@@ -155,11 +169,11 @@ console.log("soy el vendedor",vendedorSeleccionado)
         <div className="bg-[#111827] rounded-[3.5rem] p-10 md:p-20 text-center text-white mb-24 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-600/10 rounded-full blur-[80px]"></div>
-          
+
           <div className="relative z-10">
             <h2 className="text-4xl md:text-5xl font-black mb-6">¿Tu negocio aún no está aquí?</h2>
             <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-              Únete a la red comercial más grande de Cúcuta. Digitaliza tu tienda y aumenta tus ventas hoy mismo.
+              Únete a la red comercial más grande. Digitaliza tu tienda y aumenta tus ventas hoy mismo.
             </p>
             <Link to="/planes" className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all inline-block shadow-2xl shadow-blue-600/40 transform hover:scale-105">
               Empezar ahora

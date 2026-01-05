@@ -9,7 +9,8 @@ import {
   ChevronDown,
   ChevronUp,
   Bell,
-  MessageCircle
+  MessageCircle,
+  ShieldCheck
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -18,24 +19,32 @@ import api from "../../api/axios";
 export default function Sidebar({ open, setOpen }) {
   const [productosOpen, setProductosOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [sellerData, setSellerData] = useState(null); // Nuevo estado para los datos del vendedor
 
-  /* ===================== NOTIFICATIONS ===================== */
-  const fetchUnreadNotifications = async () => {
+  /* ===================== FETCH DATA ===================== */
+  const fetchData = async () => {
     try {
-      const res = await api.get("/notifications/seller");
-      const unread = res.data.notifications.filter(n => !n.isRead).length;
-      
+      // 1. Notificaciones
+      const resNotif = await api.get("/notifications/seller");
+      const unread = resNotif.data.notifications.filter(n => !n.isRead).length;
       setUnreadNotifications(unread);
+
+      // 2. Datos del Vendedor (Para ver el sellerStatus)
+      const resSeller = await api.get("/seller/me"); 
+      setSellerData(resSeller.data);
     } catch (error) {
-      console.error("Error obteniendo notificaciones", error);
+      console.error("Error obteniendo datos del sidebar", error);
     }
   };
 
   useEffect(() => {
-    fetchUnreadNotifications();
-    const interval = setInterval(fetchUnreadNotifications, 30000);
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Lógica: Si el status NO es 'active', mostramos el botón de verificación
+  const showVerification = sellerData && sellerData.sellerStatus !== "active";
 
   return (
     <>
@@ -62,41 +71,21 @@ export default function Sidebar({ open, setOpen }) {
         >
           <X size={26} />
         </button>
+
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
-            🛍️ Panel Vendedor
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900">🛍️ Panel Vendedor</h2>
           <p className="text-sm text-gray-500">Administración general</p>
         </div>
 
         {/* Navigation */}
         <nav className="px-4 py-6 flex flex-col gap-2 text-gray-700">
+          <SidebarItem to="/HomeVendedor" label="Dashboard" icon={<LayoutDashboard size={18} />} />
+          <SidebarItem to="/PerfilVendedor" label="Mi Perfil" icon={<User size={18} />} />
 
-          {/* Dashboard */}
-          <SidebarItem
-            to="/HomeVendedor"
-            label="Dashboard"
-            icon={<LayoutDashboard />}
-          />
+          <div className="pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase">Gestión</div>
 
-          {/* Perfil */}
-          <SidebarItem
-            to="/PerfilVendedor"
-            label="Mi Perfil"
-            icon={<User />}
-          />
-
-          <div className="pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase">
-            Gestión
-          </div>
-
-          {/* Pedidos */}
-          <SidebarItem
-            to="/pedidosVendedor"
-            label="Pedidos"
-            icon={<Package />}
-          />
+          <SidebarItem to="/pedidosVendedor" label="Pedidos" icon={<Package size={18} />} />
 
           {/* Productos submenu */}
           <div>
@@ -113,34 +102,25 @@ export default function Sidebar({ open, setOpen }) {
 
             {productosOpen && (
               <div className="flex flex-col pl-8 mt-2 gap-1">
-                <SidebarItem
-                  to="/vendedorProductos"
-                  label="Ver Productos"
-                  icon={<Eye />}
-                />
-                <SidebarItem
-                  to="/crearProductos"
-                  label="Subir Producto"
-                  icon={<PlusCircle />}
-                />
+                <SidebarItem to="/vendedorProductos" label="Ver Productos" icon={<Eye size={18} />} />
+                <SidebarItem to="/crearProductos" label="Subir Producto" icon={<PlusCircle size={18} />} />
               </div>
             )}
           </div>
 
-          {/* ❓ PREGUNTAS DE PRODUCTOS (AQUÍ VA) */}
-          <SidebarItem
-            to="/questions"
-            label="Preguntas de productos"
-            icon={<MessageCircle />}
-          />
+          <SidebarItem to="/questions" label="Preguntas de productos" icon={<MessageCircle size={18} />} />
+          <SidebarItem to="/notificaciones" label="Notificaciones" icon={<Bell size={18} />} badge={unreadNotifications} />
 
-          {/* 🔔 NOTIFICACIONES */}
-          <SidebarItem
-            to="/notificaciones"
-            label="Notificaciones"
-            icon={<Bell />}
-            badge={unreadNotifications}
-          />
+          {/* ============================================================ */}
+          {/* VERIFICACIÓN DE IDENTIDAD: Solo aparece si NO está activo */}
+          {/* ============================================================ */}
+          {showVerification && (
+            <SidebarItem
+              to="/verificar/documento"
+              label="Verificar Identidad"
+              icon={<ShieldCheck size={18} className="text-orange-500" />}
+            />
+          )}
         </nav>
       </aside>
     </>
@@ -153,8 +133,7 @@ function SidebarItem({ to, label, icon, badge }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `
-        flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium
+        `flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium
         transition-all duration-200
         ${isActive
           ? "bg-blue-600 text-white shadow-md"
@@ -163,12 +142,12 @@ function SidebarItem({ to, label, icon, badge }) {
       }
     >
       <div className="flex items-center gap-3">
-        <span className="text-[18px]">{icon}</span>
+        {icon}
         {label}
       </div>
 
       {badge > 0 && (
-        <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+        <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
           {badge}
         </span>
       )}

@@ -19,7 +19,7 @@ export default function Footer() {
               MARKETPLACE<span className="text-blue-600">.</span>
             </h4>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Conectando el comercio local de Cúcuta con el mundo digital. La plataforma líder en Norte de Santander.
+              Conectando el comercio con el mundo digital. 
             </p>
             <div className="flex gap-4">
               {[Facebook, Instagram, Twitter].map((Icon, index) => (
@@ -30,20 +30,28 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="bg-blue-50/50 p-8 rounded-2xl flex-1 max-w-xl">
-            <h5 className="font-bold text-gray-900 mb-2">Únete a la comunidad</h5>
-            <p className="text-sm text-gray-500 mb-6">Recibe novedades sobre las mejores tiendas y ofertas de la ciudad.</p>
-            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="Tu correo electrónico" 
-                className="flex-1 px-4 py-3 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all bg-white"
-              />
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors flex items-center gap-2">
-                Suscribirme <ArrowRight size={16} />
-              </button>
-            </form>
-          </div>
+          {/* SECCIÓN NEWSLETTER CORREGIDA */}
+<div className="bg-blue-50/50 p-6 md:p-8 rounded-2xl flex-1 max-w-xl">
+  <h5 className="font-bold text-gray-900 mb-2">Mantente al día</h5>
+  <p className="text-sm text-gray-500 mb-6">
+    Recibe novedades y ofertas exclusivas de las mejores tiendas.
+  </p>
+  
+  {/* Agregamos flex-wrap para que en móviles el botón baje si no cabe */}
+  <form 
+    className="flex flex-col sm:flex-row gap-3" 
+    onSubmit={(e) => e.preventDefault()}
+  >
+    <input 
+      type="email" 
+      placeholder="Tu correo electrónico" 
+      className="flex-1 min-w-0 px-4 py-3 rounded-xl border-none ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all bg-white"
+    />
+    <button className="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-blue-100">
+      Suscribirme <ArrowRight size={16} className="shrink-0" />
+    </button>
+  </form>
+</div>
         </div>
 
         <hr className="border-gray-100 mb-16" />

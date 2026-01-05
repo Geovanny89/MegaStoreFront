@@ -27,19 +27,39 @@ export default function SellerQuestions() {
 
   return (
     <div className="space-y-4">
+      {/* TÍTULO */}
       <h2 className="text-xl font-bold">Preguntas de tus productos</h2>
 
+      {/* CONTADORES */}
+      <div className="flex flex-wrap gap-3 text-sm">
+        <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-medium">
+          Total: {questions.length}
+        </span>
+
+        <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
+          Pendientes: {questions.filter((q) => !q.answer).length}
+        </span>
+
+        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+          Respondidas: {questions.filter((q) => q.answer).length}
+        </span>
+      </div>
+
+      {/* LISTADO */}
       {questions.map((q) => (
-        <div key={q._id} className="border p-4 rounded-lg">
+        <div
+          key={q._id}
+          className={`border p-4 rounded-lg ${
+            q.answer ? "bg-white" : "bg-yellow-50 border-yellow-300"
+          }`}
+        >
           <p className="font-medium">❓ {q.question}</p>
           <p className="text-sm text-gray-500">
             Producto: {q.productId.name}
           </p>
 
           {q.answer ? (
-            <p className="mt-2 text-green-700">
-              ✅ {q.answer}
-            </p>
+            <p className="mt-2 text-green-700">✅ {q.answer}</p>
           ) : (
             <>
               <textarea

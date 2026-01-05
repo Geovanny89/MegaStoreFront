@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { Heart, ChevronLeft, ShoppingCart, Info } from "lucide-react";
+import { Heart, ChevronLeft, ShoppingCart, Info, Store } from "lucide-react";
 import { useFavorites } from "../context/FavoriteContext";
 import ProductQuestions from "../components/Questions/ProductQuestions";
 import RatingStars from "../components/Ratings/RatingStars";
@@ -10,8 +10,10 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   const [vendedor, setVendedor] = useState(null);
   const [productos, setProductos] = useState([]);
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
+  const [tiendaVencida, setTiendaVencida] = useState(false); // Estado para manejar trial vencido
 
   // Estados de Carga y UI
+  const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState(null);
   const [loadingProduct, setLoadingProduct] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,12 +30,29 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   useEffect(() => {
     const fetchDatosVendedor = async () => {
       try {
+        setLoading(true);
         const { data } = await api.get(`/vendedor/${vendedorId}`);
-        setVendedor(data.vendedor);
-        setProductos(data.productos || []);
+        
+        // Verificamos si el backend envió la bandera de vencida o productos vacíos
+        if (data.statusTienda === "vencida") {
+          setTiendaVencida(true);
+          setVendedor(data.vendedor);
+          setProductos([]);
+        } else {
+          setVendedor(data.vendedor);
+          setProductos(data.productos || []);
+          setTiendaVencida(false);
+        }
       } catch (error) {
         console.error(error);
-        alert("Error al cargar la tienda");
+        // Si el backend responde con error 403, también marcamos como vencida
+        if (error.response?.status === 403) {
+            setTiendaVencida(true);
+        } else {
+            alert("Error al cargar la tienda");
+        }
+      } finally {
+        setLoading(false);
       }
     };
     fetchDatosVendedor();
@@ -63,11 +82,9 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       alert("Inicia sesión para usar favoritos");
       return;
     }
-
     try {
       setLoadingId(product._id);
       const isFav = favorites.some((f) => f._id === product._id);
-
       if (isFav) {
         await api.delete(`/favoriteDelete/${product._id}`);
         removeFavorite(product._id);
@@ -82,14 +99,12 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
     }
   };
 
-
   const agregarAlCarrito = async (productId, quantity = 1) => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Inicia sesión para comprar");
       return;
     }
-
     try {
       setLoadingId(productId);
       await api.post("/user/car", { productId, quantity });
@@ -101,12 +116,12 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       setLoadingId(null);
     }
   };
+
   const verProducto = async (id) => {
     try {
       setLoadingProduct(id);
       const res = await api.get(`/product/${id}`);
       setSelectedProduct(res.data);
-      // Cambia esta línea para acceder a .url
       setSelectedImg(res.data.image?.[0]?.url || "");
       setCantidad(1);
       setModalOpen(true);
@@ -117,15 +132,38 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
     }
   };
 
-  if (!vendedor) return (
-    <div className="flex justify-center items-center h-64 text-gray-500 animate-pulse font-medium">
+  // 1. Pantalla de Carga
+  if (loading) return (
+    <div className="flex flex-col justify-center items-center h-screen bg-gray-50 text-gray-500 font-medium">
+      <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
       Cargando tienda...
+    </div>
+  );
+
+  // 2. Pantalla de Tienda Inactiva (Trial Vencido)
+  if (tiendaVencida) return (
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
+      <div className="max-w-md text-center space-y-6">
+        <div className="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+          <Store size={48} />
+        </div>
+        <h1 className="text-3xl font-black text-gray-900">{vendedor?.storeName || "Tienda Inactiva"}</h1>
+        <p className="text-gray-500 font-medium leading-relaxed">
+          Esta tienda no cuenta con una suscripción activa en este momento. Sus productos estarán disponibles nuevamente una vez se renueve el plan.
+        </p>
+        <button
+          onClick={volver}
+          className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg"
+        >
+          Explorar otras tiendas
+        </button>
+      </div>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-12">
-      {/* HEADER DE TIENDA PROFESIONAL */}
+      {/* HEADER DE TIENDA */}
       <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -139,14 +177,13 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
               <img src={vendedor.image} className="w-12 h-12 rounded-full border object-cover shadow-sm" alt="Logo" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">{vendedor.storeName}</h1>
-                <p className="text-xs text-gray-500 flex items-center gap-1 uppercase tracking-wider font-semibold">
-                  Tienda Oficial
+                <p className="text-[10px] text-blue-600 flex items-center gap-1 uppercase tracking-wider font-bold bg-blue-50 px-2 py-0.5 rounded">
+                  Tienda Verificada
                 </p>
               </div>
             </div>
           </div>
 
-          {/* FILTRO CATEGORÍAS */}
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500 font-medium">Filtrar:</span>
             <select
@@ -166,17 +203,16 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       <div className="max-w-7xl mx-auto px-6 mt-8">
         {productosFiltrados.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed text-gray-400">
-            No se encontraron productos en esta categoría.
+            No hay productos disponibles por ahora.
           </div>
         ) : (
           <>
-            {/* GRID PRODUCTOS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {productosActuales.map((p) => (
                 <div key={p._id} className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   <div className="relative aspect-square bg-gray-50 flex justify-center items-center overflow-hidden">
                     <img
-                      src={p.image?.[0]?.url || p.image?.[1]?.url} // Accedemos a .url
+                      src={p.image?.[0]?.url || p.image?.[1]?.url}
                       alt={p.name}
                       className="h-full w-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
                     />
@@ -193,8 +229,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                   <div className="p-5">
                     <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{p.tipo?.name || 'Producto'}</span>
                     <h2 className="text-base font-bold text-gray-800 line-clamp-1 mt-1">{p.name}</h2>
-                    <p className="text-xs text-gray-500 mt-1 uppercase font-medium">{p.brand || 'Genérico'}</p>
-
+                    
                     <div className="flex items-center justify-between mt-4">
                       <p className="text-xl font-black text-slate-900">${p.price}</p>
                       <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${p.stock > 0 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}>
@@ -224,41 +259,42 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
               ))}
             </div>
 
-            {/* PAGINACIÓN PROFESIONAL */}
-            <div className="flex justify-center mt-12 gap-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-4 py-2 rounded-xl border bg-white disabled:opacity-50 font-bold text-sm"
-              >
-                Anterior
-              </button>
-              {[...Array(totalPages)].map((_, i) => (
+            {/* PAGINACIÓN */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-12 gap-2">
                 <button
-                  key={i}
-                  onClick={() => handlePageChange(i + 1)}
-                  className={`w-10 h-10 rounded-xl border text-sm font-bold transition-all ${currentPage === i + 1 ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "bg-white hover:bg-gray-50 text-gray-600"}`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-xl border bg-white disabled:opacity-50 font-bold text-sm"
                 >
-                  {i + 1}
+                  Anterior
                 </button>
-              ))}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 rounded-xl border bg-white disabled:opacity-50 font-bold text-sm"
-              >
-                Siguiente
-              </button>
-            </div>
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handlePageChange(i + 1)}
+                    className={`w-10 h-10 rounded-xl border text-sm font-bold transition-all ${currentPage === i + 1 ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "bg-white hover:bg-gray-50 text-gray-600"}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-xl border bg-white disabled:opacity-50 font-bold text-sm"
+                >
+                  Siguiente
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
 
-      {/* MODAL PROFESIONAL (Reseñas y Preguntas) */}
+      {/* MODAL DETALLE */}
       {modalOpen && selectedProduct && (
         <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            {/* HEADER MODAL */}
             <div className="flex items-center justify-between px-8 py-5 border-b bg-gray-50/50">
               <div className="flex flex-col">
                 <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Detalle del Producto</span>
@@ -269,45 +305,35 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
               </button>
             </div>
 
-            {/* CUERPO SCROLLABLE */}
             <div className="overflow-y-auto custom-scrollbar">
               <div className="p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  {/* VISUALS */}
                   <div className="space-y-4">
                     <div className="bg-gray-50 border border-gray-100 rounded-[1.5rem] h-[400px] flex items-center justify-center overflow-hidden p-6">
                       <img src={selectedImg} className="max-h-full object-contain hover:scale-105 transition-transform duration-500" alt="Selected" />
                     </div>
                     <div className="flex gap-3 overflow-x-auto pb-2">
-                      {selectedProduct.image?.map((imgObj, i) => ( // imgObj es el objeto {url, public_id}
+                      {selectedProduct.image?.map((imgObj, i) => (
                         <img
                           key={i}
-                          src={imgObj.url} // Usamos imgObj.url
+                          src={imgObj.url}
                           onClick={() => setSelectedImg(imgObj.url)}
                           className={`w-20 h-20 rounded-xl object-cover cursor-pointer border-2 transition-all 
-      ${selectedImg === imgObj.url ? "border-blue-500 ring-4 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
+                            ${selectedImg === imgObj.url ? "border-blue-500 ring-4 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
                         />
                       ))}
                     </div>
                   </div>
 
-                  {/* INFO COMPRA */}
                   <div className="flex flex-col justify-between">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
                         <RatingStars value={selectedProduct.rating?.average || 0} count={selectedProduct.rating?.count || 0} size="text-sm" />
-                        <span className="text-gray-300">|</span>
-                        <span className="text-xs font-bold text-gray-500 uppercase">{selectedProduct.brand}</span>
                       </div>
                       <h2 className="text-3xl font-black text-slate-900 leading-tight mb-4">{selectedProduct.name}</h2>
                       <p className="text-4xl font-black text-blue-600 mb-6">${selectedProduct.price}</p>
-
                       <div className="bg-slate-50 rounded-2xl p-5 space-y-3 border border-slate-100">
                         <p className="text-sm text-slate-600 leading-relaxed italic">"{selectedProduct.description || 'Sin descripción disponible'}"</p>
-                        <div className="pt-3 border-t border-slate-200 grid grid-cols-2 gap-4 text-xs">
-                          <p><span className="text-slate-400 font-medium">Vendio por:</span> <br /> <strong className="text-slate-700">{selectedProduct.vendedor?.storeName}</strong></p>
-                          <p><span className="text-slate-400 font-medium">Disponibles:</span> <br /> <strong className="text-slate-700">{selectedProduct.stock} Unidades</strong></p>
-                        </div>
                       </div>
                     </div>
 
@@ -332,15 +358,11 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
 
                 <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
                   <div className="bg-slate-50/50 rounded-3xl p-8 border border-slate-100">
-                    <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
-                      Experiencias de Clientes
-                    </h3>
+                    <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">Experiencias de Clientes</h3>
                     <ProductReviews productId={selectedProduct._id} />
                   </div>
                   <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-                    <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
-                      Consultas sobre el Producto
-                    </h3>
+                    <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">Consultas sobre el Producto</h3>
                     <ProductQuestions productId={selectedProduct._id} />
                   </div>
                 </div>

@@ -41,6 +41,12 @@ export default function Orders() {
   const ordersPerPage = 6;
   const [proofFile, setProofFile] = useState(null);
   const [uploadingProof, setUploadingProof] = useState(false);
+  //***Reportar vendedor */
+  const [showReportModal, setShowReportModal] = useState(false);
+const [reportReason, setReportReason] = useState("");
+const [reportDescription, setReportDescription] = useState("");
+const [sendingReport, setSendingReport] = useState(false);
+
 
   const token = localStorage.getItem("token");
 
@@ -83,6 +89,36 @@ export default function Orders() {
       fetchOrders();
     } catch (error) { alert("Error al subir el archivo."); } finally { setUploadingProof(false); }
   };
+  //** funcion reportar vendedor */
+  const submitReport = async () => {
+  if (!reportReason) {
+    alert("Selecciona un motivo");
+    return;
+  }
+
+  try {
+    setSendingReport(true);
+    await api.post(
+      `/report/seller/${selectedOrder.products[0].seller}`,
+      {
+        reason: reportReason,
+        description: reportDescription,
+        orderId: selectedOrder._id
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    alert("Reporte enviado correctamente");
+    setShowReportModal(false);
+    setReportReason("");
+    setReportDescription("");
+  } catch (error) {
+    alert(error.response?.data?.message || "Error al enviar reporte");
+  } finally {
+    setSendingReport(false);
+  }
+};
+
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const currentOrders = orders.slice(indexOfLastOrder - ordersPerPage, indexOfLastOrder);
@@ -251,6 +287,26 @@ export default function Orders() {
                            <ReviewForm orderId={selectedOrder._id} productId={item.product?._id} sellerId={item.seller} onSuccess={fetchOrders} />
                         </div>
                       )}
+                      {selectedOrder.status === "delivered" && (
+  <section className="bg-rose-50 border border-rose-200 rounded-2xl p-5 flex items-center justify-between">
+    <div>
+      <p className="text-[11px] font-black uppercase text-rose-700">
+        ¿Tuviste un problema?
+      </p>
+      <p className="text-[10px] text-rose-600 font-medium">
+        Reporta solo si hubo un inconveniente real con este pedido.
+      </p>
+    </div>
+
+    <button
+      onClick={() => setShowReportModal(true)}
+      className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow"
+    >
+      Reportar
+    </button>
+  </section>
+)}
+
                     </div>
                   ))}
                 </div>
@@ -336,8 +392,62 @@ export default function Orders() {
               )}
             </div>
           </div>
+          
         </div>
+        
+        
       )}
+      {showReportModal && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[80] p-4">
+    <div className="bg-white rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+      
+      <h3 className="font-black text-sm uppercase text-slate-800">
+        Reportar Vendedor
+      </h3>
+
+      <select
+        value={reportReason}
+        onChange={(e) => setReportReason(e.target.value)}
+        className="w-full border rounded-xl p-3 text-sm"
+      >
+        <option value="">Selecciona un motivo</option>
+        <option value="producto_no_entregado">Producto no entregado</option>
+        <option value="producto_falso">Producto falso</option>
+        <option value="cobro_fraude">Cobro fraudulento</option>
+        <option value="comunicacion_falsa">Comunicación falsa</option>
+        <option value="otro">Otro</option>
+      </select>
+
+      <textarea
+        rows={3}
+        value={reportDescription}
+        onChange={(e) => setReportDescription(e.target.value)}
+        className="w-full border rounded-xl p-3 text-sm"
+        placeholder="Describe brevemente el problema (opcional)"
+      />
+
+      <p className="text-[10px] text-slate-400 font-medium">
+        ⚠️ Los reportes falsos pueden causar sanciones.
+      </p>
+
+      <div className="flex justify-end gap-3 pt-2">
+        <button
+          onClick={() => setShowReportModal(false)}
+          className="px-4 py-2 text-sm font-bold text-slate-500"
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={submitReport}
+          disabled={sendingReport}
+          className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-black disabled:opacity-50"
+        >
+          {sendingReport ? "Enviando..." : "Enviar reporte"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
