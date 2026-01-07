@@ -29,6 +29,14 @@ export default function CrearProductos() {
   const [identityFiles, setIdentityFiles] = useState({ idDocument: null, selfie: null });
   const [idPreviews, setIdPreviews] = useState({ idDocument: null, selfie: null });
 
+ // --- ESTADOS CARGA MASIVA ---
+const [excelFile, setExcelFile] = useState(null);
+const [zipFile, setZipFile] = useState(null);
+const [bulkLoading, setBulkLoading] = useState(false);
+const [bulkMessage, setBulkMessage] = useState("");
+const [bulkError, setBulkError] = useState(false);
+
+
   /* ================== FETCH TIPOS ================== */
   const fetchTipos = async () => {
     try {
@@ -67,6 +75,44 @@ export default function CrearProductos() {
       setMessage("");
     }
   };
+/* ================== HANDLERS CARGA MASIVA ================== */
+const handleExcelChange = (e) => {
+  setExcelFile(e.target.files[0]);
+};
+
+const handleZipChange = (e) => {
+  setZipFile(e.target.files[0]);
+};
+
+const handleBulkUpload = async () => {
+  if (!excelFile || !zipFile) {
+    setBulkError(true);
+    setBulkMessage("❌ Debes subir el Excel y el ZIP de imágenes");
+    return;
+  }
+
+  setBulkLoading(true);
+  setBulkError(false);
+  setBulkMessage("");
+
+  try {
+    const formData = new FormData();
+    formData.append("excel", excelFile);
+    formData.append("images", zipFile);
+
+    await api.post("/seller/productos/import", formData);
+
+    setBulkMessage("✅ Productos cargados correctamente desde Excel");
+    setExcelFile(null);
+    setZipFile(null);
+  } catch (err) {
+    console.error(err);
+    setBulkError(true);
+    setBulkMessage("❌ Error en la carga masiva");
+  } finally {
+    setBulkLoading(false);
+  }
+};
 
   const removeImage = (index) => {
     // Eliminar archivo del estado
@@ -347,6 +393,61 @@ export default function CrearProductos() {
           </button>
         </form>
       </div>
+      {/* ================== CARGA MASIVA DESDE EXCEL ================== */}
+<div className="mb-10 bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm">
+  <h3 className="text-lg font-bold mb-4 text-gray-800">
+    Carga Masiva de Productos (Excel)
+  </h3>
+
+  {bulkMessage && (
+    <div className={`mb-4 p-3 rounded-lg text-sm font-semibold ${
+      bulkError
+        ? "bg-red-50 text-red-700 border border-red-200"
+        : "bg-green-50 text-green-700 border border-green-200"
+    }`}>
+      {bulkMessage}
+    </div>
+  )}
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div>
+      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+        Archivo Excel
+      </label>
+      <input
+        type="file"
+        accept=".xlsx,.xls"
+        onChange={handleExcelChange}
+        className="w-full text-sm"
+      />
+    </div>
+
+    <div>
+      <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+        Imágenes (ZIP o RAR)
+      </label>
+      <input
+        type="file"
+        accept=".zip,.rar"
+        onChange={handleZipChange}
+        className="w-full text-sm"
+      />
+    </div>
+  </div>
+
+  <button
+    onClick={handleBulkUpload}
+    disabled={bulkLoading}
+    className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold transition-all disabled:bg-gray-400"
+  >
+    {bulkLoading ? "Procesando Excel..." : "Subir Productos desde Excel"}
+  </button>
+
+  <p className="text-xs text-gray-500 mt-3">
+    📌 El Excel debe coincidir con los nombres de las imágenes dentro del ZIP.
+  </p>
+</div>
+
     </div>
   );
 }

@@ -6,7 +6,16 @@ import ProductosTienda from "../ProductosTienda.jsx";
 import {
   ShieldCheck, Truck, Headphones, CreditCard, ChevronRight,
   Laptop, Shirt, Hammer, ShoppingCart, Home as HomeIcon, Heart,
-  ArrowRight
+  ArrowRight,
+  LayoutGrid,
+  Brush,
+  Utensils,
+  Baby,
+  Dog,
+  Car,
+  FileText, 
+  Palette,
+  Briefcase
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -16,19 +25,27 @@ export default function HomeComprador() {
 
   // Definición de categorías con los mismos estilos del Home original
   const categorias = [
-    { name: "Todas", icon: <ShoppingCart size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
-    { name: "Tecnología", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },
-    { name: "Moda", icon: <Shirt size={28} />, gradient: "from-pink-50 to-pink-200", text: "text-pink-600" },
-    { name: "Ferretería", icon: <Hammer size={28} />, gradient: "from-orange-50 to-orange-200", text: "text-orange-600" },
-    { name: "Supermercado", icon: <ShoppingCart size={28} />, gradient: "from-green-50 to-green-200", text: "text-green-600" },
-    { name: "Hogar", icon: <HomeIcon size={28} />, gradient: "from-purple-50 to-purple-200", text: "text-purple-600" },
-    { name: "Belleza", icon: <Heart size={28} />, gradient: "from-red-50 to-red-200", text: "text-red-600" },
+    { name: "Todas", icon: <LayoutGrid size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
+    { name: "Tecnología y Electrónica", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },
+    { name: "Moda y Accesorios", icon: <Shirt size={28} />, gradient: "from-pink-50 to-pink-200", text: "text-pink-600" },
+    { name: "Hogar y Muebles", icon: <HomeIcon size={28} />, gradient: "from-purple-50 to-purple-200", text: "text-purple-600" },
+    { name: "Salud y Belleza", icon: <Brush size={28} />, gradient: "from-rose-50 to-rose-200", text: "text-rose-600" },
+    { name: "Deportes y Fitness", icon: <Heart size={28} />, gradient: "from-red-50 to-red-200", text: "text-red-600" },
+    { name: "Supermercado y Alimentos", icon: <ShoppingCart size={28} />, gradient: "from-green-50 to-green-200", text: "text-green-600" },
+    { name: "Restaurantes y Gastronomía", icon: <Utensils size={28} />, gradient: "from-orange-50 to-orange-200", text: "text-orange-600" },
+    { name: "Juguetes y Bebés", icon: <Baby size={28} />, gradient: "from-yellow-50 to-yellow-200", text: "text-yellow-600" },
+    { name: "Mascotas", icon: <Dog size={28} />, gradient: "from-amber-50 to-amber-200", text: "text-amber-600" },
+    { name: "Ferretería y Construcción", icon: <Hammer size={28} />, gradient: "from-stone-50 to-stone-200", text: "text-stone-600" },
+    { name: "Automotriz", icon: <Car size={28} />, gradient: "from-slate-50 to-slate-200", text: "text-slate-600" },
+    { name: "Papelería y Oficina", icon: <FileText size={28} />, gradient: "from-indigo-50 to-indigo-200", text: "text-indigo-600" },
+    { name: "Arte y Artesanías", icon: <Palette size={28} />, gradient: "from-violet-50 to-violet-200", text: "text-violet-600" },
+    { name: "Servicios Profesionales", icon: <Briefcase size={28} />, gradient: "from-cyan-50 to-cyan-200", text: "text-cyan-600" },
   ];
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans">
 
-      {/* 1. HERO SECTION (Banner Principal) */}
+  {/* 1. HERO SECTION */}
       {!vendedorSeleccionado && (
         <div className="relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
           <img
@@ -43,7 +60,6 @@ export default function HomeComprador() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
               El marketplace que impulsa negocios
-
             </div>
             <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Tus tiendas.</span>
@@ -52,13 +68,12 @@ export default function HomeComprador() {
               <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
                 Explorar Tiendas <ArrowRight size={20} />
               </a>
-
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. SECCIÓN DE CATEGORÍAS */}
+      {/* 2. SECCIÓN DE CATEGORÍAS (IGUAL AL HOME ORIGINAL) */}
       {!vendedorSeleccionado && (
         <section className="mb-20">
           <div className="flex items-end justify-between mb-10 px-2">
@@ -73,15 +88,16 @@ export default function HomeComprador() {
               <button
                 key={cat.name}
                 onClick={() => setCategoriaActiva(cat.name)}
-                className={`relative flex flex-col items-center justify-center min-w-[150px] h-[170px] rounded-[3rem] transition-all duration-500 group ${categoriaActiva === cat.name
+                className={`relative flex flex-col items-center justify-center min-w-[160px] h-[180px] rounded-[3rem] transition-all duration-500 group snap-center ${
+                  categoriaActiva === cat.name
                     ? "bg-white shadow-2xl shadow-blue-200/60 border-2 border-blue-500 transform -translate-y-3"
-                    : "bg-white border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1"
-                  }`}
+                    : "bg-white border border-gray-100 hover:border-blue-200"
+                }`}
               >
                 <div className={`p-5 rounded-[2rem] mb-4 bg-gradient-to-br ${cat.gradient} ${cat.text} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                   {cat.icon}
                 </div>
-                <span className={`text-sm font-black uppercase tracking-tighter ${categoriaActiva === cat.name ? "text-blue-600" : "text-gray-500"}`}>
+                <span className="text-[10px] px-2 text-center font-black uppercase tracking-tighter leading-tight">
                   {cat.name}
                 </span>
                 {categoriaActiva === cat.name && (
@@ -103,35 +119,33 @@ export default function HomeComprador() {
         </div>
       )}
 
-      {/* 4. TIENDAS PREMIUM (Filtradas) */}
+      {/* 4. SECCIÓN DE TIENDAS PREMIUM */}
       {!vendedorSeleccionado && (
         <section id="tiendas" className="mb-24 scroll-mt-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
-                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Tiendas Destacadas</span>
+                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Exclusivo</span>
               </div>
               <h2 className="text-4xl font-black text-gray-900 leading-none">
-                {categoriaActiva === "Todas" ? "Tiendas Premium" : `${categoriaActiva} Premium`}
+                {categoriaActiva === "Todas" ? "Tiendas Destacadas" : `${categoriaActiva}`}
               </h2>
             </div>
-            {/* ENLACE AL DIRECTORIO QUE CREAMOS ANTES */}
             <Link to="/user/tienda" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-colors">
-              Ver todas las tiendas <ChevronRight size={18} />
+              Ver el directorio <ChevronRight size={18} />
             </Link>
           </div>
 
-          {/* Busca esta parte en tu HomeComprador */}
           <Tienda
             setVendedorSeleccionado={setVendedorSeleccionado}
             filtroCategoria={categoriaActiva}
-            soloPremium={true} // <--- CAMBIAR ESTO (antes decía soloAvanzados)
+            soloPremium={true} 
           />
         </section>
       )}
 
-      {/* 5. VISTA DE PRODUCTOS DE UNA TIENDA SELECCIONADA */}
+      {/* 5. PRODUCTOS DE TIENDA SELECCIONADA */}
       {vendedorSeleccionado && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <ProductosTienda
@@ -141,31 +155,15 @@ export default function HomeComprador() {
         </div>
       )}
 
-      {/* 6. PRODUCTOS DESTACADOS */}
+      {/* 6. PRODUCTOS DESTACADOS GENERALES */}
       {!vendedorSeleccionado && (
         <section id="productos" className="mb-24">
           <h2 className="text-3xl font-black text-gray-900 mb-10 px-2 flex items-center gap-4">
-            Productos Destacados <div className="h-px flex-1 bg-gray-100"></div>
+            Nuevos Productos <div className="h-px flex-1 bg-gray-100"></div>
           </h2>
           <Products />
         </section>
       )}
-
-      {/* 7. CALL TO ACTION FINAL
-      {!vendedorSeleccionado && (
-        <div className="bg-[#111827] rounded-[3.5rem] p-10 md:p-20 text-center text-white mb-24 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
-          <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-black mb-6">Tu negocio en Cúcuta merece crecer</h2>
-            <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-              Únete a nuestra plataforma y llega a miles de compradores locales hoy mismo.
-            </p>
-            <Link to="/register-vendedor" className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all inline-block shadow-2xl shadow-blue-600/40 transform hover:scale-105">
-              Registrar mi Tienda
-            </Link>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

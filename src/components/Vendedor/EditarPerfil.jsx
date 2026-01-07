@@ -15,7 +15,8 @@ export default function EditarPerfilVendedor() {
     phone: "",
     storeName: "",
     nequiValue: "", 
-    llavesValue: ""
+    llavesValue: "",
+    codEnabled: false // NUEVO: pago contraentrega
   });
 
   const [nequiQR, setNequiQR] = useState(null);
@@ -28,9 +29,9 @@ export default function EditarPerfilVendedor() {
       const res = await api.get("/vendedor/perfil");
       const data = res.data;
       
-      // Mapeo de paymentMethods desde el array del backend al estado local
       const nequiData = data.paymentMethods?.find(m => m.provider === "nequi");
       const llavesData = data.paymentMethods?.find(m => m.provider === "llaves");
+      const codData = data.paymentMethods?.find(m => m.type === "cod");
 
       setForm({
         name: data.name || "",
@@ -39,7 +40,8 @@ export default function EditarPerfilVendedor() {
         phone: data.phone || "",
         storeName: data.storeName || "",
         nequiValue: nequiData?.value || "",
-        llavesValue: llavesData?.value || ""
+        llavesValue: llavesData?.value || "",
+        codEnabled: !!codData // true si existe COD
       });
     } catch (err) {
       console.error("Error cargando perfil:", err);
@@ -53,7 +55,8 @@ export default function EditarPerfilVendedor() {
   }, []);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSubmit = async (e) => {
@@ -63,17 +66,18 @@ export default function EditarPerfilVendedor() {
     try {
       const formData = new FormData();
 
-      // 1. Datos Básicos (Coinciden con updates.name, updates.lastName, etc.)
+      // Datos Básicos
       formData.append("name", form.name);
       formData.append("lastName", form.lastName);
       formData.append("phone", form.phone);
       formData.append("storeName", form.storeName);
 
-      // 2. Datos de Pago (Coinciden con req.body["paymentMethods.nequi.value"])
+      // Métodos de pago
       formData.append("paymentMethods.nequi.value", form.nequiValue);
       formData.append("paymentMethods.llaves.value", form.llavesValue);
+      formData.append("paymentMethods.cod", form.codEnabled); // COD
 
-      // 3. Archivos QR (Coinciden con req.files.nequiQR y req.files.llavesQR)
+      // Archivos QR
       if (nequiQR) formData.append("nequiQR", nequiQR);
       if (llavesQR) formData.append("llavesQR", llavesQR);
 
@@ -120,12 +124,11 @@ export default function EditarPerfilVendedor() {
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-12">
-          
           {/* SECCIÓN 1: IDENTIDAD */}
           <section>
             <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black">1</div>
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Identidad del Vendedor</h3>
+              <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black">1</div>
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Identidad del Vendedor</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <InputGroup label="Nombre" name="name" icon={<User size={18}/>} value={form.name} onChange={handleChange} />
@@ -138,8 +141,8 @@ export default function EditarPerfilVendedor() {
           {/* SECCIÓN 2: PAGOS */}
           <section>
             <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center font-black">2</div>
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Métodos de Pago (QR & Celular)</h3>
+              <div className="w-10 h-10 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center font-black">2</div>
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Métodos de Pago (QR & Celular)</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -151,13 +154,27 @@ export default function EditarPerfilVendedor() {
                 <FileInput label={nequiQR ? "QR Seleccionado" : "Cargar QR Nequi"} fileSelected={!!nequiQR} onChange={(file) => setNequiQR(file)} />
               </div>
 
-              {/* Card Llaves (Daviplata/Otros) */}
+              {/* Card Llaves */}
               <div className="bg-slate-50 p-8 rounded-[3rem] border border-slate-200/60 space-y-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-20"><QrCode size={40}/></div>
                 <p className="font-black text-blue-700 text-xs uppercase tracking-widest">Proveedor: Llaves</p>
                 <InputGroup label="Valor de la Llave (Celular/ID)" name="llavesValue" value={form.llavesValue} onChange={handleChange} placeholder="Ej: @NEQUI3107654321 o @DAVI " />
                 <FileInput label={llavesQR ? "QR Seleccionado" : "Cargar QR Llaves"} fileSelected={!!llavesQR} onChange={(file) => setLlavesQR(file)} />
               </div>
+            </div>
+
+            {/* PAGO CONTRAENTREGA */}
+            <div className="mt-6">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  name="codEnabled" 
+                  checked={form.codEnabled} 
+                  onChange={handleChange} 
+                  className="w-5 h-5 rounded border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm font-bold text-slate-700">Activar Pago Contraentrega (COD)</span>
+              </label>
             </div>
           </section>
 
@@ -185,7 +202,6 @@ export default function EditarPerfilVendedor() {
 }
 
 /* --- SUB-COMPONENTES --- */
-
 function InputGroup({ label, name, type = "text", icon, value, onChange, placeholder }) {
   return (
     <div className="space-y-2">

@@ -148,11 +148,15 @@ export default function Carrito() {
     }
   };
 
-  const total = carrito.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+ const total = carrito.reduce((acc, item) => {
+  const price = item.hasDiscount ? item.finalPrice : item.product.price;
+  return acc + price * item.quantity;
+}, 0);
+
 
   const currentSellerPayment = sellerPayments.find(m => {
-    if (paymentMethod === "nequi") return m.provider === "nequi";
-    if (paymentMethod === "daviplata") return m.provider === "llaves";
+    if (paymentMethod === "nequi") return m.provider === "nequi" && m.active;
+    if (paymentMethod === "daviplata") return m.provider === "llaves" && m.active;
     return false;
   });
 
@@ -194,9 +198,21 @@ export default function Carrito() {
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className="font-black text-slate-800 text-lg mb-1">{item.product.name}</h3>
                     <p className="text-slate-400 font-bold text-xs uppercase mb-3 tracking-tighter">Cantidad: {item.quantity}</p>
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-black">
-                      ${(item.product.price * item.quantity).toLocaleString('es-CO')}
-                    </span>
+                    {item.hasDiscount ? (
+  <div className="flex flex-col gap-1">
+    <span className="text-xs line-through text-slate-400 font-bold">
+      ${(item.product.price * item.quantity).toLocaleString('es-CO')}
+    </span>
+    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-black">
+      ${(item.finalPrice * item.quantity).toLocaleString('es-CO')}
+    </span>
+  </div>
+) : (
+  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-black">
+    ${(item.product.price * item.quantity).toLocaleString('es-CO')}
+  </span>
+)}
+
                   </div>
                   <button
                     onClick={() => eliminarProducto(item.product._id)}
@@ -279,45 +295,83 @@ export default function Carrito() {
               )}
 
               {/* 3. PAGO */}
-              <div className="space-y-4">
-                <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span> 3. Pago y Recaudo
-                </h4>
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                >
-                  <option value="nequi">Nequi</option>
-                  <option value="daviplata">Daviplata (Llaves)</option>
-                  {deliveryMethod === "pickup" && <option value="cash_on_delivery">Pago en Tienda (Efectivo)</option>}
-                </select>
+             <div className="space-y-4">
+  <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest flex items-center gap-2">
+    <span className="w-2 h-2 bg-blue-500 rounded-full"></span> 3. Pago y Recaudo
+  </h4>
+  
+  <select
+    value={paymentMethod}
+    onChange={(e) => setPaymentMethod(e.target.value)}
+    className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all"
+  >
+    {/* OPCIÓN DINÁMICA SEGÚN MÉTODO DE ENTREGA */}
+    {deliveryMethod === "delivery" ? (
+      <option value="cash_on_delivery">Contraentrega (Efectivo al recibir)</option>
+    ) : (
+      <option value="cash_on_delivery">Pago en Tienda (Efectivo)</option>
+    )}
 
-                {paymentMethod !== "cash_on_delivery" && (
-                  <div className="bg-blue-50/50 border-2 border-blue-100 rounded-[2rem] p-6">
-                    {currentSellerPayment ? (
-                      <div className="space-y-4">
-                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex justify-between items-center">
-                          <div>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Cuenta / Llave</p>
-                            <p className="text-xl font-black text-blue-700">{currentSellerPayment.value}</p>
-                          </div>
-                          <button 
-                            onClick={() => { navigator.clipboard.writeText(currentSellerPayment.value); alert("Copiado"); }}
-                            className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
-                          >
-                            <Copy size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-2">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase italic">Método no registrado por el vendedor.</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+    {/* OPCIONES DIGITALES: Solo aparecen si el vendedor las tiene activas */}
+    {sellerPayments.some(m => m.provider === "nequi" && m.active) && (
+      <option value="nequi">Transferencia Nequi</option>
+    )}
+    
+    {sellerPayments.some(m => m.provider === "llaves" && m.active) && (
+      <option value="daviplata">Transferencia Breb-B</option>
+    )}
+  </select>
+
+  {/* VISUALIZACIÓN DE DATOS DE TRANSFERENCIA */}
+  {paymentMethod !== "cash_on_delivery" ? (
+    <div className="bg-blue-50/50 border-2 border-blue-100 rounded-[2rem] p-6 animate-in zoom-in-95">
+      {currentSellerPayment ? (
+        <div className="space-y-4">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex justify-between items-center">
+            <div>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                Cuenta / Llave
+              </p>
+              <p className="text-xl font-black text-blue-700">
+                {currentSellerPayment.value}
+              </p>
+            </div>
+            <button 
+              onClick={() => { 
+                navigator.clipboard.writeText(currentSellerPayment.value); 
+                alert("Copiado al portapapeles"); 
+              }}
+              className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
+            >
+              <Copy size={16} />
+            </button>
+          </div>
+          <p className="text-[10px] text-blue-600 font-bold italic text-center">
+            Realiza la transferencia y guarda el comprobante.
+          </p>
+        </div>
+      ) : (
+        <div className="text-center py-2">
+          <p className="text-[10px] font-bold text-slate-400 uppercase italic">
+            Método no registrado por el vendedor.
+          </p>
+        </div>
+      )}
+    </div>
+  ) : (
+    /* INFO BOX PARA EFECTIVO (Diferente texto según entrega) */
+    <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-3 items-center">
+      <div className="bg-white p-2 rounded-lg shadow-sm">
+        <Check className="text-green-600" size={18} />
+      </div>
+      <p className="text-[11px] font-bold text-slate-600 leading-tight">
+        {deliveryMethod === "delivery" 
+          ? "Pagarás el total en efectivo cuando el domiciliario llegue a tu ubicación."
+          : "Pagarás el total directamente en el establecimiento al recoger tu pedido."}
+      </p>
+    </div>
+  )}
+</div>
 
               {/* TOTAL Y CONFIRMACIÓN */}
               <div className="pt-6 border-t-2 border-slate-50 space-y-4">

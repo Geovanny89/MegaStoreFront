@@ -121,6 +121,11 @@ export default function Sidebar({ open, setOpen }) {
               icon={<ShieldCheck size={18} className="text-orange-500" />}
             />
           )}
+          <SidebarItem
+  to="/banners"
+  label="Mis Banners"
+  icon={<LayoutDashboard size={18} />} // Cambia el ícono si quieres uno más adecuado
+/>
         </nav>
       </aside>
     </>

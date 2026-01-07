@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Products from "../components/Products/products.jsx";
 import Tienda from "./Tienda.jsx";
 import ProductosTienda from "./ProductosTienda.jsx";
@@ -21,7 +21,10 @@ import { Link } from "react-router-dom";
 export default function Home() {
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
   const [categoriaActiva, setCategoriaActiva] = useState("Todas");
-
+  useEffect(() => {
+    sessionStorage.setItem("entryOrigin", "global");
+  }, []);
+ 
   const categorias = [
     { name: "Todas", icon: <LayoutGrid size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
     { name: "Tecnología y Electrónica", icon: <Laptop size={28} />, gradient: "from-blue-50 to-blue-200", text: "text-blue-600" },

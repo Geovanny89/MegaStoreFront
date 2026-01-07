@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
-import { 
-  ShoppingCart, LogIn, User, LogOut, Heart, Bell, ChevronDown, Store, Search 
+import {
+  ShoppingCart, LogIn, User, LogOut, Heart, Bell, ChevronDown, Store, Search
 } from "lucide-react";
 import api from "../../../api/axios";
 
@@ -28,32 +28,32 @@ export default function NavbarTienda({ storeName }) {
 
   const goToMirror = (path) => {
     setOpenUser(false);
-    if (slug) navigate(`/tienda/${slug}/${path}`);
+    if (slug) navigate(`/${slug}/${path}`);
     else navigate(`/user/${path}`);
   };
 
-const fetchCounts = async () => {
-  if (!token) return;
+  const fetchCounts = async () => {
+    if (!token) return;
 
-  try {
-    const [cartRes, notifRes] = await Promise.all([
-      api.get("/user/carAll"),
-      api.get("/notifications/seller")
-    ]);
+    try {
+      const [cartRes, notifRes] = await Promise.all([
+        api.get("/user/carAll"),
+        api.get("/notifications/seller")
+      ]);
 
-    setCartCount(cartRes.data.items?.length || 0);
+      setCartCount(cartRes.data.items?.length || 0);
 
-    const unread = Array.isArray(notifRes.data)
-      ? notifRes.data.filter(n => !n.isRead).length
-      : 0;
+      const unread = Array.isArray(notifRes.data)
+        ? notifRes.data.filter(n => !n.isRead).length
+        : 0;
 
-    setNotificationCount(unread);
-  } catch (error) {
-    console.error("Error obteniendo contadores:", error);
-    setCartCount(0);
-    setNotificationCount(0);
-  }
-};
+      setNotificationCount(unread);
+    } catch (error) {
+      console.error("Error obteniendo contadores:", error);
+      setCartCount(0);
+      setNotificationCount(0);
+    }
+  };
 
 
 
@@ -83,23 +83,15 @@ const fetchCounts = async () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${
-      scrolled 
-        ? "bg-white/80 backdrop-blur-lg shadow-lg py-2" 
+    <nav className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 ${scrolled
+        ? "bg-white/80 backdrop-blur-lg shadow-lg py-2"
         : "bg-white py-4"
-    }`}>
+      }`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        
+
         {/* IZQUIERDA: Identidad */}
         <div className="flex items-center gap-6">
-          <Link to="/homeUser" className="group flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 transition-transform group-hover:scale-110">
-              <span className="font-black text-xl">M</span>
-            </div>
-            <span className="font-black text-2xl tracking-tighter text-slate-900 hidden md:block">
-              MARKET
-            </span>
-          </Link>
+        
 
           <div className="h-8 w-[1px] bg-slate-200 hidden sm:block"></div>
 
@@ -116,14 +108,14 @@ const fetchCounts = async () => {
 
         {/* CENTRO: Barra de búsqueda minimalista (opcional) */}
         <div className="hidden md:flex flex-1 max-w-md mx-8">
-           <div className="relative w-full group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-              <input 
-                type="text" 
-                placeholder="Buscar en esta tienda..." 
-                className="w-full bg-slate-100 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
-              />
-           </div>
+          <div className="relative w-full group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar en esta tienda..."
+              className="w-full bg-slate-100 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
+            />
+          </div>
         </div>
 
         {/* DERECHA: Navegación de Usuario */}
@@ -132,16 +124,16 @@ const fetchCounts = async () => {
             <>
               {/* Botones de Acción */}
               <div className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
-                <button 
-                  onClick={() => goToMirror("favoritos")} 
+                <button
+                  onClick={() => goToMirror("favoritos")}
                   className="p-2 text-slate-500 hover:text-red-500 hover:bg-white rounded-xl transition-all"
                   title="Favoritos"
                 >
                   <Heart size={20} />
                 </button>
 
-                <button 
-                  onClick={() => goToMirror("carrito")} 
+                <button
+                  onClick={() => goToMirror("carrito")}
                   className="p-2 text-slate-500 hover:text-blue-600 hover:bg-white rounded-xl transition-all relative"
                 >
                   <ShoppingCart size={20} />
@@ -152,7 +144,7 @@ const fetchCounts = async () => {
                   )}
                 </button>
 
-                <button 
+                <button
                   onClick={() => goToMirror("notificaciones")}
                   className="p-2 text-slate-500 hover:text-amber-500 hover:bg-white rounded-xl transition-all relative"
                 >
@@ -165,13 +157,13 @@ const fetchCounts = async () => {
 
               {/* Perfil de Usuario */}
               <div className="relative ml-2" ref={userRef}>
-                <button 
+                <button
                   onClick={() => setOpenUser(!openUser)}
                   className="flex items-center gap-2 pl-1 pr-3 py-1 bg-white border border-slate-200 rounded-full hover:shadow-md transition-all active:scale-95 shadow-sm"
                 >
                   <div className="relative">
-                    <img 
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=2563eb&color=fff&bold=true`} 
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=2563eb&color=fff&bold=true`}
                       className="w-8 h-8 rounded-full border border-slate-100 shadow-sm"
                       alt="avatar"
                     />
@@ -187,12 +179,15 @@ const fetchCounts = async () => {
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cuenta</p>
                       <p className="font-bold text-slate-900 truncate">{userName}</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <button onClick={() => goToMirror("perfil")} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
+                      <button
+                        onClick={() => navigate(`/${slug}/perfil`)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors"
+                      >
                         <User size={18} /> Mi Perfil
                       </button>
-                      <button onClick={() => navigate(`/tienda/${slug}/ordenes`)} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
+                      <button onClick={() => navigate(`/${slug}/ordenes`)} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
                         <ShoppingCart size={18} /> Mis Pedidos
                       </button>
                     </div>
@@ -207,7 +202,7 @@ const fetchCounts = async () => {
               </div>
             </>
           ) : (
-            <button 
+            <button
               onClick={() => navigate("/login", { state: { from: location.pathname } })}
               className="bg-slate-900 text-white px-6 py-2.5 rounded-2xl font-black text-sm hover:bg-blue-600 shadow-lg shadow-slate-200 transition-all active:scale-95"
             >

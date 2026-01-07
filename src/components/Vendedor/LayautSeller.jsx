@@ -18,7 +18,7 @@ export default function LayoutSeller() {
     const fetchSeller = async () => {
       try {
         const res = await api.get("/seller/me");
-        console.log("soy el vendedor ",res.data)
+        console.log("soy el vendedor ", res.data);
         setSeller(res.data);
       } catch (error) {
         console.error("Error obteniendo seller:", error);
@@ -47,8 +47,17 @@ export default function LayoutSeller() {
   }
 
   /* ===============================
+      💳 DETECTAR MÉTODOS DE PAGO
+  =============================== */
+ const hasCOD = Array.isArray(seller?.seller?.paymentMethods)
+  ? seller.seller.paymentMethods.some(
+      (m) => m.type === "cod" && m.active !== false
+    )
+  : false;
+
+
+  /* ===============================
       🟢 TRIAL / ACTIVO → DASHBOARD
-      (TIENE PRIORIDAD)
   =============================== */
   if (
     seller?.sellerStatus === "pending_identity" ||
@@ -79,6 +88,26 @@ export default function LayoutSeller() {
                 </div>
               )}
 
+              {/* 💳 AVISO MÉTODOS DE PAGO */}
+              {!hasCOD &&
+  ["pending_identity", "trial", "active"].includes(
+    seller?.sellerStatus
+  ) && (
+    <div className="mb-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-semibold text-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <span>
+        💳 No olvides agregar el método de pago contraentrega (COD)
+        para poder recibir pedidos.
+      </span>
+
+      <a
+        href="/editarVendedor"
+        className="shrink-0 px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-black hover:bg-amber-700 transition"
+      >
+        Agregar COD
+      </a>
+    </div>
+)}
+
               <Outlet context={{ seller }} />
             </div>
           </main>
@@ -86,7 +115,6 @@ export default function LayoutSeller() {
       </div>
     );
   }
-
 
   /* ===============================
       🟦 VALIDANDO IDENTIDAD
@@ -100,9 +128,7 @@ export default function LayoutSeller() {
   =============================== */
   if (seller?.sellerStatus === "rejected_identity") {
     return (
-      <SellerRejected
-        rejectionReason={seller?.rejectionReason}
-      />
+      <SellerRejected rejectionReason={seller?.rejectionReason} />
     );
   }
 
@@ -169,4 +195,3 @@ export default function LayoutSeller() {
     </div>
   );
 }
-

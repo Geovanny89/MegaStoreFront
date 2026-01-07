@@ -55,7 +55,7 @@ export default function DashboardSeller() {
   };
 
   const handleCopy = () => {
-    const storeUrl = `${window.location.origin}/tienda/${data?.seller?.slug}`;
+    const storeUrl = `${window.location.origin}/${data?.seller?.slug}`;
     navigator.clipboard.writeText(storeUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -146,7 +146,7 @@ export default function DashboardSeller() {
 
             <div className="flex items-center bg-slate-50 border border-slate-200 rounded-2xl p-1 w-full lg:max-w-md min-w-0">
               <code className="flex-1 px-3 text-blue-600 font-bold text-[11px] md:text-sm break-all">
-                {window.location.origin}/tienda/{data?.seller?.slug}
+                {window.location.origin}/{data?.seller?.slug}
               </code>
               <button
                 onClick={handleCopy}

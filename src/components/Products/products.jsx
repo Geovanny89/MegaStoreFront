@@ -42,10 +42,10 @@ export default function Products() {
     const fetchProductos = async () => {
       try {
         const res = await api.get("/user/allProducts");
-        
+
         // ALEATORIZACIÓN: Mezclamos todos los productos recibidos
         const productosMezclados = shuffleArray(res.data);
-        
+
         setProductos(productosMezclados);
       } catch (error) {
         console.log(error);
@@ -151,7 +151,6 @@ export default function Products() {
                         className="h-full object-contain p-2"
                       />
                     </div>
-
                     {/* FAVORITO */}
                     <button
                       onClick={() => handleToggleFavorite(p)}
@@ -266,7 +265,7 @@ export default function Products() {
       {modalOpen && selectedProduct && (
         <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
-            
+
             {/* HEADER */}
             <div className="flex items-center justify-between px-5 py-3 border-b bg-gray-50/50">
               <h3 className="text-sm font-bold text-gray-800 truncate pr-6">
@@ -284,7 +283,7 @@ export default function Products() {
             <div className="overflow-y-auto overflow-x-hidden">
               <div className="p-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  
+
                   {/* IMÁGENES */}
                   <div className="space-y-3">
                     <div className="bg-gray-50 border border-gray-100 rounded-xl h-48 flex items-center justify-center">
@@ -301,9 +300,8 @@ export default function Products() {
                           key={i}
                           src={img.url}
                           onClick={() => setSelectedImg(img.url)}
-                          className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all ${
-                            selectedImg === img.url ? "border-blue-500" : "border-transparent opacity-70"
-                          }`}
+                          className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all ${selectedImg === img.url ? "border-blue-500" : "border-transparent opacity-70"
+                            }`}
                         />
                       ))}
                     </div>
@@ -312,20 +310,29 @@ export default function Products() {
                   {/* INFO PRODUCTO */}
                   <div className="flex flex-col">
                     <div className="mb-2">
+
                       <h2 className="text-lg font-black text-gray-900 leading-tight">
                         {selectedProduct.name}
                       </h2>
                       <div className="flex items-center gap-1 mt-1 scale-90 origin-left">
                         {selectedProduct.rating?.count > 0 ? (
-                          <RatingStars
-                            value={selectedProduct.rating.average}
-                            count={selectedProduct.rating.count}
-                            size="text-[10px]"
-                          />
+                          <>
+                            <span className="text-[10px] font-semibold text-gray-700">
+                              Calificación
+                            </span>
+                            <RatingStars
+                              value={selectedProduct.rating.average}
+                              count={selectedProduct.rating.count}
+                              size="text-[10px]"
+                            />
+                          </>
                         ) : (
-                          <span className="text-[10px] text-gray-400">Sin calificaciones</span>
+                          <span className="text-[10px] text-blue-600 font-semibold">
+                            Compra y sé el primero en calificar
+                          </span>
                         )}
                       </div>
+
                     </div>
 
                     <p className="text-xl font-black text-blue-600 mb-3">
@@ -334,8 +341,31 @@ export default function Products() {
 
                     <div className="space-y-1.5 text-xs text-gray-600 mb-5">
                       <p>Marca: <span className="font-semibold">{selectedProduct.brand}</span></p>
+                      {selectedProduct.description && (
+                        <div className="mt-3 text-xs text-gray-700 leading-relaxed">
+                          <p className="font-bold text-gray-900 mb-1">Descripción</p>
+                          <p>{selectedProduct.description}</p>
+                        </div>
+                      )}
+
                       <p className="flex items-center gap-1">
                         Vendido por: <span className="font-bold uppercase text-blue-700">{selectedProduct?.vendedor?.storeName}</span>
+                        {selectedProduct.size?.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-xs font-bold text-gray-900 mb-2">Tallas disponibles</p>
+                            <div className="flex flex-wrap gap-2">
+                              {selectedProduct.size.map((talla, i) => (
+                                <span
+                                  key={i}
+                                  className="px-3 py-1 text-xs font-semibold border rounded-lg bg-gray-50"
+                                >
+                                  {talla}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                       </p>
                       <p>Stock: <span className="font-semibold text-green-600">{selectedProduct.stock}</span></p>
                     </div>

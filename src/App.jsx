@@ -56,6 +56,7 @@ import VerificationGallery from "./components/Admin/VerificationGallery";
 import ValidarIdentidad from "./components/Admin/ValidarIdentidad";
 import Reports from "./components/Admin/Reports";
 import UploadIdentityDocuments from "./components/Vendedor/ValidarIdentidad/UploadIdentityDocuments";
+import BannerManager from "./components/Vendedor/banners/BannerManager";
 
 
 export default function AppRouter() {
@@ -88,7 +89,13 @@ export default function AppRouter() {
           <Route path="favoritos" element={<Favoritos />} />
           <Route path="ordenes" element={<Orders />} />
           <Route path="perfil" element={<Perfil />} />
+          <Route path="perfil/editar" element={<EditarPerfilUser />} />
           <Route path="notificaciones" element={<Notificacion />} />
+          <Route path="sobre-nosotros" element={<AboutUs />} />
+          <Route path="privacidad" element={<Privacidad />} />
+          <Route path="terminos-condiciones" element={<Terminos />} />
+          <Route path="contacto" element={<Contacto />} />
+
 
 
         </Route>
@@ -115,6 +122,7 @@ export default function AppRouter() {
           <Route path="/admin/sellers/pagos" element={<ValidarPagos />} />
           <Route path="/admin/sellers/verificar-identidad" element={<ValidarIdentidad />} />
           <Route path="/admin/reportes" element={<Reports />} />
+        
 
 
 
@@ -144,6 +152,7 @@ export default function AppRouter() {
           <Route path="/user/terminos-condiciones" element={<Terminos />} />
           <Route path="/user/privacidad" element={<Privacidad />} />
           <Route path="/user/contacto" element={<Contacto />} />
+         
 
 
 
@@ -164,6 +173,7 @@ export default function AppRouter() {
           <Route path="/questions" element={<SellerQuestions />} />
           <Route path="/pedidos/:orderId/messages" element={<SellerMessages />} />
           <Route path="/verificar/documento" element={<UploadIdentityDocuments />} />
+             <Route path="/banners" element={<BannerManager />} />
 
 
 

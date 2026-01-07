@@ -59,27 +59,31 @@ export default function FooterStore() {
           <div>
             <h4 className="font-black text-gray-900 mb-6 text-xs uppercase tracking-[0.2em]">Ayuda</h4>
             <ul className="space-y-4">
-              <li>
-                <Link to={`${pathPrefix}/sobre-nosotros`} className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors">
-                  Sobre Nosotros
-                </Link>
-              </li>
-              <li>
-                <Link to={`${pathPrefix}/privacidad`} className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors">
-                  Privacidad
-                </Link>
-              </li>
-              <li>
-                <Link to={`${pathPrefix}/terminos-condiciones`} className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors">
-                  Términos y Condiciones
-                </Link>
-              </li>
-              <li>
-                <Link to={`${pathPrefix}/contacto`} className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors flex items-center gap-2">
-                  <Mail size={14} /> Soporte Técnico
-                </Link>
-              </li>
-            </ul>
+  <li>
+    <Link to="sobre-nosotros" className="text-gray-500 hover:text-blue-600 text-sm font-medium">
+      Sobre Nosotros
+    </Link>
+  </li>
+
+  <li>
+    <Link to="privacidad" className="text-gray-500 hover:text-blue-600 text-sm font-medium">
+      Privacidad
+    </Link>
+  </li>
+
+  <li>
+    <Link to="terminos-condiciones" className="text-gray-500 hover:text-blue-600 text-sm font-medium">
+      Términos y Condiciones
+    </Link>
+  </li>
+
+  <li>
+    <Link to="contacto" className="text-gray-500 hover:text-blue-600 text-sm font-medium flex items-center gap-2">
+      <Mail size={14} /> Soporte Técnico
+    </Link>
+  </li>
+</ul>
+
           </div>
 
           {/* UBICACIÓN */}
