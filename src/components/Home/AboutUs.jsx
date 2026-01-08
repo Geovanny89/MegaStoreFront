@@ -42,7 +42,7 @@ export default function AboutUs() {
           <span className="text-blue-600 italic">para tu negocio.</span>
         </h1>
         <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed px-4 font-medium text-center">
-          Potenciamos el COMERCIO LOCAL conectando directamente a vendedores y compradores. Sin intermediarios, facilitamos un espacio para que acuerden sus ventas con total libertad a través de nuestro CHAT INTERNO.
+          Potenciamos el COMERCIO conectando directamente a vendedores y compradores. Sin intermediarios, facilitamos un espacio para que acuerden sus ventas con total libertad a través de nuestro CHAT INTERNO.
         </p>
       </section>
 

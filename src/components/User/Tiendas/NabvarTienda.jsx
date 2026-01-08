@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import {
-  ShoppingCart, LogIn, User, LogOut, Heart, Bell, ChevronDown, Store, Search
+  ShoppingCart, LogIn, User, LogOut, Heart, Bell, ChevronDown, Store, Search,
+  ArrowLeft
 } from "lucide-react";
 import api from "../../../api/axios";
 
-export default function NavbarTienda({ storeName }) {
+export default function NavbarTienda({ storeName,fromMarketplace  }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { slug } = useParams();
 
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("userName") || "Usuario";
+  const [search, setSearch] = useState("");
 
   const [cartCount, setCartCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
@@ -91,7 +93,16 @@ export default function NavbarTienda({ storeName }) {
 
         {/* IZQUIERDA: Identidad */}
         <div className="flex items-center gap-6">
-        
+        {fromMarketplace && (
+  <button
+    onClick={() => window.history.length > 1 ? window.history.back() : navigate("/")}
+    className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-blue-600"
+  >
+    <ArrowLeft size={16} />
+    Volver al marketplace
+  </button>
+)}
+
 
           <div className="h-8 w-[1px] bg-slate-200 hidden sm:block"></div>
 
@@ -110,11 +121,19 @@ export default function NavbarTienda({ storeName }) {
         <div className="hidden md:flex flex-1 max-w-md mx-8">
           <div className="relative w-full group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
-            <input
-              type="text"
-              placeholder="Buscar en esta tienda..."
-              className="w-full bg-slate-100 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
-            />
+           <input
+  type="text"
+  placeholder="Buscar en esta tienda..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      navigate(`/${slug}?q=${encodeURIComponent(search)}`);
+    }
+  }}
+  className="w-full bg-slate-100 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
+/>
+
           </div>
         </div>
 

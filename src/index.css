@@ -1,9 +1,17 @@
 @import "tailwindcss";
 
-html, body, #root { 
-  overflow-x: hidden; 
+/* Configuración para Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+/* Esto asegura que TODO el fondo cambie, no solo los componentes */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  @apply transition-colors duration-300;
 }
 
 body {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  /* Fondo por defecto para modo claro y oscuro */
+  @apply bg-white text-gray-900 dark:bg-[#0b1120] dark:text-gray-100;
 }

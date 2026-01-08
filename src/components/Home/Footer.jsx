@@ -136,7 +136,7 @@ export default function Footer() {
             © {currentYear} MARKETPLACE · TODOS LOS DERECHOS RESERVADOS.
           </p>
           <p className="text-gray-400 text-sm font-medium italic">
-            Hecho para el comercio local de Cúcuta.
+            Hecho para el comercio .
           </p>
         </div>
       </div>

@@ -4,7 +4,8 @@ import Footer from "../Home/Footer.jsx";
 
 export default function Layout() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#0b1120] transition-colors">
+
       
       {/* NAVBAR GLOBAL */}
       <Navbar />

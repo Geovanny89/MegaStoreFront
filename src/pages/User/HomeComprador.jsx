@@ -110,14 +110,33 @@ export default function HomeComprador() {
       )}
 
       {/* 3. BARRA DE CONFIANZA */}
-      {!vendedorSeleccionado && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
-          <TrustItem icon={<ShieldCheck size={28} className="text-blue-600" />} title="Compra Segura" desc="Protección garantizada" />
-          <TrustItem icon={<Truck size={28} className="text-blue-600" />} title="Envíos Locales" desc="Entregas el mismo día" />
-          <TrustItem icon={<CreditCard size={28} className="text-blue-600" />} title="Pagos Fáciles" desc="Múltiples métodos" />
-          <TrustItem icon={<Headphones size={28} className="text-blue-600" />} title="Soporte 24/7" desc="Siempre disponibles" />
-        </div>
-      )}
+    {!vendedorSeleccionado && (
+  <section className="mb-16 px-2">
+    {/* Contenedor con scroll horizontal en móvil, grid normal en PC */}
+    <div className="flex overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible">
+      <TrustItem 
+        icon={<ShieldCheck size={24} className="text-blue-600" />} 
+        title="Compra Segura" 
+        desc="Garantía total" 
+      />
+      <TrustItem 
+        icon={<Truck size={24} className="text-blue-600" />} 
+        title="Envíos Locales" 
+        desc="Entrega rápida" 
+      />
+      <TrustItem 
+        icon={<CreditCard size={24} className="text-blue-600" />} 
+        title="Pagos Fáciles" 
+        desc="Todo medio de pago" 
+      />
+      <TrustItem 
+        icon={<Headphones size={24} className="text-blue-600" />} 
+        title="Soporte 24/7" 
+        desc="Atención inmediata" 
+      />
+    </div>
+  </section>
+)}
 
       {/* 4. SECCIÓN DE TIENDAS PREMIUM */}
       {!vendedorSeleccionado && (
@@ -141,6 +160,8 @@ export default function HomeComprador() {
             setVendedorSeleccionado={setVendedorSeleccionado}
             filtroCategoria={categoriaActiva}
             soloPremium={true} 
+            esCarrusel={true}
+            limite={10}
           />
         </section>
       )}

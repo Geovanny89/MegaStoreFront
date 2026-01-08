@@ -89,7 +89,7 @@ export default function FooterUser() {
             <h4 className="font-black text-gray-900 mb-6 text-xs uppercase tracking-[0.2em]">Ubicación</h4>
             <div className="flex items-start gap-3 text-gray-500 text-sm leading-relaxed">
               <MapPin size={18} className="text-blue-600 shrink-0" />
-              <p>Cúcuta, Norte de Santander<br />Colombia</p>
+              <p>Colombia</p>
             </div>
             <p className="text-blue-600 font-bold text-lg pt-4">+57 (300) 000-0000</p>
           </div>

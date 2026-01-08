@@ -353,7 +353,7 @@
 //   );
 // }
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation, Outlet, useNavigate } from "react-router-dom";
+import { useParams, useLocation, Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../api/axios";
 // import ProductosTienda from "../ProductosTienda";
 import NavbarTienda from "../../components/User/Tiendas/NabvarTienda";
@@ -370,6 +370,9 @@ export default function Storefront() {
   const [storeData, setStoreData] = useState(null);
   const [banners, setBanners] = useState([]); // ✅ NUEVO
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+const query = searchParams.get("q") || "";
+
 
   const isSubRoute = location.pathname !== `/${slug}`;
   const path = location.pathname;
@@ -453,11 +456,15 @@ export default function Storefront() {
       </div>
     );
   }
-
+const fromMarketplace = location.state?.from === "marketplace";
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ===================== NAVBAR ===================== */}
-      <NavbarTienda store={storeData.seller} />
+      <NavbarTienda
+  store={storeData.seller}
+  fromMarketplace={fromMarketplace}
+/>
+
 
       {/* ===================== HERO ===================== */}
       <div className="relative pt-20">
@@ -532,7 +539,10 @@ export default function Storefront() {
         {/* PRODUCTOS SOLO EN HOME */}
         {!isSubRoute && (
           <div className="bg-white rounded-[3rem] shadow-xl border border-slate-100 p-8 mt-10">
-            <Productosvendedor vendedorId={storeData.seller._id} />
+            <Productosvendedor 
+            vendedorId={storeData.seller._id} 
+            search={query}
+            />
           </div>
         )}
       </main>

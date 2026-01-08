@@ -5,12 +5,15 @@ import { useFavorites } from "../context/FavoriteContext";
 import ProductQuestions from "../components/Questions/ProductQuestions";
 import RatingStars from "../components/Ratings/RatingStars";
 import ProductReviews from "../components/User/Calificaciones/ProductReviews";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductosTienda({ vendedorId, volver, user }) {
   const [vendedor, setVendedor] = useState(null);
   const [productos, setProductos] = useState([]);
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [tiendaVencida, setTiendaVencida] = useState(false); // Estado para manejar trial vencido
+  const navigate = useNavigate();
+
 
   // Estados de Carga y UI
   const [loading, setLoading] = useState(true);
@@ -73,7 +76,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    ;
   };
 
   const handleToggleFavorite = async (product) => {
@@ -135,26 +138,50 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
 
   // 1. Pantalla de Carga
   if (loading) return (
-    <div className="flex flex-col justify-center items-center h-screen bg-gray-50 text-gray-500 font-medium">
-      <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+    <div className="flex flex-col justify-center items-center h-screen
+                  bg-gray-50 dark:bg-[#020617]
+                  text-gray-500 dark:text-gray-400
+                  font-medium">
+      <div className="w-12 h-12 border-4
+                    border-blue-600 border-t-transparent
+                    rounded-full animate-spin mb-4"></div>
       Cargando tienda...
     </div>
   );
 
+
   // 2. Pantalla de Tienda Inactiva (Trial Vencido)
   if (tiendaVencida) return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen
+                  bg-white dark:bg-[#020617]
+                  flex flex-col items-center justify-center p-6">
+
       <div className="max-w-md text-center space-y-6">
-        <div className="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+
+        <div className="w-24 h-24
+                      bg-amber-50 dark:bg-amber-900/30
+                      text-amber-500 dark:text-amber-400
+                      rounded-full flex items-center justify-center
+                      mx-auto shadow-inner">
           <Store size={48} />
         </div>
-        <h1 className="text-3xl font-black text-gray-900">{vendedor?.storeName || "Tienda Inactiva"}</h1>
-        <p className="text-gray-500 font-medium leading-relaxed">
-          Esta tienda no cuenta con una suscripción activa en este momento. Sus productos estarán disponibles nuevamente una vez se renueve el plan.
+
+        <h1 className="text-3xl font-black
+                     text-gray-900 dark:text-gray-100">
+          {vendedor?.storeName || "Tienda Inactiva"}
+        </h1>
+
+        <p className="text-gray-500 dark:text-gray-400
+                    font-medium leading-relaxed">
+          Esta tienda no cuenta con una suscripción activa en este momento.
+          Sus productos estarán disponibles nuevamente una vez se renueve el plan.
         </p>
+
         <button
           onClick={volver}
-          className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg"
+          className="w-full bg-blue-600 text-white
+                   py-4 rounded-2xl font-bold
+                   hover:bg-blue-700 transition-all shadow-lg"
         >
           Explorar otras tiendas
         </button>
@@ -162,31 +189,65 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
     </div>
   );
 
+
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-12">
+    <div className="min-h-screen
+                bg-gray-50/50 dark:bg-[#020617]
+                pb-12">
+
       {/* HEADER DE TIENDA */}
-      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
+      <div className="
+  bg-white dark:bg-[#020617]
+  border-b border-gray-200 dark:border-gray-800
+  sticky top-0 z-10
+  shadow-sm dark:shadow-none
+">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500 font-medium">Filtrar:</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+              Filtrar:
+            </span>
+
             <select
-              className="bg-gray-50 border border-gray-200 text-sm rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="
+          bg-gray-50 dark:bg-gray-900
+          border border-gray-200 dark:border-gray-700
+          text-sm text-gray-800 dark:text-gray-200
+          rounded-xl px-4 py-2 outline-none
+          focus:ring-2 focus:ring-blue-500/20
+        "
               value={categoriaFiltro}
-              onChange={(e) => { setCategoriaFiltro(e.target.value); setCurrentPage(1); }}
+              onChange={(e) => {
+                setCategoriaFiltro(e.target.value);
+                setCurrentPage(1);
+              }}
             >
               <option value="">Todas las categorías</option>
               {categorias.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
-
           </div>
+
           {/* BOTÓN IR A LA TIENDA */}
           {vendedor?.slug && (
             <button
-              onClick={() => window.location.href = `/${vendedor.slug}`}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-md transition-all"
+              onClick={() =>
+                navigate(`/${vendedor.slug}`, {
+                  state: { from: "marketplace" }
+                })
+              }
+              className="
+          flex items-center gap-2
+          bg-blue-600 hover:bg-blue-700
+          text-white
+          px-5 py-2 rounded-xl
+          text-sm font-bold
+          shadow-md shadow-blue-200/50
+          dark:shadow-none
+          transition-all
+        "
             >
               <Store size={16} />
               Ir a la tienda
@@ -195,7 +256,14 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 mt-8">
+
+      <div className="
+  text-center py-20
+  bg-white dark:bg-[#020617]
+  rounded-3xl
+  border border-dashed border-gray-200 dark:border-gray-800
+  text-gray-400 dark:text-gray-500
+">
         {productosFiltrados.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed text-gray-400">
             No hay productos disponibles por ahora.
@@ -204,7 +272,17 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {productosActuales.map((p) => (
-                <div key={p._id} className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <div key={p._id} className="
+    group
+    bg-white dark:bg-gray-900
+    rounded-2xl
+    shadow-sm dark:shadow-none
+    border border-gray-100 dark:border-gray-800
+    hover:shadow-xl hover:-translate-y-1
+    transition-all duration-300
+    overflow-hidden
+  "
+                >
                   <div className="relative aspect-square bg-gray-50 flex justify-center items-center overflow-hidden">
                     {p.hasDiscount && (
                       <span className="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-black px-3 py-1 rounded-full shadow-lg z-10">
@@ -217,25 +295,51 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                     <img
                       src={p.image?.[0]?.url || p.image?.[1]?.url}
                       alt={p.name}
-                      className="h-full w-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+                      className="
+    h-full w-full
+    object-contain
+    p-4
+    transition-transform duration-500
+    group-hover:scale-110
+    dark:brightness-95
+  "
                     />
+
                     <button
                       onClick={() => handleToggleFavorite(p)}
                       disabled={loadingId === p._id}
-                      className={`absolute top-3 right-3 rounded-full p-2.5 shadow-md transition-all 
-                        ${favorites.some((f) => f._id === p._id) ? "bg-red-500 text-white scale-110" : "bg-white/90 backdrop-blur text-gray-600 hover:text-red-500"}`}
+                      className={`
+    absolute top-3 right-3
+    rounded-full p-2.5
+    shadow-md transition-all
+    backdrop-blur
+    ${favorites.some((f) => f._id === p._id)
+                          ? "bg-red-500 text-white scale-110 shadow-red-300/40"
+                          : `
+          bg-white/90 dark:bg-gray-900/80
+          text-gray-600 dark:text-gray-300
+          hover:text-red-500
+        `
+                        }
+  `}
                     >
+
                       <Heart className="h-5 w-5" fill={favorites.some((f) => f._id === p._id) ? "white" : "transparent"} />
                     </button>
                   </div>
+                  <div className="p-5 dark:bg-[#020617]">
+                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
+                      {p.tipo?.name || "Producto"}
+                    </span>
 
-                  <div className="p-5">
-                    <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{p.tipo?.name || 'Producto'}</span>
-                    <h2 className="text-base font-bold text-gray-800 line-clamp-1 mt-1">{p.name}</h2>
+                    <h2 className="text-base font-bold text-gray-800 dark:text-gray-100 line-clamp-1 mt-1">
+                      {p.name}
+                    </h2>
+
                     <div className="flex items-center justify-between mt-4">
                       {p.hasDiscount ? (
                         <div className="flex flex-col">
-                          <span className="text-sm line-through text-gray-400">
+                          <span className="text-sm line-through text-gray-400 dark:text-gray-500">
                             ${p.price}
                           </span>
                           <span className="text-xl font-black text-red-600">
@@ -243,77 +347,123 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                           </span>
                         </div>
                       ) : (
-                        <p className="text-xl font-black text-slate-900">
+                        <p className="text-xl font-black text-slate-900 dark:text-white">
                           ${p.price}
                         </p>
                       )}
 
-                      <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${p.stock > 0 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}>
-                        {p.stock > 0 ? `STOCK: ${p.stock}` : 'SIN STOCK'}
+                      <span
+                        className={`text-[10px] px-2 py-1 rounded-full font-bold
+        ${p.stock > 0
+                            ? "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+                          }
+      `}
+                      >
+                        {p.stock > 0 ? `STOCK: ${p.stock}` : "SIN STOCK"}
                       </span>
                     </div>
+
                     <div className="mt-3">
-                      <p className="text-blue-600 font-bold text-xl">${p.price}</p>
                       <div className="mt-1 flex items-center gap-1">
                         {p.shippingPolicy?.trim().toLowerCase() === "free" ? (
-                          <span className="flex items-center gap-1 text-[11px] font-bold text-green-600">
+                          <span className="flex items-center gap-1 text-[11px] font-bold text-green-600 dark:text-green-400">
                             <Truck size={12} /> Envío Gratis
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500 italic">
-                            <Truck size={12} className="text-gray-400" /> Envío a coordinar
+                          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500 dark:text-gray-400 italic">
+                            <Truck size={12} /> Envío a coordinar
                           </span>
                         )}
-
                       </div>
                     </div>
+
                     <div className="mt-5 flex gap-2">
                       <button
                         onClick={() => verProducto(p._id)}
                         disabled={loadingProduct === p._id}
-                        className="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+                        className="
+        flex-1
+        bg-slate-100 dark:bg-gray-800
+        text-slate-700 dark:text-gray-200
+        py-2.5 rounded-xl
+        text-xs font-bold
+        hover:bg-slate-200 dark:hover:bg-gray-700
+        transition-colors
+        flex items-center justify-center gap-2
+      "
                       >
                         {loadingProduct === p._id ? "..." : <><Info size={14} /> Detalles</>}
                       </button>
+
                       <button
                         onClick={() => agregarAlCarrito(p._id, 1)}
                         disabled={loadingId === p._id || p.stock <= 0}
-                        className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2
-                          ${loadingId === p._id ? "bg-blue-300" : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100"}`}
+                        className={`
+        flex-1 py-2.5 rounded-xl text-xs font-bold
+        text-white
+        transition-all
+        flex items-center justify-center gap-2
+        ${loadingId === p._id
+                            ? "bg-blue-300 dark:bg-blue-500/50"
+                            : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 dark:shadow-none"
+                          }
+      `}
                       >
                         {loadingId === p._id ? "..." : <><ShoppingCart size={14} /> Comprar</>}
                       </button>
                     </div>
                   </div>
+
                 </div>
               ))}
             </div>
 
             {/* PAGINACIÓN */}
             {totalPages > 1 && (
-              <div className="flex justify-center mt-12 gap-2">
+              <div className="flex flex-wrap justify-center items-center mt-14 gap-3 px-4">
+                {/* BOTÓN ANTERIOR */}
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl border bg-white disabled:opacity-50 font-bold text-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-gray-200 bg-white text-gray-700 font-bold text-sm transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-sm"
                 >
-                  Anterior
+                  <span className="text-lg">←</span>
+                  <span className="hidden sm:inline">Anterior</span>
                 </button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handlePageChange(i + 1)}
-                    className={`w-10 h-10 rounded-xl border text-sm font-bold transition-all ${currentPage === i + 1 ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "bg-white hover:bg-gray-50 text-gray-600"}`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+
+                {/* NÚMEROS DE PÁGINA */}
+                <div className="flex flex-wrap justify-center gap-2">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pageNum = i + 1;
+                    const isActive = currentPage === pageNum;
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`
+              w-10 h-10 sm:w-11 sm:h-11 rounded-2xl border font-bold text-sm transition-all duration-300
+              ${isActive
+                            ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200 scale-110 z-10"
+                            : "bg-white text-gray-500 border-gray-100 hover:border-blue-300 hover:text-blue-600 shadow-sm"
+                          }
+            `}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* BOTÓN SIGUIENTE */}
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl border bg-white disabled:opacity-50 font-bold text-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-gray-200 bg-white text-gray-700 font-bold text-sm transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-sm"
                 >
-                  Siguiente
+                  <span className="hidden sm:inline">Siguiente</span>
+                  <span className="text-lg">→</span>
                 </button>
               </div>
             )}

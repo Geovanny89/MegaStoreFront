@@ -52,7 +52,7 @@ import Privacidad from "./components/Home/Privacidad";
 import Contacto from "./components/Home/Contacto";
 import TodasTiendas from "./components/Home/TodasTiendas";
 import Planes from "./components/Planes/Planes";
-import VerificationGallery from "./components/Admin/VerificationGallery";
+// import VerificationGallery from "./components/Admin/VerificationGallery";
 import ValidarIdentidad from "./components/Admin/ValidarIdentidad";
 import Reports from "./components/Admin/Reports";
 import UploadIdentityDocuments from "./components/Vendedor/ValidarIdentidad/UploadIdentityDocuments";
