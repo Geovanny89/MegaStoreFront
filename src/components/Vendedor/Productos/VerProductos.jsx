@@ -25,6 +25,8 @@ export default function VerProductos() {
     sise: "",
     stock: "",
     description: "",
+    shippingPolicy: "coordinar",
+  shippingNote: "",
   });
 
   const [tipos, setTipos] = useState([]);
@@ -99,6 +101,9 @@ export default function VerProductos() {
       sise: producto.sise?.join(", ") || "",
       stock: producto.stock,
       description: producto.description,
+      shippingPolicy: producto.shippingPolicy || "coordinar",
+    shippingNote: producto.shippingNote || "",
+
     });
     setExistingImages(producto.image || []);
     setPreview([]);
@@ -371,6 +376,40 @@ export default function VerProductos() {
                         <input type="file" multiple onChange={handleImageChange} className="hidden" />
                       </label>
                     </div>
+                    {/* ================= ENVÍO ================= */}
+<div className="space-y-5">
+  <div>
+    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+      Política de Envío
+    </label>
+    <select
+      name="shippingPolicy"
+      value={form.shippingPolicy}
+      onChange={handleFormChange}
+      className="w-full bg-gray-50 rounded-2xl px-5 py-3.5 font-semibold outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="coordinar">Coordinar con el vendedor</option>
+      <option value="free">Envío gratis</option>
+    </select>
+  </div>
+
+  {form.shippingPolicy === "free" && (
+    <div>
+      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">
+        Nota de envío
+      </label>
+      <input
+        type="text"
+        name="shippingNote"
+        value={form.shippingNote}
+        onChange={handleFormChange}
+        placeholder="Ej: Envío gratis por compras mayores a $200.000"
+        className="w-full bg-gray-50 rounded-2xl px-5 py-3.5 font-semibold outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  )}
+</div>
+
                   </div>
                 </div>
               </div>

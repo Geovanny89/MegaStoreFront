@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { Heart, ChevronLeft, ShoppingCart, Info, Store } from "lucide-react";
+import { Heart, ChevronLeft, ShoppingCart, Info, Store, Truck, MessageCircle, ShieldCheck } from "lucide-react";
 import { useFavorites } from "../context/FavoriteContext";
 import ProductQuestions from "../components/Questions/ProductQuestions";
 import RatingStars from "../components/Ratings/RatingStars";
@@ -121,7 +121,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
     try {
       setLoadingProduct(id);
       const res = await api.get(`/product/${id}`);
-      console.log("producto",res.data)
+      console.log("producto", res.data)
       setSelectedProduct(res.data);
       setSelectedImg(res.data.image?.[0]?.url || "");
       setCantidad(1);
@@ -252,7 +252,21 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                         {p.stock > 0 ? `STOCK: ${p.stock}` : 'SIN STOCK'}
                       </span>
                     </div>
-                      
+                    <div className="mt-3">
+                      <p className="text-blue-600 font-bold text-xl">${p.price}</p>
+                      <div className="mt-1 flex items-center gap-1">
+                        {p.shippingPolicy?.trim().toLowerCase() === "free" ? (
+                          <span className="flex items-center gap-1 text-[11px] font-bold text-green-600">
+                            <Truck size={12} /> Envío Gratis
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500 italic">
+                            <Truck size={12} className="text-gray-400" /> Envío a coordinar
+                          </span>
+                        )}
+
+                      </div>
+                    </div>
                     <div className="mt-5 flex gap-2">
                       <button
                         onClick={() => verProducto(p._id)}
@@ -308,159 +322,192 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       </div>
 
       {/* MODAL DETALLE */}
-     {/* MODAL DETALLE */}
-{modalOpen && selectedProduct && (
-  <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
+      {/* MODAL DETALLE */}
+      {modalOpen && selectedProduct && (
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
 
-      {/* HEADER COMPACTO */}
-      <div className="flex items-center justify-between px-5 py-3 border-b bg-gray-50/50">
-        <div className="flex flex-col">
-          <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Detalle del Producto</span>
-          <h3 className="text-sm font-bold text-gray-800 truncate max-w-[400px]">
-            {selectedProduct.name}
-          </h3>
-        </div>
-        <button
-          onClick={() => setModalOpen(false)}
-          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
-        >
-          <span className="text-xl">✕</span>
-        </button>
-      </div>
-
-      {/* CUERPO CON SCROLL */}
-      <div className="overflow-y-auto overflow-x-hidden custom-scrollbar">
-        <div className="p-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-
-            {/* SECCIÓN IMÁGENES */}
-            <div className="space-y-3">
-              <div className="bg-gray-50 border border-gray-100 rounded-xl h-48 flex items-center justify-center overflow-hidden">
-                <img
-                  src={selectedImg}
-                  alt={selectedProduct.name}
-                  className="object-contain max-h-full p-2 hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {selectedProduct.image?.map((imgObj, i) => (
-                  <img
-                    key={i}
-                    src={imgObj.url}
-                    onClick={() => setSelectedImg(imgObj.url)}
-                    className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all 
-                    ${selectedImg === imgObj.url ? "border-blue-500 ring-2 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* SECCIÓN INFO PRODUCTO */}
-            <div className="flex flex-col justify-between">
-              <div>
-                <h2 className="text-lg font-black text-gray-900 leading-tight mb-1">
+            {/* HEADER COMPACTO */}
+            <div className="flex items-center justify-between px-5 py-3 border-b bg-gray-50/50">
+              <div className="flex flex-col">
+                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Detalle del Producto</span>
+                <h3 className="text-sm font-bold text-gray-800 truncate max-w-[400px]">
                   {selectedProduct.name}
-                </h2>
-                
-                {/* --- SECCIÓN DE RATINGS ACTUALIZADA --- */}
-                <div className="flex items-center gap-1 mb-2 scale-90 origin-left">
-                  {selectedProduct.rating?.count > 0 ? (
-                    <>
-                      <span className="text-[10px] font-semibold text-gray-700">Calificación</span>
-                      <RatingStars
-                        value={selectedProduct.rating.average}
-                        count={selectedProduct.rating.count}
-                        size="text-[10px]"
-                      />
-                    </>
-                  ) : (
-                    <span className="text-[10px] text-blue-600 font-semibold italic">
-                      Compra y sé el primero en calificar
-                    </span>
-                  )}
-                </div>
-                {/* -------------------------------------- */}
-
-                {selectedProduct.hasDiscount ? (
-                  <div className="mb-3">
-                    <p className="text-sm line-through text-gray-400">${selectedProduct.price}</p>
-                    <p className="text-2xl font-black text-red-600">${selectedProduct.finalPrice}</p>
-                  </div>
-                ) : (
-                  <p className="text-xl font-black text-blue-600 mb-3">${selectedProduct.price}</p>
-                )}
-
-                <div className="space-y-1.5 text-xs text-gray-600 mb-4">
-                  <p>Marca: <span className="font-semibold">{selectedProduct.brand || 'N/A'}</span></p>
-                  <p>Vendido por: <span className="font-bold uppercase text-blue-700">{vendedor?.storeName}</span></p>
-                  <p>Stock: <span className={`font-semibold ${selectedProduct.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {selectedProduct.stock} unidades
-                  </span></p>
-
-                  {selectedProduct.description && (
-                    <div className="mt-3 bg-slate-50 p-3 rounded-lg border border-slate-100 text-gray-700">
-                      <p className="font-bold text-gray-900 mb-0.5">Descripción</p>
-                      <p className="italic leading-relaxed line-clamp-3">"{selectedProduct.description}"</p>
-                    </div>
-                  )}
-                </div>
+                </h3>
               </div>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
+              >
+                <span className="text-xl">✕</span>
+              </button>
+            </div>
 
-              {/* BOTONES DE ACCIÓN */}
-              <div className="mt-auto space-y-2">
-                <div className="flex items-center justify-between bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">Cantidad</span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                      className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50 active:scale-90 transition-transform"
-                    >
-                      −
-                    </button>
-                    <span className="text-xs font-bold w-4 text-center">{cantidad}</span>
-                    <button
-                      onClick={() => setCantidad(cantidad + 1)}
-                      className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50 active:scale-90 transition-transform"
-                    >
-                      +
-                    </button>
+            {/* CUERPO CON SCROLL */}
+            <div className="overflow-y-auto overflow-x-hidden custom-scrollbar">
+              <div className="p-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                  {/* SECCIÓN IMÁGENES */}
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 border border-gray-100 rounded-xl h-48 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={selectedImg}
+                        alt={selectedProduct.name}
+                        className="object-contain max-h-full p-2 hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                      {selectedProduct.image?.map((imgObj, i) => (
+                        <img
+                          key={i}
+                          src={imgObj.url}
+                          onClick={() => setSelectedImg(imgObj.url)}
+                          className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all 
+                    ${selectedImg === imgObj.url ? "border-blue-500 ring-2 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECCIÓN INFO PRODUCTO */}
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <h2 className="text-lg font-black text-gray-900 leading-tight mb-1">
+                        {selectedProduct.name}
+                      </h2>
+
+                      {/* --- SECCIÓN DE RATINGS ACTUALIZADA --- */}
+                      <div className="flex items-center gap-1 mb-2 scale-90 origin-left">
+                        {selectedProduct.rating?.count > 0 ? (
+                          <>
+                            <span className="text-[10px] font-semibold text-gray-700">Calificación</span>
+                            <RatingStars
+                              value={selectedProduct.rating.average}
+                              count={selectedProduct.rating.count}
+                              size="text-[10px]"
+                            />
+                          </>
+                        ) : (
+                          <span className="text-[10px] text-blue-600 font-semibold italic">
+                            Compra y sé el primero en calificar
+                          </span>
+                        )}
+                      </div>
+                      {/* -------------------------------------- */}
+
+                      {selectedProduct.hasDiscount && selectedProduct.discount ? (
+                        <div className="mb-3">
+                          {/* Precio original */}
+                          <p className="text-sm line-through text-gray-400">${selectedProduct.price}</p>
+
+                          {/* Precio con descuento */}
+                          <p className="text-2xl font-black text-red-600">${selectedProduct.finalPrice}</p>
+
+                          {/* Mensaje de vigencia del descuento */}
+                          <p className="text-[11px] text-green-700 font-semibold mt-1">
+                            Oferta válida del {new Date(selectedProduct.discount.startDate).toLocaleDateString()} al {new Date(selectedProduct.discount.endDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-xl font-black text-blue-600 mb-3">${selectedProduct.price}</p>
+                      )}
+
+                      <div className="space-y-1.5 text-xs text-gray-600 mb-4">
+                        <p>Marca: <span className="font-semibold">{selectedProduct.brand || 'N/A'}</span></p>
+                        <p>Vendido por: <span className="font-bold uppercase text-blue-700">{vendedor?.storeName}</span></p>
+                        <p>Stock: <span className={`font-semibold ${selectedProduct.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {selectedProduct.stock} unidades
+                        </span></p>
+                        <div className="mb-4">
+                          <p className="text-2xl font-black text-blue-600">${selectedProduct.price}</p>
+                          <div className="mt-2">
+                            {selectedProduct.shippingPolicy === "free" ? (
+                              <div className="flex items-center gap-1.5 text-green-700 bg-green-50 px-2 py-1 rounded-md w-fit border border-green-100">
+                                <ShieldCheck size={14} />
+                                <span className="text-xs font-bold uppercase">Envío Gratis</span>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-2 py-1 rounded-md w-fit border border-amber-100">
+                                  <MessageCircle size={14} />
+                                  <span className="text-xs font-bold uppercase">Envío a coordinar</span>
+                                </div>
+                                {selectedProduct.shippingNote && (
+                                  <div className="bg-gray-50 border-l-2 border-amber-400 p-2 mt-1">
+                                    <p className="text-[11px] text-gray-600 leading-tight">
+                                      <span className="font-bold text-gray-800">Nota del vendedor: </span>
+                                      "{selectedProduct.shippingNote}"
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {selectedProduct.description && (
+                          <div className="mt-3 bg-slate-50 p-3 rounded-lg border border-slate-100 text-gray-700">
+                            <p className="font-bold text-gray-900 mb-0.5">Descripción</p>
+                            <p className="italic leading-relaxed line-clamp-3">"{selectedProduct.description}"</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* BOTONES DE ACCIÓN */}
+                    <div className="mt-auto space-y-2">
+                      <div className="flex items-center justify-between bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Cantidad</span>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                            className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50 active:scale-90 transition-transform"
+                          >
+                            −
+                          </button>
+                          <span className="text-xs font-bold w-4 text-center">{cantidad}</span>
+                          <button
+                            onClick={() => setCantidad(cantidad + 1)}
+                            className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50 active:scale-90 transition-transform"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
+                        disabled={selectedProduct.stock <= 0}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.97] disabled:bg-gray-300"
+                      >
+                        {selectedProduct.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
-                  disabled={selectedProduct.stock <= 0}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.97] disabled:bg-gray-300"
-                >
-                  {selectedProduct.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}
-                </button>
+                {/* SECCIONES EXTRA */}
+                <div className="border-t border-gray-100 pt-5 space-y-6">
+                  <section>
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">Experiencias de Clientes</h4>
+                    <div className="scale-95 origin-top-left bg-gray-50/50 rounded-xl p-4 border border-gray-50">
+                      <ProductReviews productId={selectedProduct._id} />
+                    </div>
+                  </section>
+
+                  <section>
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">Consultas</h4>
+                    <div className="scale-95 origin-top-left px-2">
+                      <ProductQuestions productId={selectedProduct._id} />
+                    </div>
+                  </section>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* SECCIONES EXTRA */}
-          <div className="border-t border-gray-100 pt-5 space-y-6">
-            <section>
-              <h4 className="text-sm font-bold text-gray-900 mb-3">Experiencias de Clientes</h4>
-              <div className="scale-95 origin-top-left bg-gray-50/50 rounded-xl p-4 border border-gray-50">
-                <ProductReviews productId={selectedProduct._id} />
-              </div>
-            </section>
-
-            <section>
-              <h4 className="text-sm font-bold text-gray-900 mb-3">Consultas</h4>
-              <div className="scale-95 origin-top-left px-2">
-                <ProductQuestions productId={selectedProduct._id} />
-              </div>
-            </section>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 }

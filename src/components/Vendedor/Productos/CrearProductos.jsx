@@ -15,6 +15,8 @@ export default function CrearProductos() {
     sise: "",
     stock: "",
     description: "",
+    shippingPolicy: "coordinar", // 👈 NUEVO
+  shippingNote: ""             // 👈 NUEVO
   });
 
   const [tipos, setTipos] = useState([]);
@@ -341,6 +343,47 @@ const handleBulkUpload = async () => {
             <label className="block text-xs font-bold text-gray-400 mb-1 uppercase">Descripción del Producto</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Describe las características principales..." className="w-full border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all"/>
           </div>
+{/* ================= ENVÍO ================= */}
+<div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+  <label className="block text-xs font-bold text-gray-400 mb-3 uppercase">
+    Política de Envío
+  </label>
+
+  <div className="flex gap-6 mb-3">
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="radio"
+        name="shippingPolicy"
+        value="free"
+        checked={form.shippingPolicy === "free"}
+        onChange={handleChange}
+        className="accent-green-600"
+      />
+      <span className="font-medium">🚚 Envío gratis</span>
+    </label>
+
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="radio"
+        name="shippingPolicy"
+        value="coordinar"
+        checked={form.shippingPolicy === "coordinar"}
+        onChange={handleChange}
+        className="accent-green-600"
+      />
+      <span className="font-medium">📦 Coordinar con el vendedor</span>
+    </label>
+  </div>
+
+  <textarea
+    name="shippingNote"
+    value={form.shippingNote}
+    onChange={handleChange}
+    rows={2}
+    placeholder="Opcional: Ej. Envío gratis por promoción, depende de la ciudad, etc."
+    className="w-full border border-gray-200 px-3 py-2 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm"
+  />
+</div>
 
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1 uppercase">Fotos del Producto ({images.length}/5)</label>

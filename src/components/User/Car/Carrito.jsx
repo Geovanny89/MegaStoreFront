@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../api/axios";
 import {
   Trash2, MapPin, Store, ShoppingBag,
-  ArrowRight, PlusCircle, X, Check, Info, QrCode, Copy, ShieldAlert
+  ArrowRight, PlusCircle, X, Check, Info, QrCode, Copy, ShieldAlert,
+  Truck
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -148,10 +149,10 @@ export default function Carrito() {
     }
   };
 
- const total = carrito.reduce((acc, item) => {
-  const price = item.hasDiscount ? item.finalPrice : item.product.price;
-  return acc + price * item.quantity;
-}, 0);
+  const total = carrito.reduce((acc, item) => {
+    const price = item.hasDiscount ? item.finalPrice : item.product.price;
+    return acc + price * item.quantity;
+  }, 0);
 
 
   const currentSellerPayment = sellerPayments.find(m => {
@@ -159,6 +160,11 @@ export default function Carrito() {
     if (paymentMethod === "daviplata") return m.provider === "llaves" && m.active;
     return false;
   });
+  const shippingPolicyCarrito = carrito.every(
+    item => item.product.shippingPolicy === "free"
+  )
+    ? "free"
+    : "coordinar";
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] py-12 px-4 md:px-6">
@@ -199,19 +205,19 @@ export default function Carrito() {
                     <h3 className="font-black text-slate-800 text-lg mb-1">{item.product.name}</h3>
                     <p className="text-slate-400 font-bold text-xs uppercase mb-3 tracking-tighter">Cantidad: {item.quantity}</p>
                     {item.hasDiscount ? (
-  <div className="flex flex-col gap-1">
-    <span className="text-xs line-through text-slate-400 font-bold">
-      ${(item.product.price * item.quantity).toLocaleString('es-CO')}
-    </span>
-    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-black">
-      ${(item.finalPrice * item.quantity).toLocaleString('es-CO')}
-    </span>
-  </div>
-) : (
-  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-black">
-    ${(item.product.price * item.quantity).toLocaleString('es-CO')}
-  </span>
-)}
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs line-through text-slate-400 font-bold">
+                          ${(item.product.price * item.quantity).toLocaleString('es-CO')}
+                        </span>
+                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-black">
+                          ${(item.finalPrice * item.quantity).toLocaleString('es-CO')}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-black">
+                        ${(item.product.price * item.quantity).toLocaleString('es-CO')}
+                      </span>
+                    )}
 
                   </div>
                   <button
@@ -250,6 +256,32 @@ export default function Carrito() {
                   </button>
                 </div>
               </div>
+              {/* INFO DE ENVÍO SEGÚN POLÍTICA DEL CARRITO */}
+              {deliveryMethod === "delivery" && (
+                <div
+                  className={`p-4 rounded-2xl border flex items-center gap-3 ${shippingPolicyCarrito === "free"
+                      ? "bg-green-50 border-green-200 text-green-700"
+                      : "bg-amber-50 border-amber-200 text-amber-700"
+                    }`}
+                >
+                  {shippingPolicyCarrito === "free" ? (
+                    <>
+                      <Truck size={18} />
+                      <p className="text-[11px] font-bold uppercase">
+                        Envío Gratis en todos los productos
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Info size={18} />
+                      <p className="text-[11px] font-bold uppercase">
+                        El costo del envío se coordina con el vendedor
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
+
 
               {/* 2. DIRECCIÓN */}
               {deliveryMethod === "delivery" && (
@@ -295,83 +327,83 @@ export default function Carrito() {
               )}
 
               {/* 3. PAGO */}
-             <div className="space-y-4">
-  <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest flex items-center gap-2">
-    <span className="w-2 h-2 bg-blue-500 rounded-full"></span> 3. Pago y Recaudo
-  </h4>
-  
-  <select
-    value={paymentMethod}
-    onChange={(e) => setPaymentMethod(e.target.value)}
-    className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all"
-  >
-    {/* OPCIÓN DINÁMICA SEGÚN MÉTODO DE ENTREGA */}
-    {deliveryMethod === "delivery" ? (
-      <option value="cash_on_delivery">Contraentrega (Efectivo al recibir)</option>
-    ) : (
-      <option value="cash_on_delivery">Pago en Tienda (Efectivo)</option>
-    )}
+              <div className="space-y-4">
+                <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span> 3. Pago y Recaudo
+                </h4>
 
-    {/* OPCIONES DIGITALES: Solo aparecen si el vendedor las tiene activas */}
-    {sellerPayments.some(m => m.provider === "nequi" && m.active) && (
-      <option value="nequi">Transferencia Nequi</option>
-    )}
-    
-    {sellerPayments.some(m => m.provider === "llaves" && m.active) && (
-      <option value="daviplata">Transferencia Breb-B</option>
-    )}
-  </select>
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all"
+                >
+                  {/* OPCIÓN DINÁMICA SEGÚN MÉTODO DE ENTREGA */}
+                  {deliveryMethod === "delivery" ? (
+                    <option value="cash_on_delivery">Contraentrega (Efectivo al recibir)</option>
+                  ) : (
+                    <option value="cash_on_delivery">Pago en Tienda (Efectivo)</option>
+                  )}
 
-  {/* VISUALIZACIÓN DE DATOS DE TRANSFERENCIA */}
-  {paymentMethod !== "cash_on_delivery" ? (
-    <div className="bg-blue-50/50 border-2 border-blue-100 rounded-[2rem] p-6 animate-in zoom-in-95">
-      {currentSellerPayment ? (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex justify-between items-center">
-            <div>
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">
-                Cuenta / Llave
-              </p>
-              <p className="text-xl font-black text-blue-700">
-                {currentSellerPayment.value}
-              </p>
-            </div>
-            <button 
-              onClick={() => { 
-                navigator.clipboard.writeText(currentSellerPayment.value); 
-                alert("Copiado al portapapeles"); 
-              }}
-              className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
-            >
-              <Copy size={16} />
-            </button>
-          </div>
-          <p className="text-[10px] text-blue-600 font-bold italic text-center">
-            Realiza la transferencia y guarda el comprobante.
-          </p>
-        </div>
-      ) : (
-        <div className="text-center py-2">
-          <p className="text-[10px] font-bold text-slate-400 uppercase italic">
-            Método no registrado por el vendedor.
-          </p>
-        </div>
-      )}
-    </div>
-  ) : (
-    /* INFO BOX PARA EFECTIVO (Diferente texto según entrega) */
-    <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-3 items-center">
-      <div className="bg-white p-2 rounded-lg shadow-sm">
-        <Check className="text-green-600" size={18} />
-      </div>
-      <p className="text-[11px] font-bold text-slate-600 leading-tight">
-        {deliveryMethod === "delivery" 
-          ? "Pagarás el total en efectivo cuando el domiciliario llegue a tu ubicación."
-          : "Pagarás el total directamente en el establecimiento al recoger tu pedido."}
-      </p>
-    </div>
-  )}
-</div>
+                  {/* OPCIONES DIGITALES: Solo aparecen si el vendedor las tiene activas */}
+                  {sellerPayments.some(m => m.provider === "nequi" && m.active) && (
+                    <option value="nequi">Transferencia Nequi</option>
+                  )}
+
+                  {sellerPayments.some(m => m.provider === "llaves" && m.active) && (
+                    <option value="daviplata">Transferencia Breb-B</option>
+                  )}
+                </select>
+
+                {/* VISUALIZACIÓN DE DATOS DE TRANSFERENCIA */}
+                {paymentMethod !== "cash_on_delivery" ? (
+                  <div className="bg-blue-50/50 border-2 border-blue-100 rounded-[2rem] p-6 animate-in zoom-in-95">
+                    {currentSellerPayment ? (
+                      <div className="space-y-4">
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex justify-between items-center">
+                          <div>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                              Cuenta / Llave
+                            </p>
+                            <p className="text-xl font-black text-blue-700">
+                              {currentSellerPayment.value}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(currentSellerPayment.value);
+                              alert("Copiado al portapapeles");
+                            }}
+                            className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
+                          >
+                            <Copy size={16} />
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-blue-600 font-bold italic text-center">
+                          Realiza la transferencia y guarda el comprobante.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-2">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase italic">
+                          Método no registrado por el vendedor.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* INFO BOX PARA EFECTIVO (Diferente texto según entrega) */
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-3 items-center">
+                    <div className="bg-white p-2 rounded-lg shadow-sm">
+                      <Check className="text-green-600" size={18} />
+                    </div>
+                    <p className="text-[11px] font-bold text-slate-600 leading-tight">
+                      {deliveryMethod === "delivery"
+                        ? "Pagarás el total en efectivo cuando el domiciliario llegue a tu ubicación."
+                        : "Pagarás el total directamente en el establecimiento al recoger tu pedido."}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* TOTAL Y CONFIRMACIÓN */}
               <div className="pt-6 border-t-2 border-slate-50 space-y-4">
@@ -383,12 +415,12 @@ export default function Carrito() {
                 {/* CHECKBOX DE TÉRMINOS */}
                 <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                   <div className="relative flex items-center pt-0.5">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       id="terms"
                       checked={acceptedTerms}
                       onChange={(e) => setAcceptedTerms(e.target.checked)}
-                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-300 checked:border-blue-600 checked:bg-blue-600 transition-all" 
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-300 checked:border-blue-600 checked:bg-blue-600 transition-all"
                     />
                     <Check size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none left-0.5" />
                   </div>
@@ -418,92 +450,92 @@ export default function Carrito() {
         )}
       </div>
 
-   
-     {/* MODAL DE TÉRMINOS Y CONDICIONES */}
-{showTermsModal && (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-    <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-300">
-      
-      <button 
-        onClick={() => setShowTermsModal(false)}
-        className="absolute top-6 right-6 p-2 bg-slate-100 hover:bg-rose-100 hover:text-rose-500 rounded-full transition-colors z-10"
-      >
-        <X size={20} />
-      </button>
 
-      <div className="p-8 overflow-y-auto custom-scrollbar">
-        <header className="mb-8 border-b pb-4">
-          <h2 className="text-2xl font-black text-slate-900 uppercase">Términos y <span className="text-blue-600">Condiciones</span></h2>
-          <p className="text-xs text-slate-400 font-bold italic">Última actualización: Diciembre 2025 | Marketplace</p>
-        </header>
-        
-        <div className="space-y-6">
-          {/* AVISO CRÍTICO: DESLINDE FINANCIERO */}
-          <div className="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-2xl shadow-sm">
-              <div className="flex gap-4">
-                  <ShieldAlert className="text-amber-600 shrink-0" size={24} />
-                  <div>
+      {/* MODAL DE TÉRMINOS Y CONDICIONES */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-300">
+
+            <button
+              onClick={() => setShowTermsModal(false)}
+              className="absolute top-6 right-6 p-2 bg-slate-100 hover:bg-rose-100 hover:text-rose-500 rounded-full transition-colors z-10"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="p-8 overflow-y-auto custom-scrollbar">
+              <header className="mb-8 border-b pb-4">
+                <h2 className="text-2xl font-black text-slate-900 uppercase">Términos y <span className="text-blue-600">Condiciones</span></h2>
+                <p className="text-xs text-slate-400 font-bold italic">Última actualización: Diciembre 2025 | Marketplace</p>
+              </header>
+
+              <div className="space-y-6">
+                {/* AVISO CRÍTICO: DESLINDE FINANCIERO */}
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-2xl shadow-sm">
+                  <div className="flex gap-4">
+                    <ShieldAlert className="text-amber-600 shrink-0" size={24} />
+                    <div>
                       <h3 className="font-black text-amber-900 uppercase text-xs mb-1">Deslinde de Responsabilidad Financiera</h3>
                       <p className="text-amber-800 text-[11px] leading-relaxed font-medium">
-                          Este marketplace <strong>NO actúa como pasarela de pagos</strong> ni capta dinero del público. Todas las transacciones (Nequi, Daviplata o Efectivo) se realizan directamente entre la cuenta del comprador y la cuenta del vendedor. No nos hacemos responsables por errores en transferencias o pérdidas de dinero.
+                        Este marketplace <strong>NO actúa como pasarela de pagos</strong> ni capta dinero del público. Todas las transacciones (Nequi, Daviplata o Efectivo) se realizan directamente entre la cuenta del comprador y la cuenta del vendedor. No nos hacemos responsables por errores en transferencias o pérdidas de dinero.
                       </p>
+                    </div>
                   </div>
+                </div>
+
+                <section>
+                  <h3 className="font-black text-slate-800 uppercase text-xs mb-2 italic flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span> 1. Naturaleza del Servicio
+                  </h3>
+                  <p className="text-slate-600 text-xs leading-relaxed ml-3">
+                    Actuamos exclusivamente como un <strong>facilitador tecnológico</strong>. Proporcionamos el catálogo y el canal de comunicación, pero no formamos parte del contrato de compraventa entre las partes.
+                  </p>
+                </section>
+
+                <section>
+                  <h3 className="font-black text-slate-800 uppercase text-xs mb-2 italic flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span> 2. Calidad y Entrega de Productos
+                  </h3>
+                  <p className="text-slate-600 text-xs leading-relaxed ml-3">
+                    La calidad, el estado, la originalidad y la entrega efectiva de los productos son <strong>responsabilidad única del vendedor</strong>. El marketplace no garantiza ni responde por productos defectuosos o pedidos no entregados.
+                  </p>
+                </section>
+
+                <section>
+                  <h3 className="font-black text-slate-800 uppercase text-xs mb-2 italic flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span> 3. Veracidad de Comprobantes
+                  </h3>
+                  <p className="text-slate-600 text-xs leading-relaxed ml-3">
+                    El comprador se compromete a adjuntar comprobantes de pago legítimos. La falsificación de soportes de pago resultará en la expulsión inmediata de la plataforma y reporte a las autoridades competentes.
+                  </p>
+                </section>
+
+                <section className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                  <p className="text-slate-500 text-[10px] leading-relaxed italic text-center font-bold uppercase tracking-tight">
+                    Al confirmar tu pedido, exoneras a la plataforma de cualquier reclamación legal vinculada a la negociación directa con el vendedor.
+                  </p>
+                </section>
               </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t flex flex-col sm:flex-row justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowTermsModal(false)}
+                className="px-6 py-3 rounded-2xl font-black uppercase text-[10px] text-slate-400 hover:text-slate-600 transition-all"
+              >
+                Cerrar
+              </button>
+              <button
+                onClick={() => { setAcceptedTerms(true); setShowTermsModal(false); }}
+                className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2"
+              >
+                <Check size={16} /> Aceptar y Continuar
+              </button>
+            </div>
           </div>
-
-          <section>
-              <h3 className="font-black text-slate-800 uppercase text-xs mb-2 italic flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span> 1. Naturaleza del Servicio
-              </h3>
-              <p className="text-slate-600 text-xs leading-relaxed ml-3">
-                  Actuamos exclusivamente como un <strong>facilitador tecnológico</strong>. Proporcionamos el catálogo y el canal de comunicación, pero no formamos parte del contrato de compraventa entre las partes.
-              </p>
-          </section>
-
-          <section>
-              <h3 className="font-black text-slate-800 uppercase text-xs mb-2 italic flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span> 2. Calidad y Entrega de Productos
-              </h3>
-              <p className="text-slate-600 text-xs leading-relaxed ml-3">
-                  La calidad, el estado, la originalidad y la entrega efectiva de los productos son <strong>responsabilidad única del vendedor</strong>. El marketplace no garantiza ni responde por productos defectuosos o pedidos no entregados.
-              </p>
-          </section>
-
-          <section>
-              <h3 className="font-black text-slate-800 uppercase text-xs mb-2 italic flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span> 3. Veracidad de Comprobantes
-              </h3>
-              <p className="text-slate-600 text-xs leading-relaxed ml-3">
-                  El comprador se compromete a adjuntar comprobantes de pago legítimos. La falsificación de soportes de pago resultará en la expulsión inmediata de la plataforma y reporte a las autoridades competentes.
-              </p>
-          </section>
-
-          <section className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-              <p className="text-slate-500 text-[10px] leading-relaxed italic text-center font-bold uppercase tracking-tight">
-                  Al confirmar tu pedido, exoneras a la plataforma de cualquier reclamación legal vinculada a la negociación directa con el vendedor.
-              </p>
-          </section>
         </div>
-      </div>
-
-      <div className="p-6 bg-slate-50 border-t flex flex-col sm:flex-row justify-end gap-3">
-        <button 
-          type="button"
-          onClick={() => setShowTermsModal(false)}
-          className="px-6 py-3 rounded-2xl font-black uppercase text-[10px] text-slate-400 hover:text-slate-600 transition-all"
-        >
-          Cerrar
-        </button>
-        <button 
-          onClick={() => { setAcceptedTerms(true); setShowTermsModal(false); }}
-          className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs hover:bg-green-600 transition-all shadow-lg flex items-center justify-center gap-2"
-        >
-          <Check size={16} /> Aceptar y Continuar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 }

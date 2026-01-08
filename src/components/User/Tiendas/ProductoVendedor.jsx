@@ -174,7 +174,18 @@ export default function Productosvendedor({ vendedorId: propVendedorId }) {
             STOCK: {p.stock}
           </div>
         </div>
-
+{/* LÓGICA DE ENVÍO EN CARD */}
+  <div className="mb-2 flex items-center gap-2">
+    {p.shippingPolicy === "free" ? (
+      <span className="flex items-center gap-1 text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full uppercase">
+        <ShieldCheck size={10} /> Envío Gratis
+      </span>
+    ) : (
+      <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full uppercase">
+        Envió a coordinar
+      </span>
+    )}
+  </div>
         <div className="flex gap-2">
           <button
             onClick={() => verProducto(p._id)}
@@ -191,9 +202,51 @@ export default function Productosvendedor({ vendedorId: propVendedorId }) {
           </button>
         </div>
       </div>
+      
     </div>
+    
   ))}
+  
 </div>
+{/* --- CONTROLES DE PAGINACIÓN --- */}
+{totalPages > 1 && (
+  <div className="flex justify-center items-center mt-12 mb-6 gap-2">
+    {/* Botón Anterior */}
+    <button
+      onClick={() => handlePageChange(currentPage - 1)}
+      disabled={currentPage === 1}
+      className="p-2 rounded-xl bg-white border border-gray-200 text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all active:scale-90"
+    >
+      <ChevronLeft size={20} />
+    </button>
+    
+    {/* Números de Página */}
+    <div className="flex gap-1">
+      {[...Array(totalPages)].map((_, i) => (
+        <button
+          key={i + 1}
+          onClick={() => handlePageChange(i + 1)}
+          className={`w-10 h-10 rounded-xl text-xs font-black transition-all ${
+            currentPage === i + 1
+              ? "bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110"
+              : "bg-white border border-gray-200 text-gray-500 hover:border-blue-300"
+          }`}
+        >
+          {i + 1}
+        </button>
+      ))}
+    </div>
+
+    {/* Botón Siguiente */}
+    <button
+      onClick={() => handlePageChange(currentPage + 1)}
+      disabled={currentPage === totalPages}
+      className="p-2 rounded-xl bg-white border border-gray-200 text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all active:scale-90"
+    >
+      <ChevronRight size={20} />
+    </button>
+  </div>
+)}
 
       {/* MODAL RESPONSIVO */}
 {modalOpen && selectedProduct && (
@@ -240,6 +293,7 @@ export default function Productosvendedor({ vendedorId: propVendedorId }) {
                   />
                 ))}
               </div>
+              
             </div>
 
             {/* SECCIÓN INFO PRODUCTO */}
@@ -322,6 +376,37 @@ export default function Productosvendedor({ vendedorId: propVendedorId }) {
                 <p className="mt-2">Stock: <span className={`font-semibold ${selectedProduct.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {selectedProduct.stock} unidades
                 </span></p>
+                <div className="mt-4 p-3 rounded-xl border border-blue-50 bg-blue-50/30">
+    <p className="text-[10px] font-black text-blue-800 uppercase mb-2 flex items-center gap-1">
+      <ShoppingCart size={12} /> Información de entrega
+    </p>
+    
+    {selectedProduct.shippingPolicy === "free" ? (
+      <div className="flex items-start gap-2">
+        <div className="bg-green-100 p-1 rounded-full">
+          <ShieldCheck size={14} className="text-green-600" />
+        </div>
+        <div>
+          <p className="text-xs font-bold text-green-700">¡Este producto tiene envío gratuito!</p>
+          <p className="text-[10px] text-gray-500">Aprovecha y recíbelo sin costos adicionales.</p>
+        </div>
+      </div>
+    ) : (
+      <div className="flex items-start gap-2">
+        <div className="bg-amber-100 p-1 rounded-full">
+          <MessageCircle size={14} className="text-amber-600" />
+        </div>
+        <div>
+          <p className="text-xs font-bold text-amber-700">Envío a coordinar con el vendedor</p>
+          {selectedProduct.shippingNote && (
+            <p className="text-[11px] text-amber-800 mt-1 italic bg-white/50 p-1.5 rounded border border-amber-100">
+              "{selectedProduct.shippingNote}"
+            </p>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
               </div>
 
               {/* ACCIONES */}

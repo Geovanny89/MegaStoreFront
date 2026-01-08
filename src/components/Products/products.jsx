@@ -184,7 +184,7 @@ export default function Products() {
                     {/* STOCK */}
                     <p className={`text-sm mt-1 ${p.stock > 0 ? "text-green-600" : "text-red-600"
                       }`}>
-                      Stock: {p.stock}
+                      Stocks: {p.stock}
                     </p>
 
                     {/* PRECIO EN COP */}
@@ -398,6 +398,7 @@ export default function Products() {
                       </button>
                     </div>
                   </div>
+                  
                 </div>
 
                 {/* SECCIONES EXTRA */}

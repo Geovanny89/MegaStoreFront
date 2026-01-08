@@ -11,7 +11,7 @@ export default function BannerManager() {
   const fetchBanners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await api.get("/allBanners", {
+      const { data } = await api.get("/seller/allBanners", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBanners(data);
