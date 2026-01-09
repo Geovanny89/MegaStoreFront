@@ -60,7 +60,7 @@ export default function Navbar() {
             <div className="hand-ripple"></div>
             <div className="hand-ripple" style={{ animationDelay: '1s' }}></div>
             <div className="relative z-10 animate-logo-active">
-              <img 
+              <img  
                 src={logo} 
                 alt="Logo K-DICE" 
                 className="h-16 md:h-20 w-auto object-contain transition-transform dark:brightness-110" 

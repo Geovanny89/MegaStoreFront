@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { Heart, ChevronLeft, ShoppingCart, Info, Store, Truck, MessageCircle, ShieldCheck } from "lucide-react";
+import {
+  Heart,
+  ChevronLeft,
+  ShoppingCart,
+  Info,
+  Store,
+  Truck,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
 import { useFavorites } from "../context/FavoriteContext";
 import ProductQuestions from "../components/Questions/ProductQuestions";
 import RatingStars from "../components/Ratings/RatingStars";
@@ -13,7 +22,6 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [tiendaVencida, setTiendaVencida] = useState(false); // Estado para manejar trial vencido
   const navigate = useNavigate();
-
 
   // Estados de Carga y UI
   const [loading, setLoading] = useState(true);
@@ -62,7 +70,9 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   }, [vendedorId]);
 
   // Lógica de Filtrado y Paginación
-  const categorias = [...new Set(productos.map((p) => p.tipo?.name).filter(Boolean))];
+  const categorias = [
+    ...new Set(productos.map((p) => p.tipo?.name).filter(Boolean)),
+  ];
 
   const productosFiltrados = categoriaFiltro
     ? productos.filter((p) => p.tipo?.name === categoriaFiltro)
@@ -76,7 +86,6 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    ;
   };
 
   const handleToggleFavorite = async (product) => {
@@ -124,7 +133,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
     try {
       setLoadingProduct(id);
       const res = await api.get(`/product/${id}`);
-      console.log("producto", res.data)
+      console.log("producto", res.data);
       setSelectedProduct(res.data);
       setSelectedImg(res.data.image?.[0]?.url || "");
       setCantidad(1);
@@ -135,75 +144,104 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       setLoadingProduct(null);
     }
   };
+  const handleComprarModal = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login", {
+        state: { from: location.pathname },
+      });
+      return;
+    }
+
+    agregarAlCarrito(selectedProduct._id, cantidad);
+  };
 
   // 1. Pantalla de Carga
-  if (loading) return (
-    <div className="flex flex-col justify-center items-center h-screen
+  if (loading)
+    return (
+      <div
+        className="flex flex-col justify-center items-center h-screen
                   bg-gray-50 dark:bg-[#020617]
                   text-gray-500 dark:text-gray-400
-                  font-medium">
-      <div className="w-12 h-12 border-4
+                  font-medium"
+      >
+        <div
+          className="w-12 h-12 border-4
                     border-blue-600 border-t-transparent
-                    rounded-full animate-spin mb-4"></div>
-      Cargando tienda...
-    </div>
-  );
-
+                    rounded-full animate-spin mb-4"
+        ></div>
+        Cargando tienda...
+      </div>
+    );
 
   // 2. Pantalla de Tienda Inactiva (Trial Vencido)
-  if (tiendaVencida) return (
-    <div className="min-h-screen
+  if (tiendaVencida)
+    return (
+      <div
+        className="min-h-screen
                   bg-white dark:bg-[#020617]
-                  flex flex-col items-center justify-center p-6">
-
-      <div className="max-w-md text-center space-y-6">
-
-        <div className="w-24 h-24
+                  flex flex-col items-center justify-center p-6"
+      >
+        <div className="max-w-md text-center space-y-6">
+          <div
+            className="w-24 h-24
                       bg-amber-50 dark:bg-amber-900/30
                       text-amber-500 dark:text-amber-400
                       rounded-full flex items-center justify-center
-                      mx-auto shadow-inner">
-          <Store size={48} />
+                      mx-auto shadow-inner"
+          >
+            <Store size={48} />
+          </div>
+
+          <h1
+            className="text-3xl font-black
+                     text-gray-900 dark:text-gray-100"
+          >
+            {vendedor?.storeName || "Tienda Inactiva"}
+          </h1>
+
+          <p
+            className="text-gray-500 dark:text-gray-400
+                    font-medium leading-relaxed"
+          >
+            Esta tienda no cuenta con una suscripción activa en este momento.
+            Sus productos estarán disponibles nuevamente una vez se renueve el
+            plan.
+          </p>
+
+          <button
+            onClick={volver}
+            className="
+  w-full bg-blue-600 hover:bg-blue-500
+  text-white py-4 rounded-2xl font-bold
+  transition-all
+  ring-1 ring-blue-400/30
+  hover:ring-blue-400/60
+"
+          >
+            Explorar otras tiendas
+          </button>
         </div>
-
-        <h1 className="text-3xl font-black
-                     text-gray-900 dark:text-gray-100">
-          {vendedor?.storeName || "Tienda Inactiva"}
-        </h1>
-
-        <p className="text-gray-500 dark:text-gray-400
-                    font-medium leading-relaxed">
-          Esta tienda no cuenta con una suscripción activa en este momento.
-          Sus productos estarán disponibles nuevamente una vez se renueve el plan.
-        </p>
-
-        <button
-          onClick={volver}
-          className="w-full bg-blue-600 text-white
-                   py-4 rounded-2xl font-bold
-                   hover:bg-blue-700 transition-all shadow-lg"
-        >
-          Explorar otras tiendas
-        </button>
       </div>
-    </div>
-  );
-
+    );
 
   return (
-    <div className="min-h-screen
+    <div
+      className="min-h-screen
                 bg-gray-50/50 dark:bg-[#020617]
-                pb-12">
-
+                pb-12"
+    >
       {/* HEADER DE TIENDA */}
-      <div className="
+      <div
+        className="
   bg-white dark:bg-[#020617]
   border-b border-gray-200 dark:border-gray-800
   sticky top-0 z-10
   shadow-sm dark:shadow-none
-">
+"
+      >
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               Filtrar:
@@ -225,7 +263,9 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
             >
               <option value="">Todas las categorías</option>
               {categorias.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </div>
@@ -235,19 +275,19 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
             <button
               onClick={() =>
                 navigate(`/${vendedor.slug}`, {
-                  state: { from: "marketplace" }
+                  state: { from: "marketplace" },
                 })
               }
               className="
-          flex items-center gap-2
-          bg-blue-600 hover:bg-blue-700
-          text-white
-          px-5 py-2 rounded-xl
-          text-sm font-bold
-          shadow-md shadow-blue-200/50
-          dark:shadow-none
-          transition-all
-        "
+  flex items-center gap-2
+  bg-blue-600 hover:bg-blue-500
+  text-white
+  px-5 py-2 rounded-xl
+  text-sm font-bold
+  transition-all
+  ring-1 ring-blue-400/30
+  hover:ring-blue-400/60
+"
             >
               <Store size={16} />
               Ir a la tienda
@@ -256,14 +296,15 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
         </div>
       </div>
 
-
-      <div className="
+      <div
+        className="
   text-center py-20
   bg-white dark:bg-[#020617]
   rounded-3xl
   border border-dashed border-gray-200 dark:border-gray-800
   text-gray-400 dark:text-gray-500
-">
+"
+      >
         {productosFiltrados.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed text-gray-400">
             No hay productos disponibles por ahora.
@@ -272,7 +313,9 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {productosActuales.map((p) => (
-                <div key={p._id} className="
+                <div
+                  key={p._id}
+                  className="
     group
     bg-white dark:bg-gray-900
     rounded-2xl
@@ -323,8 +366,14 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                         }
   `}
                     >
-
-                      <Heart className="h-5 w-5" fill={favorites.some((f) => f._id === p._id) ? "white" : "transparent"} />
+                      <Heart
+                        className="h-5 w-5"
+                        fill={
+                          favorites.some((f) => f._id === p._id)
+                            ? "white"
+                            : "transparent"
+                        }
+                      />
                     </button>
                   </div>
                   <div className="p-5 dark:bg-[#020617]">
@@ -393,28 +442,43 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
         flex items-center justify-center gap-2
       "
                       >
-                        {loadingProduct === p._id ? "..." : <><Info size={14} /> Detalles</>}
+                        {loadingProduct === p._id ? (
+                          "..."
+                        ) : (
+                          <>
+                            <Info size={14} /> Detalles
+                          </>
+                        )}
                       </button>
 
                       <button
                         onClick={() => agregarAlCarrito(p._id, 1)}
                         disabled={loadingId === p._id || p.stock <= 0}
                         className={`
-        flex-1 py-2.5 rounded-xl text-xs font-bold
-        text-white
-        transition-all
-        flex items-center justify-center gap-2
-        ${loadingId === p._id
+  flex-1 py-2.5 rounded-xl text-xs font-bold
+  text-white transition-all
+  flex items-center justify-center gap-2
+  ${loadingId === p._id
                             ? "bg-blue-300 dark:bg-blue-500/50"
-                            : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 dark:shadow-none"
+                            : `
+        bg-blue-600 hover:bg-blue-500
+        ring-1 ring-blue-400/30
+        hover:ring-blue-400/60
+        active:scale-[0.97]
+      `
                           }
-      `}
+`}
                       >
-                        {loadingId === p._id ? "..." : <><ShoppingCart size={14} /> Comprar</>}
+                        {loadingId === p._id ? (
+                          "..."
+                        ) : (
+                          <>
+                            <ShoppingCart size={14} /> Comprar
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
-
                 </div>
               ))}
             </div>
@@ -443,12 +507,17 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                         key={i}
                         onClick={() => handlePageChange(pageNum)}
                         className={`
-              w-10 h-10 sm:w-11 sm:h-11 rounded-2xl border font-bold text-sm transition-all duration-300
-              ${isActive
-                            ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200 scale-110 z-10"
-                            : "bg-white text-gray-500 border-gray-100 hover:border-blue-300 hover:text-blue-600 shadow-sm"
+  w-10 h-10 sm:w-11 sm:h-11
+  rounded-2xl
+  border
+  font-bold text-sm
+  transition-all duration-200
+  flex items-center justify-center
+  ${isActive
+                            ? "bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300"
+                            : "bg-white text-gray-500 border-gray-200 hover:border-blue-400 hover:text-blue-600 shadow-sm"
                           }
-            `}
+`}
                       >
                         {pageNum}
                       </button>
@@ -474,33 +543,42 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       {/* MODAL DETALLE */}
       {/* MODAL DETALLE */}
       {modalOpen && selectedProduct && (
-        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
+      <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 md:p-4">
+
+          <div className="bg-white dark:bg-[#020617] w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
 
             {/* HEADER COMPACTO */}
-            <div className="flex items-center justify-between px-5 py-3 border-b bg-gray-50/50">
+            <div className="flex items-center justify-between px-5 py-3 border-b
+                    bg-gray-50/50 dark:bg-gray-900
+                    border-gray-100 dark:border-gray-800">
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Detalle del Producto</span>
-                <h3 className="text-sm font-bold text-gray-800 truncate max-w-[400px]">
+                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">
+                  Detalle del Producto
+                </span>
+                <h3 className="text-sm font-bold text-gray-800 dark:text-gray-100 truncate max-w-[400px]">
                   {selectedProduct.name}
                 </h3>
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full
+                   text-gray-400 hover:text-black dark:hover:text-white
+                   hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <span className="text-xl">✕</span>
               </button>
             </div>
 
-            {/* CUERPO CON SCROLL */}
+            {/* CUERPO */}
             <div className="overflow-y-auto overflow-x-hidden custom-scrollbar">
               <div className="p-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
-                  {/* SECCIÓN IMÁGENES */}
+                  {/* IMÁGENES */}
                   <div className="space-y-3">
-                    <div className="bg-gray-50 border border-gray-100 rounded-xl h-48 flex items-center justify-center overflow-hidden">
+                    <div className="bg-gray-50 dark:bg-gray-900
+                            border border-gray-100 dark:border-gray-800
+                            rounded-xl h-48 flex items-center justify-center overflow-hidden">
                       <img
                         src={selectedImg}
                         alt={selectedProduct.name}
@@ -514,25 +592,30 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                           key={i}
                           src={imgObj.url}
                           onClick={() => setSelectedImg(imgObj.url)}
-                          className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all 
-                    ${selectedImg === imgObj.url ? "border-blue-500 ring-2 ring-blue-50" : "border-transparent opacity-70 hover:opacity-100"}`}
+                          className={`h-12 w-12 min-w-[3rem] rounded-lg object-cover cursor-pointer border-2 transition-all
+                    ${selectedImg === imgObj.url
+                              ? "border-blue-500 ring-2 ring-blue-500/30"
+                              : "border-transparent opacity-70 hover:opacity-100"
+                            }`}
                         />
                       ))}
                     </div>
                   </div>
 
-                  {/* SECCIÓN INFO PRODUCTO */}
+                  {/* INFO PRODUCTO */}
                   <div className="flex flex-col justify-between">
                     <div>
-                      <h2 className="text-lg font-black text-gray-900 leading-tight mb-1">
+                      <h2 className="text-lg font-black text-gray-900 dark:text-gray-100 leading-tight mb-1">
                         {selectedProduct.name}
                       </h2>
 
-                      {/* --- SECCIÓN DE RATINGS ACTUALIZADA --- */}
+                      {/* RATINGS */}
                       <div className="flex items-center gap-1 mb-2 scale-90 origin-left">
                         {selectedProduct.rating?.count > 0 ? (
                           <>
-                            <span className="text-[10px] font-semibold text-gray-700">Calificación</span>
+                            <span className="text-[10px] font-semibold text-gray-700 dark:text-gray-400">
+                              Calificación
+                            </span>
                             <RatingStars
                               value={selectedProduct.rating.average}
                               count={selectedProduct.rating.count}
@@ -545,109 +628,179 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                           </span>
                         )}
                       </div>
-                      {/* -------------------------------------- */}
 
+                      {/* PRECIOS */}
                       {selectedProduct.hasDiscount && selectedProduct.discount ? (
                         <div className="mb-3">
-                          {/* Precio original */}
-                          <p className="text-sm line-through text-gray-400">${selectedProduct.price}</p>
-
-                          {/* Precio con descuento */}
-                          <p className="text-2xl font-black text-red-600">${selectedProduct.finalPrice}</p>
-
-                          {/* Mensaje de vigencia del descuento */}
-                          <p className="text-[11px] text-green-700 font-semibold mt-1">
-                            Oferta válida del {new Date(selectedProduct.discount.startDate).toLocaleDateString()} al {new Date(selectedProduct.discount.endDate).toLocaleDateString()}
+                          <p className="text-sm line-through text-gray-400">
+                            ${selectedProduct.price}
+                          </p>
+                          <p className="text-2xl font-black text-red-600">
+                            ${selectedProduct.finalPrice}
+                          </p>
+                          <p className="text-[11px] text-green-600 font-semibold mt-1">
+                            Oferta válida del{" "}
+                            {new Date(selectedProduct.discount.startDate).toLocaleDateString()}{" "}
+                            al{" "}
+                            {new Date(selectedProduct.discount.endDate).toLocaleDateString()}
                           </p>
                         </div>
                       ) : (
-                        <p className="text-xl font-black text-blue-600 mb-3">${selectedProduct.price}</p>
+                        <p className="text-xl font-black text-blue-600 mb-3">
+                          ${selectedProduct.price}
+                        </p>
                       )}
 
-                      <div className="space-y-1.5 text-xs text-gray-600 mb-4">
-                        <p>Marca: <span className="font-semibold">{selectedProduct.brand || 'N/A'}</span></p>
-                        <p>Vendido por: <span className="font-bold uppercase text-blue-700">{vendedor?.storeName}</span></p>
-                        <p>Stock: <span className={`font-semibold ${selectedProduct.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {selectedProduct.stock} unidades
-                        </span></p>
-                        <div className="mb-4">
-                          <p className="text-2xl font-black text-blue-600">${selectedProduct.price}</p>
-                          <div className="mt-2">
-                            {selectedProduct.shippingPolicy === "free" ? (
-                              <div className="flex items-center gap-1.5 text-green-700 bg-green-50 px-2 py-1 rounded-md w-fit border border-green-100">
-                                <ShieldCheck size={14} />
-                                <span className="text-xs font-bold uppercase">Envío Gratis</span>
-                              </div>
-                            ) : (
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-2 py-1 rounded-md w-fit border border-amber-100">
-                                  <MessageCircle size={14} />
-                                  <span className="text-xs font-bold uppercase">Envío a coordinar</span>
-                                </div>
-                                {selectedProduct.shippingNote && (
-                                  <div className="bg-gray-50 border-l-2 border-amber-400 p-2 mt-1">
-                                    <p className="text-[11px] text-gray-600 leading-tight">
-                                      <span className="font-bold text-gray-800">Nota del vendedor: </span>
-                                      "{selectedProduct.shippingNote}"
-                                    </p>
-                                  </div>
-                                )}
+                      {/* DETALLES */}
+                      <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400 mb-4">
+                        <p>
+                          Marca:{" "}
+                          <span className="font-semibold">
+                            {selectedProduct.brand || "N/A"}
+                          </span>
+                        </p>
+                        <p>
+                          Vendido por:{" "}
+                          <span className="font-bold uppercase text-blue-700">
+                            {vendedor?.storeName}
+                          </span>
+                        </p>
+                        <p>
+                          Stock:{" "}
+                          <span className={`font-semibold ${selectedProduct.stock > 0
+                              ? "text-green-600"
+                              : "text-red-600"
+                            }`}>
+                            {selectedProduct.stock} unidades
+                          </span>
+                        </p>
+
+                        {/* ENVÍO */}
+                        {selectedProduct.shippingPolicy === "free" ? (
+                          <div className="flex items-center gap-1.5
+                                  text-green-600 bg-green-50 dark:bg-green-900/20
+                                  px-2 py-1 rounded-md w-fit
+                                  border border-green-100 dark:border-green-900">
+                            <ShieldCheck size={14} />
+                            <span className="text-xs font-bold uppercase">
+                              Envío Gratis
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-1.5
+                                    text-amber-600 bg-amber-50 dark:bg-amber-900/20
+                                    px-2 py-1 rounded-md w-fit
+                                    border border-amber-100 dark:border-amber-900">
+                              <MessageCircle size={14} />
+                              <span className="text-xs font-bold uppercase">
+                                Envío a coordinar
+                              </span>
+                            </div>
+                            {selectedProduct.shippingNote && (
+                              <div className="bg-gray-50 dark:bg-gray-900
+                                      border-l-2 border-amber-400 p-2 mt-1">
+                                <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
+                                  <span className="font-bold text-gray-800 dark:text-gray-200">
+                                    Nota del vendedor:
+                                  </span>{" "}
+                                  "{selectedProduct.shippingNote}"
+                                </p>
                               </div>
                             )}
                           </div>
-                        </div>
+                        )}
+
+                        {/* DESCRIPCIÓN */}
                         {selectedProduct.description && (
-                          <div className="mt-3 bg-slate-50 p-3 rounded-lg border border-slate-100 text-gray-700">
-                            <p className="font-bold text-gray-900 mb-0.5">Descripción</p>
-                            <p className="italic leading-relaxed line-clamp-3">"{selectedProduct.description}"</p>
+                          <div className="mt-3 bg-slate-50 dark:bg-gray-900
+                                  p-3 rounded-lg
+                                  border border-slate-100 dark:border-gray-800">
+                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-0.5">
+                              Descripción
+                            </p>
+                            <p className="italic leading-relaxed line-clamp-3">
+                              "{selectedProduct.description}"
+                            </p>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* BOTONES DE ACCIÓN */}
+                    {/* ACCIONES */}
                     <div className="mt-auto space-y-2">
-                      <div className="flex items-center justify-between bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">Cantidad</span>
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                            className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50 active:scale-90 transition-transform"
-                          >
-                            −
-                          </button>
-                          <span className="text-xs font-bold w-4 text-center">{cantidad}</span>
-                          <button
-                            onClick={() => setCantidad(cantidad + 1)}
-                            className="w-6 h-6 flex items-center justify-center rounded bg-white border text-xs shadow-sm hover:bg-gray-50 active:scale-90 transition-transform"
-                          >
-                            +
-                          </button>
-                        </div>
+                      <div className="flex items-center justify-between
+                              bg-gray-50 dark:bg-gray-900
+                              px-3 py-1.5 rounded-lg
+                              border border-gray-100 dark:border-gray-800">
+                        <button
+                          onClick={() => setCantidad((prev) => Math.max(1, prev - 1))}
+                          className="w-6 h-6 flex items-center justify-center rounded
+             bg-white dark:bg-gray-800
+             border border-gray-200 dark:border-gray-700
+             text-xs shadow-sm
+             hover:bg-gray-50 dark:hover:bg-gray-700
+             active:scale-90 transition"
+                        >
+                          −
+                        </button>
+
+                        <span className="text-xs font-bold w-4 text-center text-gray-900 dark:text-gray-100">
+                          {cantidad}
+                        </span>
+
+                        <button
+                          onClick={() => setCantidad((prev) => prev + 1)}
+                          className="w-6 h-6 flex items-center justify-center rounded
+             bg-white dark:bg-gray-800
+             border border-gray-200 dark:border-gray-700
+             text-xs shadow-sm
+             hover:bg-gray-50 dark:hover:bg-gray-700
+             active:scale-90 transition"
+                        >
+                          +
+                        </button>
+
                       </div>
 
                       <button
-                        onClick={() => agregarAlCarrito(selectedProduct._id, cantidad)}
+                        onClick={handleComprarModal}
                         disabled={selectedProduct.stock <= 0}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.97] disabled:bg-gray-300"
+                        className="w-full bg-blue-600 hover:bg-blue-700
+             text-white py-2.5 rounded-xl text-sm font-bold
+             shadow-md transition-all
+             active:scale-[0.97]
+             disabled:bg-gray-700 disabled:text-gray-400"
                       >
-                        {selectedProduct.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}
+                        {!localStorage.getItem("token")
+                          ? "Inicia sesión para comprar"
+                          : selectedProduct.stock > 0
+                            ? "Agregar al carrito"
+                            : "Sin stock"}
                       </button>
+
                     </div>
                   </div>
                 </div>
 
                 {/* SECCIONES EXTRA */}
-                <div className="border-t border-gray-100 pt-5 space-y-6">
+                <div className="border-t border-gray-100 dark:border-gray-800 pt-5 space-y-6">
                   <section>
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">Experiencias de Clientes</h4>
-                    <div className="scale-95 origin-top-left bg-gray-50/50 rounded-xl p-4 border border-gray-50">
+                    <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3">
+                      Experiencias de Clientes
+                    </h4>
+                    <div className="scale-95 origin-top-left
+                            bg-gray-50/50 dark:bg-gray-900
+                            rounded-xl p-4
+                            border border-gray-50 dark:border-gray-800">
                       <ProductReviews productId={selectedProduct._id} />
                     </div>
                   </section>
 
                   <section>
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">Consultas</h4>
+                    <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3">
+                      Consultas
+                    </h4>
                     <div className="scale-95 origin-top-left px-2">
                       <ProductQuestions productId={selectedProduct._id} />
                     </div>
@@ -657,6 +810,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
             </div>
           </div>
         </div>
+
       )}
     </div>
   );

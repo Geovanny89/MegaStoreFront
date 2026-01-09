@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import api from "../../../api/axios";
+import ThemeToggle from "../../../utils/ThemeToggle"; 
 
 export default function NavbarUser({ name, categorias = [] }) {
   const navigate = useNavigate();
@@ -149,11 +150,15 @@ export default function NavbarUser({ name, categorias = [] }) {
     <>
       {/* NAVBAR */}
       <nav
-        className="
-          w-full fixed top-0 left-0 z-50 
-          bg-white border-b border-gray-100 shadow-sm
-        "
-      >
+  className="
+    w-full fixed top-0 left-0 z-50
+    bg-white dark:bg-[#020617]
+    border-b border-gray-100 dark:border-gray-800
+    shadow-sm dark:shadow-none
+    transition-colors
+  "
+>
+
         <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
           {/* LOGO */}
           <div
@@ -180,30 +185,36 @@ export default function NavbarUser({ name, categorias = [] }) {
                 }
               }}
               className="
-                w-full pl-11 pr-4 py-2.5 
-                bg-gray-100/50 
-                border border-transparent
-                rounded-full 
-                text-sm
-                focus:bg-white 
-                focus:ring-2 
-                focus:ring-green-500/20 
-                focus:border-green-500
-                outline-none
-                transition-all
-              "
+  w-full pl-11 pr-4 py-2.5 
+  bg-gray-100/50 dark:bg-gray-800
+  border border-transparent
+  rounded-full 
+  text-sm
+  text-gray-800 dark:text-gray-100
+  placeholder:text-gray-400 dark:placeholder:text-gray-500
+  focus:bg-white dark:focus:bg-gray-900
+  focus:ring-2 
+  focus:ring-green-500/20 
+  focus:border-green-500
+  outline-none
+  transition-all
+"
+
             />
           </div>
 
           {/* MENU DESKTOP */}
-          <div className="hidden md:flex items-center gap-6 text-gray-600 font-medium">
-            <Link to="/homeUser" className="hover:text-green-600 transition-colors text-sm">
+          <div className="hidden md:flex items-center gap-6 text-gray-600 dark:text-gray-300 font-medium">
+
+            <Link to="/homeUser" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors text-sm"
+>
               Inicio
             </Link>
 
             <Link
               to="/user/productos"
-              className="hover:text-green-600 transition-colors text-sm"
+              className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors text-sm"
+
             >
               Productos
             </Link>
@@ -218,7 +229,13 @@ export default function NavbarUser({ name, categorias = [] }) {
               </button>
 
               {openCat && (
-                <div className="absolute left-0 mt-4 w-56 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2">
+                <div className="
+  absolute left-0 mt-4 w-56
+  bg-white dark:bg-[#020617]
+  border border-gray-100 dark:border-gray-800
+  rounded-xl shadow-xl z-50 py-2
+"
+>
                   {categorias.length > 0 ? (
                     categorias.map((cat) => (
                       <div
@@ -227,7 +244,13 @@ export default function NavbarUser({ name, categorias = [] }) {
                           navigate(`/user/categorias/${cat._id}`);
                           setOpenCat(false);
                         }}
-                        className="px-4 py-2.5 hover:bg-green-50 hover:text-green-700 cursor-pointer text-sm transition-colors"
+                        className="
+  px-4 py-2.5 cursor-pointer text-sm transition-colors
+  text-gray-700 dark:text-gray-300
+  hover:bg-green-50 dark:hover:bg-gray-800
+  hover:text-green-700 dark:hover:text-green-400
+"
+
                       >
                         {cat.name}
                       </div>
@@ -246,17 +269,26 @@ export default function NavbarUser({ name, categorias = [] }) {
             <div className="flex items-center gap-2">
               <Link
                 to="/favorito/all"
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors relative"
+               className="
+  p-2 rounded-full transition-colors relative
+  hover:bg-gray-100 dark:hover:bg-gray-800
+"
+
                 title="Favoritos"
               >
                 <Heart size={22} />
               </Link>
-
+<ThemeToggle />
               <Link
                 to="/user/carAll"
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors relative"
+                className="
+  p-2 rounded-full transition-colors relative
+  hover:bg-gray-100 dark:hover:bg-gray-800
+"
+
                 title="Carrito"
               >
+                
                 <ShoppingCart size={22} />
                 {cartCount > 0 && (
                   <span
@@ -279,27 +311,35 @@ export default function NavbarUser({ name, categorias = [] }) {
             <div className="relative" ref={userRef}>
               <button
                 onClick={() => setOpenUser(!openUser)}
-                className="flex items-center gap-2 pl-2 pr-1 py-1 bg-gray-50 rounded-full border border-gray-100 hover:border-green-200 transition-all shadow-sm"
+                className="
+  flex items-center gap-2 pl-2 pr-1 py-1
+  bg-gray-50 dark:bg-gray-900
+  border border-gray-100 dark:border-gray-800
+  hover:border-green-200
+  transition-all shadow-sm
+"
               >
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=10b981&color=fff`}
                   alt="avatar"
                   className="w-8 h-8 rounded-full shadow-inner"
                 />
-                <span className="text-gray-800 text-sm font-bold max-w-[100px] truncate">{name}</span>
+                <span className="text-gray-800 dark:text-gray-100 text-sm font-bold max-w-[100px] truncate">{name}</span>
                 <ChevronDown size={14} className="text-gray-400 mr-1" />
               </button>
 
               {openUser && (
-                <div className="absolute right-0 mt-4 w-72 bg-white rounded-2xl shadow-2xl border border-gray-50 z-50 overflow-hidden animate-in fade-in zoom-in-95">
-                  <div className="flex items-center gap-3 p-4 bg-gray-50/50 border-b">
+                <div className="absolute right-0 mt-4 w-72 bg-white dark:bg-[#020617] rounded-2xl shadow-2xl border border-gray-50 dark:border-gray-800 z-50 overflow-hidden"
+>
+                  <div className="flex items-center gap-3 p-4 bg-gray-50/50 dark:bg-gray-900 border-b dark:border-gray-800">
+
                     <img
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=10b981&color=fff`}
                       className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
                     />
                     <div className="overflow-hidden">
-                      <p className="font-bold text-gray-900 truncate">{name}</p>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="font-bold text-gray-900 dark:text-gray-100 truncate">{name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {localStorage.getItem("email")}
                       </p>
                     </div>
@@ -311,7 +351,14 @@ export default function NavbarUser({ name, categorias = [] }) {
                         setOpenUser(false);
                         navigate("/perfil");
                       }}
-                      className="flex items-center gap-3 text-left hover:bg-green-50 hover:text-green-700 p-2.5 rounded-xl transition-colors text-sm text-gray-700"
+                      className="
+  flex items-center gap-3 text-left
+  p-2.5 rounded-xl transition-colors text-sm
+  text-gray-700 dark:text-gray-300
+  hover:bg-green-50 dark:hover:bg-gray-800
+  hover:text-green-700 dark:hover:text-green-400
+"
+
                     >
                       <User size={18} className="text-gray-400" /> Mi Perfil
                     </button>
@@ -331,7 +378,14 @@ export default function NavbarUser({ name, categorias = [] }) {
                         setOpenUser(false);
                         navigate("/cambiar-password");
                       }}
-                      className="flex items-center gap-3 text-left hover:bg-green-50 hover:text-green-700 p-2.5 rounded-xl transition-colors text-sm text-gray-700"
+                      className="
+  flex items-center gap-3 text-left
+  p-2.5 rounded-xl transition-colors text-sm
+  text-gray-700 dark:text-gray-300
+  hover:bg-green-50 dark:hover:bg-gray-800
+  hover:text-green-700 dark:hover:text-green-400
+"
+
                     >
                       <ShieldCheck size={18} className="text-gray-400" /> Seguridad
                     </button>
@@ -353,7 +407,7 @@ export default function NavbarUser({ name, categorias = [] }) {
                     </Link>
                   </div>
 
-                  <div className="p-2 mt-1 bg-gray-50">
+                  <div className="p-2 mt-1 bg-gray-50 dark:bg-gray-900">
                     <button
                       onClick={handleLogout}
                       className="flex items-center justify-center gap-2 w-full bg-red-50 text-red-600 rounded-xl py-2.5 hover:bg-red-500 hover:text-white transition-all text-sm font-semibold"
@@ -368,38 +422,50 @@ export default function NavbarUser({ name, categorias = [] }) {
           </div>
 
           {/* BOTÓN MOBILE */}
-          <div className="flex md:hidden items-center gap-2">
-            <Link to="/user/carAll" className="p-2 relative text-gray-600">
-               <ShoppingCart size={24} />
-               {cartCount > 0 && <span className="absolute top-1 right-1 bg-green-600 w-4 h-4 rounded-full text-[10px] text-white flex items-center justify-center border border-white">{cartCount}</span>}
-            </Link>
-            <button
-              className="text-gray-800 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              onClick={() => setMobileMenu(true)}
-            >
-              <Menu size={28} />
-            </button>
-          </div>
+         {/* BOTÓN MOBILE */}
+<div className="flex md:hidden items-center gap-2">
+  {/* 🌙☀️ DARK MODE */}
+  <ThemeToggle />
+
+  <Link to="/user/carAll" className="p-2 relative text-gray-600 dark:text-gray-300">
+    <ShoppingCart size={24} />
+    {cartCount > 0 && (
+      <span className="absolute top-1 right-1 bg-green-600 w-4 h-4 rounded-full text-[10px] text-white flex items-center justify-center border border-white dark:border-gray-900">
+        {cartCount}
+      </span>
+    )}
+  </Link>
+
+  <button
+    className="text-gray-800 dark:text-gray-200 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+    onClick={() => setMobileMenu(true)}
+  >
+    <Menu size={28} />
+  </button>
+</div>
+
         </div>
       </nav>
 
       {/* SIDEBAR MOBILE */}
       <div
         className={`
-          fixed top-0 right-0 h-full w-[85%] max-w-[320px]
-          bg-white shadow-2xl z-[999]
-          transform transition-transform duration-500 ease-in-out
-          ${mobileMenu ? "translate-x-0" : "translate-x-full"}
-        `}
+    fixed top-0 right-0 h-full w-[85%] max-w-[320px]
+    bg-white dark:bg-[#020617] 
+    shadow-2xl z-[999]
+    border-l dark:border-gray-800 
+    transform transition-transform duration-500 ease-in-out
+    ${mobileMenu ? "translate-x-0" : "translate-x-full"}
+  `}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6 flex justify-between items-center border-b border-gray-100">
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                {name.charAt(0)}
-             </div>
-             <span className="font-bold text-gray-800">Menú Principal</span>
-          </div>
+        <div className="p-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-800">
+    <div className="flex items-center gap-3">
+       <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+          {name.charAt(0)}
+       </div>
+       <span className="font-bold text-gray-800 dark:text-gray-100">Menú Principal</span>
+    </div>
           <button onClick={() => setMobileMenu(false)} className="p-2 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-all">
             <X size={24} />
           </button>
@@ -458,7 +524,8 @@ export default function NavbarUser({ name, categorias = [] }) {
               <Package size={18} className="text-gray-300" />
             </Link>
 
-            <hr className="my-4 border-gray-100" />
+            <hr className="my-4 border-gray-100 dark:border-gray-800" />
+
 
             <p className="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Cuenta</p>
 

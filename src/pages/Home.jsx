@@ -92,7 +92,7 @@ export default function Home() {
           <div className="flex items-end justify-between mb-10 px-2">
             <div>
               <h3 className="text-3xl font-black text-gray-900 dark:text-gray-100">
-Busca por Sector</h3>
+                Busca por Sector</h3>
               <p className="text-gray-500 font-medium">Los mejores comercios organizados para ti</p>
             </div>
           </div>
@@ -156,45 +156,45 @@ ${categoriaActiva === cat.name
 
       {/* 4. SECCIÓN DE TIENDAS (TRIAL + PREMIUM) */}
       {!vendedorSeleccionado && (
-  <section id="tiendas" className="mb-24 scroll-mt-20">
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
-          <span className="text-blue-600 font-black text-xs uppercase tracking-widest">
-            Exclusivo
-          </span>
-        </div>
+        <section id="tiendas" className="mb-24 scroll-mt-20">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-1 w-8 bg-blue-600 rounded-full"></div>
+                <span className="text-blue-600 font-black text-xs uppercase tracking-widest">
+                  Exclusivo
+                </span>
+              </div>
 
-        <h2 className="text-4xl font-black leading-none
+              <h2 className="text-4xl font-black leading-none
                        text-gray-900 dark:text-gray-100">
-          {categoriaActiva === "Todas"
-            ? "Tiendas Destacadas"
-            : categoriaActiva}
-        </h2>
-      </div>
+                {categoriaActiva === "Todas"
+                  ? "Tiendas Destacadas"
+                  : categoriaActiva}
+              </h2>
+            </div>
 
-      <Link
-        to="/tiendas"
-        className="bg-gray-100 dark:bg-gray-800
+            <Link
+              to="/tiendas"
+              className="bg-gray-100 dark:bg-gray-800
                    hover:bg-gray-200 dark:hover:bg-gray-700
                    text-gray-700 dark:text-gray-200
                    px-6 py-3 rounded-2xl font-bold
                    flex items-center gap-2 transition-colors"
-      >
-        Ver el directorio <ChevronRight size={18} />
-      </Link>
-    </div>
+            >
+              Ver el directorio <ChevronRight size={18} />
+            </Link>
+          </div>
 
-    <Tienda
-      setVendedorSeleccionado={setVendedorSeleccionado}
-      filtroCategoria={categoriaActiva}
-      soloPremium={true}
-      esCarrusel={true}
-      limite={12}
-    />
-  </section>
-)}
+          <Tienda
+            setVendedorSeleccionado={setVendedorSeleccionado}
+            filtroCategoria={categoriaActiva}
+            soloPremium={true}
+            esCarrusel={true}
+            limite={12}
+          />
+        </section>
+      )}
 
 
       {/* 5. PRODUCTOS DE TIENDA SELECCIONADA */}
@@ -209,19 +209,19 @@ ${categoriaActiva === cat.name
 
       {/* 6. PRODUCTOS DESTACADOS GENERALES */}
       {!vendedorSeleccionado && (
-  <section id="productos" className="mb-24">
-    <h2
-      className="text-3xl font-black mb-10 px-2
+        <section id="productos" className="mb-24">
+          <h2
+            className="text-3xl font-black mb-10 px-2
                  flex items-center gap-4
                  text-gray-900 dark:text-gray-100"
-    >
-      Productos
-      <div className="h-px flex-1 bg-gray-100 dark:bg-gray-800"></div>
-    </h2>
+          >
+            Productos
+            <div className="h-px flex-1 bg-gray-100 dark:bg-gray-800"></div>
+          </h2>
 
-    <Products />
-  </section>
-)}
+          <Products />
+        </section>
+      )}
 
 
       {/* 7. CALL TO ACTION */}
@@ -235,7 +235,16 @@ ${categoriaActiva === cat.name
             <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
               Únete a la red comercial más grande. Digitaliza tu tienda y aumenta tus ventas hoy mismo.
             </p>
-            <Link to="/planes" className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all inline-block shadow-2xl shadow-blue-600/40 transform hover:scale-105">
+            <Link to="/planes" className="
+    inline-flex items-center justify-center
+    bg-blue-600 hover:bg-blue-500
+    text-white px-12 py-5
+    rounded-[2rem] font-black text-lg
+    transition-all duration-300
+    ring-1 ring-blue-400/30
+    hover:ring-blue-400/60
+    hover:scale-[1.02] active:scale-[0.98]
+  ">
               Empezar ahora
             </Link>
           </div>
@@ -252,7 +261,7 @@ function TrustItem({ icon, title, desc }) {
                     p-6 rounded-[2rem]
                     border border-gray-100 dark:border-gray-800
                     shadow-sm flex items-center gap-4 transition-all">
-      
+
       <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-2xl flex-shrink-0">
         {icon}
       </div>

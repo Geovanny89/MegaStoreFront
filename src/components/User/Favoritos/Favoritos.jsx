@@ -26,7 +26,6 @@ export default function Favoritos() {
     fetchFavProducts();
   }, []);
 
-  // ✅ Eliminar FAVORITO usando productId → porque tu backend lo pide así
   const eliminarFavorito = async (favorite) => {
     try {
       setLoadingId(favorite._id);
@@ -37,10 +36,7 @@ export default function Favoritos() {
         }
       });
 
-      // Eliminar en lista local de favoritos
       setProductos((prev) => prev.filter((f) => f._id !== favorite._id));
-
-      // 🔥 ACTUALIZAR FAVORITOS GLOBALES (Products.jsx también lo verá)
       removeFavorite(favorite.product._id);
 
     } catch (e) {
@@ -51,8 +47,6 @@ export default function Favoritos() {
     }
   };
 
-
-  // 🛒 Agregar al carrito y luego eliminar favorito
   const agregarCarrito = async (productId, favoriteId) => {
     try {
       setAddingId(productId);
@@ -64,9 +58,7 @@ export default function Favoritos() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Buscar el favorito completo
       const favoritoItem = productos.find(f => f._id === favoriteId);
-
       if (favoritoItem) {
         await eliminarFavorito(favoritoItem);
       }
@@ -82,59 +74,60 @@ export default function Favoritos() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      <h1 className="text-3xl font-bold mb-6">Mis favoritos</h1>
+    <div className="max-w-7xl mx-auto px-6 py-10 bg-[#F8FAFC] dark:bg-slate-900">
+      <h1 className="text-3xl font-bold mb-6 text-slate-900 dark:text-slate-100">
+        Mis favoritos
+      </h1>
 
       {productos.length === 0 ? (
-        <p className="text-gray-500">Aún no tienes productos marcados como favoritos.</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          Aún no tienes productos marcados como favoritos.
+        </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
           {productos.map((f) => (
             <div
               key={f._id}
-              className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+              className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
             >
-              <div className="w-full h-44 bg-gray-50 flex justify-center items-center">
+              <div className="w-full h-44 bg-gray-50 dark:bg-slate-700 flex justify-center items-center">
                 <img
-                  src={
-                    f.product.image?.[0]?.url ||
-                    f.product.image?.[1]?.url ||
-                    "/no-image.png"
-                  }
+                  src={f.product.image?.[0]?.url || f.product.image?.[1]?.url || "/no-image.png"}
                   alt={f.product.name}
                   className="h-full object-contain p-3"
                 />
-
               </div>
 
               <div className="p-4">
-                <h2 className="text-lg font-medium text-gray-800">{f.product.name}</h2>
+                <h2 className="text-lg font-medium text-gray-800 dark:text-slate-100">
+                  {f.product.name}
+                </h2>
 
-                <p className="text-gray-900 font-semibold mt-2 text-lg">
+                <p className="text-gray-900 dark:text-slate-200 font-semibold mt-2 text-lg">
                   ${f.product.price}
                 </p>
 
-                {/* 🛒 Añadir al carrito */}
                 <button
                   onClick={() => agregarCarrito(f.product._id, f._id)}
                   disabled={addingId === f.product._id}
                   className="
                     mt-4 w-full py-2 text-sm font-medium
-                    border border-gray-300 rounded-md
-                    text-gray-700 hover:bg-gray-100
+                    border border-gray-300 dark:border-slate-600
+                    rounded-md
+                    text-gray-700 dark:text-slate-100
+                    hover:bg-gray-100 dark:hover:bg-slate-700
                     transition-all
                   "
                 >
                   {addingId === f.product._id ? "Agregando..." : "Añadir al carrito"}
                 </button>
 
-                {/* ❌ Quitar favorito */}
                 <button
                   onClick={() => eliminarFavorito(f)}
                   disabled={loadingId === f._id}
                   className="
                     mt-2 w-full py-2 text-sm font-medium
-                    text-red-600 hover:bg-red-50 rounded-md
+                    text-red-600 hover:bg-red-50 dark:hover:bg-red-900 rounded-md
                     flex items-center justify-center gap-2
                     transition-all
                   "
