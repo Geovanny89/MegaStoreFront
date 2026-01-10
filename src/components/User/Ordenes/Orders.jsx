@@ -432,24 +432,7 @@ export default function Orders() {
               )}
 
               {/* INFO RECOGER EN TIENDA */}
-              {selectedOrder.paymentMethod === 'cash_on_delivery' && selectedOrder.status !== 'delivered' && (
-                <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 p-4 rounded-2xl flex items-center gap-4 transition-colors">
-                  {/* Contenedor del Icono */}
-                  <div className="bg-white dark:bg-slate-800 p-2 rounded-xl text-emerald-600 dark:text-emerald-400 shadow-sm transition-colors">
-                    <Store size={20} />
-                  </div>
-
-                  {/* Mensaje Informativo */}
-                  <div>
-                    <p className="text-[11px] font-black text-emerald-800 dark:text-emerald-400 uppercase leading-none mb-1">
-                      Pago en Tienda
-                    </p>
-                    <p className="text-[10px] text-emerald-600 dark:text-emerald-500/90 font-bold uppercase">
-                      Usa el chat para avisar al vendedor que vas en camino.
-                    </p>
-                  </div>
-                </div>
-              )}
+           
             </div>
 
             {/* TOTAL Y CONFIRMACIÓN */}

@@ -14,7 +14,7 @@ export default function Success() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FBFDFF] dark:bg-slate-950 px-4 transition-colors duration-300">
       <div className="bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none rounded-[40px] p-10 max-w-md w-full text-center border border-slate-100 dark:border-slate-800 relative overflow-hidden">
-        
+
         {/* Adorno visual de fondo */}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl" />
@@ -50,10 +50,11 @@ export default function Success() {
             <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
               {isPickup ? (
                 <>
-                  Tu orden fue creada exitosamente. 
+                  Tu orden fue creada exitosamente.
                   <span className="block mt-2 font-bold text-emerald-600 dark:text-emerald-500">
-                    Realiza el pago directamente en la tienda al recoger tu producto.
+                    Realiza el pago al mensajero una vez recibas tu producto.
                   </span>
+
                 </>
               ) : (
                 <>
@@ -75,7 +76,7 @@ export default function Success() {
               Ver mis órdenes
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
-            
+
             <Link
               to={continueShoppingPath}
               className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-transparent text-slate-400 dark:text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:text-slate-800 dark:hover:text-white transition-colors"

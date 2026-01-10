@@ -42,7 +42,8 @@ const [bulkError, setBulkError] = useState(false);
   /* ================== FETCH TIPOS ================== */
   const fetchTipos = async () => {
     try {
-      const res = await api.get("/all/tipes");
+      const res = await api.get("/seller/tipos-productos");
+     
       setTipos(res.data);
     } catch (err) {
       console.error(err);
