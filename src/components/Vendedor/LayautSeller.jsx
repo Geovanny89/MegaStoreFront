@@ -18,7 +18,7 @@ export default function LayoutSeller() {
     const fetchSeller = async () => {
       try {
         const res = await api.get("/seller/me");
-        console.log("soy el vendedor ", res.data);
+        // console.log("soy el vendedor ", res.data);
         setSeller(res.data);
       } catch (error) {
         console.error("Error obteniendo seller:", error);

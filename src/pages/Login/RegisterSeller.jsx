@@ -80,10 +80,10 @@ export default function RegisterSeller() {
   const query = new URLSearchParams(useLocation().search);
   const planFromUrl = query.get("plan");
 
-  const METODOS_PAGO = [
-    { banco: "Nequi", numero: "3000000000", titular: "Marketplace Admin" },
-    { banco: "Daviplata", numero: "3000000000", titular: "Marketplace Admin" }
-  ];
+  // const METODOS_PAGO = [
+  //   { banco: "Nequi", numero: "3000000000", titular: "Marketplace Admin" },
+  //   { banco: "Daviplata", numero: "3000000000", titular: "Marketplace Admin" }
+  // ];
 
   const [form, setForm] = useState({
     name: "", lastName: "", identity: "", email: "", password: "", phone: "",
@@ -334,7 +334,7 @@ export default function RegisterSeller() {
             </div>
 
             {/* SECCIÓN DE PAGO (SOLO INFO) */}
-            {planSeleccionado && (
+            {/* {planSeleccionado && (
               <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="p-5 rounded-2xl bg-blue-600/5 border border-blue-500/20">
                   <div className="flex justify-between items-center">
@@ -369,7 +369,7 @@ export default function RegisterSeller() {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* TÉRMINOS */}
             <div className="flex items-start gap-3 p-2">
