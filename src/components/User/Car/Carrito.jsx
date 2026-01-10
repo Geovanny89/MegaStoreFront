@@ -139,62 +139,87 @@ export default function Carrito() {
     }
   };
 
-  const handleCreateOrder = async () => {
-    if (!acceptedTerms)
-      return alert("Debes aceptar los términos y condiciones");
-    if (carrito.length === 0) return alert("El carrito está vacío");
-    if (deliveryMethod === "delivery" && !selectedAddress)
-      return alert("Selecciona una dirección de envío");
+const handleCreateOrder = async () => {
+  if (!acceptedTerms)
+    return alert("Debes aceptar los términos y condiciones");
+  if (carrito.length === 0) return alert("El carrito está vacío");
+  if (deliveryMethod === "delivery" && !selectedAddress)
+    return alert("Selecciona una dirección de envío");
 
-    try {
-      setLoadingOrder(true);
-      const products = carrito.map((item) => ({
-        productId: item.product._id,
-        quantity: item.quantity,
-      }));
+  // 🔴 VALIDACIÓN DE CONTRAENTREGA POR CIUDAD
+  if (
+    paymentMethod === "cash_on_delivery" &&
+    deliveryMethod === "delivery" &&
+    codPayment?.cities?.length > 0
+  ) {
+    const ciudadCliente = selectedAddress.city?.toLowerCase();
 
-      const shippingAddress =
-        deliveryMethod === "delivery"
-          ? {
-              street: selectedAddress.street,
-              city: selectedAddress.city,
-              state: selectedAddress.state,
-              postalCode: selectedAddress.postalCode,
-              reference: selectedAddress.reference,
-            }
-          : null;
+    const permitido = codPayment.cities.some(
+      (c) => c.toLowerCase() === ciudadCliente
+    );
 
-      await api.post(
-        "/order",
-        { products, deliveryMethod, paymentMethod, shippingAddress },
-        { headers: { Authorization: `Bearer ${token}` } }
+    if (!permitido) {
+      return alert(
+        `El pago contraentrega solo está disponible en: ${codPayment.cities.join(
+          ", "
+        )}`
       );
-
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#16a34a", "#3b82f6", "#ffffff"],
-      });
-
-      setCarrito([]);
-      window.dispatchEvent(new Event("cartUpdated"));
-
-      setTimeout(() => {
-        const shipParam =
-          deliveryMethod === "delivery" ? "&shipping=seller" : "";
-        navigate(
-          paymentMethod === "cash_on_delivery"
-            ? `/success?type=pickup${shipParam}`
-            : `/success?type=mobile${shipParam}`
-        );
-      }, 800);
-    } catch (err) {
-      alert(err.response?.data?.message || "Error al crear la orden");
-    } finally {
-      setLoadingOrder(false);
     }
-  };
+  }
+
+  try {
+    setLoadingOrder(true);
+
+    const products = carrito.map((item) => ({
+      productId: item.product._id,
+      quantity: item.quantity,
+    }));
+
+    const shippingAddress =
+      deliveryMethod === "delivery"
+        ? {
+            street: selectedAddress.street,
+            city: selectedAddress.city,
+            state: selectedAddress.state,
+            postalCode: selectedAddress.postalCode,
+            reference: selectedAddress.reference,
+          }
+        : null;
+
+    await api.post(
+      "/order",
+      { products, deliveryMethod, paymentMethod, shippingAddress },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#16a34a", "#3b82f6", "#ffffff"],
+    });
+
+    setCarrito([]);
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    setTimeout(() => {
+      const shipParam =
+        deliveryMethod === "delivery" ? "&shipping=seller" : "";
+        
+        const basePath = slug ? `/${slug}` : "";
+     navigate(
+    paymentMethod === "cash_on_delivery"
+      ? `${basePath}/success?type=pickup${shipParam}`
+      : `${basePath}/success?type=mobile${shipParam}`
+  );
+}, 800);
+  } catch (err) {
+    alert(err.response?.data?.message || "Error al crear la orden");
+  } finally {
+    setLoadingOrder(false);
+  }
+};
+
 
   const total = carrito.reduce((acc, item) => {
     const price = item.hasDiscount ? item.finalPrice : item.product.price;
@@ -212,6 +237,23 @@ export default function Carrito() {
   )
     ? "free"
     : "coordinar";
+const codPayment = sellerPayments.find(
+  (m) => m.type === "cod" && m.active
+);
+useEffect(() => {
+  // 🔴 Si quedó contraentrega seleccionada pero el vendedor no la tiene
+  if (paymentMethod === "cash_on_delivery" && !codPayment) {
+    // buscamos un método válido de respaldo
+    const fallback =
+      sellerPayments.find((m) => m.provider === "nequi" && m.active)
+        ? "nequi"
+        : sellerPayments.find((m) => m.provider === "llaves" && m.active)
+        ? "daviplata"
+        : "";
+
+    setPaymentMethod(fallback);
+  }
+}, [codPayment, sellerPayments]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-900 py-12 px-4 md:px-6">
@@ -316,7 +358,7 @@ export default function Carrito() {
                   Modo de Entrega
                 </h4>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <button
                     onClick={() => setDeliveryMethod("delivery")}
                     className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 transition-all ${
@@ -331,7 +373,7 @@ export default function Carrito() {
                     </span>
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => {
                       setDeliveryMethod("pickup");
                       setPaymentMethod("nequi");
@@ -346,7 +388,7 @@ export default function Carrito() {
                     <span className="text-[10px] font-black uppercase tracking-tight">
                       En tienda
                     </span>
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -499,78 +541,101 @@ export default function Carrito() {
                   Pago y Recaudo
                 </h4>
 
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full p-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all text-slate-900 dark:text-gray-100"
-                >
-                  {deliveryMethod === "delivery" ? (
-                    <option value="cash_on_delivery">
-                      Contraentrega (Efectivo al recibir)
-                    </option>
-                  ) : (
-                    <option value="cash_on_delivery">
-                      Pago en Tienda (Efectivo)
-                    </option>
-                  )}
+               <select
+  value={paymentMethod}
+  onChange={(e) => setPaymentMethod(e.target.value)}
+  className="w-full p-4 bg-slate-50 dark:bg-gray-800 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all text-slate-900 dark:text-gray-100"
+>
+  {/* 🔴 CONTRAENTREGA SOLO SI EL VENDEDOR LA TIENE */}
+  {codPayment && (
+    <option value="cash_on_delivery">
+      {deliveryMethod === "delivery"
+        ? "Contraentrega (Efectivo al recibir)"
+        : "Pago en Tienda (Efectivo)"}
+    </option>
+  )}
 
-                  {sellerPayments.some(
-                    (m) => m.provider === "nequi" && m.active
-                  ) && <option value="nequi">Transferencia Nequi</option>}
-                  {sellerPayments.some(
-                    (m) => m.provider === "llaves" && m.active
-                  ) && <option value="daviplata">Transferencia Breb-B</option>}
-                </select>
+  {/* NEQUI */}
+  {sellerPayments.some(
+    (m) => m.provider === "nequi" && m.active
+  ) && <option value="nequi">Transferencia Nequi</option>}
+
+  {/* LLAVES */}
+  {sellerPayments.some(
+    (m) => m.provider === "llaves" && m.active
+  ) && <option value="daviplata">Transferencia Breb-B</option>}
+</select>
+
 
                 {paymentMethod !== "cash_on_delivery" ? (
-                  <div className="bg-blue-50/50 dark:bg-blue-900/30 border-2 border-blue-100 dark:border-blue-700 rounded-[2rem] p-6 animate-in zoom-in-95">
-                    {currentSellerPayment ? (
-                      <div className="space-y-4">
-                        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-blue-100 dark:border-blue-700 flex justify-between items-center">
-                          <div>
-                            <p className="text-[9px] font-black text-slate-400 dark:text-gray-400 uppercase tracking-tighter">
-                              Cuenta / Llave
-                            </p>
-                            <p className="text-xl font-black text-blue-700 dark:text-blue-400">
-                              {currentSellerPayment.value}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                currentSellerPayment.value
-                              );
-                              alert("Copiado al portapapeles");
-                            }}
-                            className="p-3 bg-blue-50 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
-                          >
-                            <Copy size={16} />
-                          </button>
-                        </div>
-                        <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold italic text-center">
-                          Realiza la transferencia y guarda el comprobante.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="text-center py-2">
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-gray-400 uppercase italic">
-                          Método no registrado por el vendedor.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="bg-slate-50 dark:bg-gray-800 border border-slate-100 dark:border-gray-700 rounded-2xl p-4 flex gap-3 items-center">
-                    <div className="bg-white dark:bg-gray-900 p-2 rounded-lg shadow-sm">
-                      <Check className="text-green-600" size={18} />
-                    </div>
-                    <p className="text-[11px] font-bold text-slate-600 dark:text-gray-300 leading-tight">
-                      {deliveryMethod === "delivery"
-                        ? "Pagarás el total en efectivo cuando el domiciliario llegue a tu ubicación."
-                        : "Pagarás el total directamente en el establecimiento al recoger tu pedido."}
-                    </p>
-                  </div>
-                )}
+  <div className="bg-blue-50/50 dark:bg-blue-900/30 border-2 border-blue-100 dark:border-blue-700 rounded-[2rem] p-6 animate-in zoom-in-95">
+    {currentSellerPayment ? (
+      <div className="space-y-4">
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border border-blue-100 dark:border-blue-700 flex justify-between items-center">
+          <div>
+            <p className="text-[9px] font-black text-slate-400 dark:text-gray-400 uppercase tracking-tighter">
+              Cuenta / Llave
+            </p>
+            <p className="text-xl font-black text-blue-700 dark:text-blue-400">
+              {currentSellerPayment.value}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(currentSellerPayment.value);
+              alert("Copiado al portapapeles");
+            }}
+            className="p-3 bg-blue-50 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-600 hover:text-white transition-all"
+          >
+            <Copy size={16} />
+          </button>
+        </div>
+
+        <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold italic text-center">
+          Realiza la transferencia y guarda el comprobante.
+        </p>
+      </div>
+    ) : (
+      <div className="text-center py-2">
+        <p className="text-[10px] font-bold text-slate-400 dark:text-gray-400 uppercase italic">
+          Método no registrado por el vendedor.
+        </p>
+      </div>
+    )}
+  </div>
+) : (
+  <div className="space-y-3">
+    {/* INFO CONTRAENTREGA */}
+    <div className="bg-slate-50 dark:bg-gray-800 border border-slate-100 dark:border-gray-700 rounded-2xl p-4 flex gap-3 items-center">
+      <div className="bg-white dark:bg-gray-900 p-2 rounded-lg shadow-sm">
+        <Check className="text-green-600" size={18} />
+      </div>
+      <p className="text-[11px] font-bold text-slate-600 dark:text-gray-300 leading-tight">
+        {deliveryMethod === "delivery"
+          ? "Pagarás el total en efectivo cuando el domiciliario llegue a tu ubicación."
+          : "Pagarás el total directamente en el establecimiento al recoger tu pedido."}
+      </p>
+    </div>
+
+    {/* 📝 NOTA DEL VENDEDOR */}
+    {codPayment?.note && (
+      <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 flex gap-2 items-start">
+        <Info size={16} className="text-amber-600 dark:text-amber-400 mt-0.5" />
+        <p className="text-[11px] font-bold text-amber-700 dark:text-amber-300">
+          {codPayment.note}
+        </p>
+      </div>
+    )}
+
+    {/* 📍 CIUDADES PERMITIDAS */}
+    {codPayment?.cities?.length > 0 && (
+      <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 italic text-center">
+        Disponible solo en: {codPayment.cities.join(", ")}
+      </p>
+    )}
+  </div>
+)}
+
               </div>
 
               {/* TOTAL Y CONFIRMACIÓN */}

@@ -1,40 +1,15 @@
-// import { Link } from "react-router-dom";
-// import { CheckCircleIcon } from "@heroicons/react/24/solid";
-
-// export default function Success() {
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-//       <div className="bg-white shadow-md rounded-2xl p-8 max-w-md w-full text-center">
-        
-//         <CheckCircleIcon className="w-20 h-20 text-green-500 mx-auto mb-4" />
-
-//         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-//           Pago realizado con éxito
-//         </h1>
-
-//         <p className="text-gray-600 mb-6">
-//           Gracias por tu compra. Tu pago ha sido confirmado.  
-//           Puedes revisar los detalles en la sección de órdenes.
-//         </p>
-
-//         <Link
-//           to="/homeUser"
-//           className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-//         >
-//           Volver al inicio
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// }
 import { Link, useSearchParams } from "react-router-dom";
 import { CheckCircle2, Clock, ArrowRight, ShoppingBag } from "lucide-react";
 
 export default function Success() {
   const [params] = useSearchParams();
   const type = params.get("type");
+  const slug = params.get("slug"); // Capturamos el slug de la tienda desde la URL
 
   const isPickup = type === "pickup";
+
+  // Si existe un slug, redirigimos a /nombre-tienda, de lo contrario a la raíz
+  const continueShoppingPath = slug ? `/${slug}` : "/";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FBFDFF] dark:bg-slate-950 px-4 transition-colors duration-300">
@@ -102,7 +77,7 @@ export default function Success() {
             </Link>
             
             <Link
-              to="/"
+              to={continueShoppingPath}
               className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-transparent text-slate-400 dark:text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:text-slate-800 dark:hover:text-white transition-colors"
             >
               <ShoppingBag size={16} />

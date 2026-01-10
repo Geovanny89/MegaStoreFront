@@ -144,9 +144,10 @@ export default function Storefront() {
               </h1>
 
               <p className="mt-4 text-slate-500 dark:text-slate-400 font-medium max-w-xl">
-                {storeData.seller.description ||
-                  "Bienvenidos a nuestra tienda oficial. Calidad y confianza garantizada."}
-              </p>
+  {storeData.seller.storeDescription?.trim() ||
+    "Bienvenidos a nuestra tienda oficial. Calidad y confianza garantizada."}
+</p>
+
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import ProductQuestions from "../../Questions/ProductQuestions";
 import RatingStars from "../../Ratings/RatingStars";
 import ProductReviews from "../Calificaciones/ProductReviews";
+import { formatPriceCOP } from "../../../utils/FomatoPrice";
 
 export default function Productosvendedor({ vendedorId: propVendedorId, search }) {
   const { vendedorId: paramVendedorId } = useParams();
@@ -365,7 +366,7 @@ export default function Productosvendedor({ vendedorId: propVendedorId, search }
                       {selectedProduct.hasDiscount ? (
                         <div className="flex flex-col">
                           <span className="text-sm line-through text-gray-400 dark:text-slate-500">
-                            ${selectedProduct.price}
+                            ${formatPriceCOP(selectedProduct.price)}
                           </span>
                           <div className="flex items-center gap-2">
                             <span className="text-2xl font-black text-red-600 dark:text-red-500">
@@ -378,7 +379,7 @@ export default function Productosvendedor({ vendedorId: propVendedorId, search }
                         </div>
                       ) : (
                         <p className="text-2xl font-black text-blue-600 dark:text-blue-400">
-                          ${selectedProduct.price}
+                          ${formatPriceCOP(selectedProduct.price)}
                         </p>
                       )}
                     </div>

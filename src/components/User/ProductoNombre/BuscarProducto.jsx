@@ -6,6 +6,7 @@ import { useFavorites } from "../../../context/FavoriteContext";
 import ProductQuestions from "../../Questions/ProductQuestions";
 import RatingStars from "../../Ratings/RatingStars";
 import ProductReviews from "../Calificaciones/ProductReviews";
+import { formatPriceCOP } from "../../../utils/FomatoPrice";
 
 export default function BuscarProducto() {
   const { name } = useParams();
@@ -233,7 +234,7 @@ export default function BuscarProducto() {
                   )}
 
                   <p className="text-2xl font-bold text-blue-600 mt-3">
-                    ${selectedProduct.price}
+                    ${formatPriceCOP(selectedProduct.price)}
                   </p>
 
                   <p className="mt-2">Marca: {selectedProduct.brand}</p>

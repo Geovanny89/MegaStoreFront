@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { 
-  User, Mail, Phone, Store, QrCode, 
-  Save, ArrowLeft, Image as ImageIcon, Loader2, CheckCircle2 
+import {
+  User, Mail, Phone, Store, QrCode,
+  Save, ArrowLeft, Image as ImageIcon, Loader2, CheckCircle2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,9 +14,11 @@ export default function EditarPerfilVendedor() {
     email: "",
     phone: "",
     storeName: "",
-    nequiValue: "", 
+    storeDescription: "",
+    nequiValue: "",
     llavesValue: "",
-    codEnabled: false // NUEVO: pago contraentrega
+    codEnabled: false,
+    codNote: ""
   });
 
   const [nequiQR, setNequiQR] = useState(null);
@@ -28,7 +30,7 @@ export default function EditarPerfilVendedor() {
     try {
       const res = await api.get("/vendedor/perfil");
       const data = res.data;
-      
+
       const nequiData = data.paymentMethods?.find(m => m.provider === "nequi");
       const llavesData = data.paymentMethods?.find(m => m.provider === "llaves");
       const codData = data.paymentMethods?.find(m => m.type === "cod");
@@ -39,9 +41,11 @@ export default function EditarPerfilVendedor() {
         email: data.email || "",
         phone: data.phone || "",
         storeName: data.storeName || "",
+        storeDescription: data.storeDescription || "",
         nequiValue: nequiData?.value || "",
         llavesValue: llavesData?.value || "",
-        codEnabled: !!codData // true si existe COD
+        codEnabled: !!codData,
+        codNote: codData?.note || ""
       });
     } catch (err) {
       console.error("Error cargando perfil:", err);
@@ -56,7 +60,10 @@ export default function EditarPerfilVendedor() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    setForm(prev => ({ 
+      ...prev, 
+      [name]: type === "checkbox" ? checked : value 
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -65,19 +72,19 @@ export default function EditarPerfilVendedor() {
 
     try {
       const formData = new FormData();
-
-      // Datos Básicos
       formData.append("name", form.name);
       formData.append("lastName", form.lastName);
       formData.append("phone", form.phone);
       formData.append("storeName", form.storeName);
-
-      // Métodos de pago
+      formData.append("storeDescription", form.storeDescription);
       formData.append("paymentMethods.nequi.value", form.nequiValue);
       formData.append("paymentMethods.llaves.value", form.llavesValue);
-      formData.append("paymentMethods.cod", form.codEnabled); // COD
+      
+      if (form.codEnabled) {
+        formData.append("paymentMethods.cod.active", "true");
+        formData.append("paymentMethods.cod.note", form.codNote);
+      }
 
-      // Archivos QR
       if (nequiQR) formData.append("nequiQR", nequiQR);
       if (llavesQR) formData.append("llavesQR", llavesQR);
 
@@ -104,26 +111,28 @@ export default function EditarPerfilVendedor() {
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
-      <button 
+      <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-slate-500 font-bold text-sm mb-6 hover:text-blue-600 transition-colors group"
       >
-        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
         Volver al Perfil
       </button>
 
       <div className="bg-white rounded-[40px] shadow-2xl border border-slate-100 overflow-hidden">
+        {/* HEADER CON ADORNO */}
         <div className="bg-slate-900 p-10 text-white relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl font-black tracking-tight mb-2">Configuración de Tienda</h2>
             <p className="text-slate-400 font-medium">Gestiona tu identidad y métodos de recaudo</p>
           </div>
           <div className="absolute right-[-20px] top-[-20px] opacity-10">
-            <SettingsIcon size={180} />
+            <Store size={180} />
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-12">
+          
           {/* SECCIÓN 1: IDENTIDAD */}
           <section>
             <div className="flex items-center gap-3 mb-8">
@@ -131,10 +140,20 @@ export default function EditarPerfilVendedor() {
               <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Identidad del Vendedor</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputGroup label="Nombre" name="name" icon={<User size={18}/>} value={form.name} onChange={handleChange} />
-              <InputGroup label="Apellido" name="lastName" icon={<User size={18}/>} value={form.lastName} onChange={handleChange} />
-              <InputGroup label="Nombre de la Tienda" name="storeName" icon={<Store size={18}/>} value={form.storeName} onChange={handleChange} />
-              <InputGroup label="Teléfono Público" name="phone" icon={<Phone size={18}/>} value={form.phone} onChange={handleChange} />
+              <InputGroup label="Nombre" name="name" icon={<User size={18} />} value={form.name} onChange={handleChange} />
+              <InputGroup label="Apellido" name="lastName" icon={<User size={18} />} value={form.lastName} onChange={handleChange} />
+              <InputGroup label="Nombre de la Tienda" name="storeName" icon={<Store size={18} />} value={form.storeName} onChange={handleChange} />
+              <InputGroup label="Teléfono Público" name="phone" icon={<Phone size={18} />} value={form.phone} onChange={handleChange} />
+              
+              <div className="md:col-span-2">
+                <InputGroup 
+                  label="Descripción de la Tienda" 
+                  name="storeDescription" 
+                  value={form.storeDescription} 
+                  onChange={handleChange} 
+                  placeholder="Ej: Somos tienda virtual, ofrecemos los mejores precios y calidad" 
+                />
+              </div>
             </div>
           </section>
 
@@ -144,11 +163,11 @@ export default function EditarPerfilVendedor() {
               <div className="w-10 h-10 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center font-black">2</div>
               <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Métodos de Pago (QR & Celular)</h3>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Card Nequi */}
               <div className="bg-slate-50 p-8 rounded-[3rem] border border-slate-200/60 space-y-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-20"><QrCode size={40}/></div>
+                <div className="absolute top-0 right-0 p-4 opacity-20"><QrCode size={40} /></div>
                 <p className="font-black text-purple-700 text-xs uppercase tracking-widest">Proveedor: Nequi</p>
                 <InputGroup label="Número de Celular Nequi" name="nequiValue" value={form.nequiValue} onChange={handleChange} placeholder="Ej: 3001234567" />
                 <FileInput label={nequiQR ? "QR Seleccionado" : "Cargar QR Nequi"} fileSelected={!!nequiQR} onChange={(file) => setNequiQR(file)} />
@@ -156,25 +175,42 @@ export default function EditarPerfilVendedor() {
 
               {/* Card Llaves */}
               <div className="bg-slate-50 p-8 rounded-[3rem] border border-slate-200/60 space-y-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-20"><QrCode size={40}/></div>
+                <div className="absolute top-0 right-0 p-4 opacity-20"><QrCode size={40} /></div>
                 <p className="font-black text-blue-700 text-xs uppercase tracking-widest">Proveedor: Llaves</p>
-                <InputGroup label="Valor de la Llave (Celular/ID)" name="llavesValue" value={form.llavesValue} onChange={handleChange} placeholder="Ej: @NEQUI3107654321 o @DAVI " />
+                <InputGroup label="Valor de la Llave (Celular/ID)" name="llavesValue" value={form.llavesValue} onChange={handleChange} placeholder="Ej: @NEQUI3107654321" />
                 <FileInput label={llavesQR ? "QR Seleccionado" : "Cargar QR Llaves"} fileSelected={!!llavesQR} onChange={(file) => setLlavesQR(file)} />
               </div>
             </div>
 
             {/* PAGO CONTRAENTREGA */}
-            <div className="mt-6">
-              <label className="inline-flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  name="codEnabled" 
-                  checked={form.codEnabled} 
-                  onChange={handleChange} 
-                  className="w-5 h-5 rounded border border-gray-300 focus:ring-2 focus:ring-blue-500"
+            <div className="mt-8 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+              <label className="inline-flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="codEnabled"
+                  checked={form.codEnabled}
+                  onChange={handleChange}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm font-bold text-slate-700">Activar Pago Contraentrega (COD)</span>
               </label>
+
+              {form.codEnabled && (
+  <div className="mt-6 animate-in fade-in slide-in-from-top-2">
+    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-5 mb-2 block">
+      Nota Pago Contraentrega
+    </label>
+    <textarea
+      name="codNote"
+      value={form.codNote || ""} // Asegura que no sea undefined
+      onChange={handleChange}
+      placeholder="Ej: Pago contraentrega solo para la ciudad de Cúcuta"
+      rows={3}
+      // Se agregó text-slate-800 para que la letra sea visible
+      className="w-full bg-white border-2 border-slate-100 focus:border-blue-500 rounded-3xl px-8 py-4 text-sm font-bold transition-all outline-none shadow-sm placeholder:text-slate-300 resize-none text-slate-800"
+    />
+  </div>
+)}
             </div>
           </section>
 
@@ -201,7 +237,7 @@ export default function EditarPerfilVendedor() {
   );
 }
 
-/* --- SUB-COMPONENTES --- */
+/* --- SUB-COMPONENTES (RESTAURADOS) --- */
 function InputGroup({ label, name, type = "text", icon, value, onChange, placeholder }) {
   return (
     <div className="space-y-2">
@@ -216,7 +252,7 @@ function InputGroup({ label, name, type = "text", icon, value, onChange, placeho
           value={value || ""}
           onChange={onChange}
           placeholder={placeholder}
-          className={`w-full bg-white border-2 border-slate-100 focus:border-blue-500 rounded-3xl py-4 ${icon ? 'pl-14' : 'px-8'} pr-8 text-sm font-bold transition-all outline-none shadow-sm placeholder:text-slate-300`}
+          className={`w-full bg-white border-2 border-slate-100 focus:border-blue-500 rounded-3xl py-4 ${icon ? 'pl-14' : 'px-8'} pr-8 text-sm font-bold transition-all outline-none shadow-sm placeholder:text-slate-300 text-slate-800`}
         />
       </div>
     </div>
@@ -231,17 +267,13 @@ function FileInput({ label, onChange, fileSelected }) {
           {fileSelected ? <CheckCircle2 size={32} className="mb-2" /> : <ImageIcon size={32} className="mb-2" />}
           <p className="text-[10px] font-black uppercase tracking-tighter">{label}</p>
         </div>
-        <input 
-          type="file" 
-          className="hidden" 
+        <input
+          type="file"
+          className="hidden"
           accept="image/*"
-          onChange={(e) => onChange(e.target.files[0])} 
+          onChange={(e) => onChange(e.target.files[0])}
         />
       </label>
     </div>
   );
-}
-
-function SettingsIcon({ size }) {
-    return <Store size={size} />;
 }

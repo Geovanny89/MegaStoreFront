@@ -15,6 +15,7 @@ import ProductQuestions from "../components/Questions/ProductQuestions";
 import RatingStars from "../components/Ratings/RatingStars";
 import ProductReviews from "../components/User/Calificaciones/ProductReviews";
 import { useNavigate } from "react-router-dom";
+import { formatPriceCOP } from "../utils/FomatoPrice";
 
 export default function ProductosTienda({ vendedorId, volver, user }) {
   const [vendedor, setVendedor] = useState(null);
@@ -633,7 +634,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                       {selectedProduct.hasDiscount && selectedProduct.discount ? (
                         <div className="mb-3">
                           <p className="text-sm line-through text-gray-400">
-                            ${selectedProduct.price}
+                            ${formatPriceCOP(selectedProduct.price)}
                           </p>
                           <p className="text-2xl font-black text-red-600">
                             ${selectedProduct.finalPrice}
@@ -647,7 +648,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                         </div>
                       ) : (
                         <p className="text-xl font-black text-blue-600 mb-3">
-                          ${selectedProduct.price}
+                         ${formatPriceCOP(selectedProduct.price)}
                         </p>
                       )}
 

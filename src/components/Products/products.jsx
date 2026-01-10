@@ -5,6 +5,7 @@ import { useFavorites } from "../../context/FavoriteContext";
 import ProductQuestions from "../../components/Questions/ProductQuestions";
 import RatingStars from "../Ratings/RatingStars";
 import ProductReviews from "../User/Calificaciones/ProductReviews";
+import { formatPriceCOP } from "../../utils/FomatoPrice";
 
 // --- FUNCIÓN DE ALEATORIZACIÓN (Fuera del componente para evitar recreaciones) ---
 const shuffleArray = (array) => {
@@ -237,15 +238,15 @@ export default function Products() {
                 {p.hasDiscount ? (
                   <div className="flex flex-col">
                     <span className="text-sm line-through text-gray-400">
-                      ${p.price}
+                      ${formatPriceCOP(p.price)}
                     </span>
                     <span className="text-xl font-black text-red-600">
-                      ${p.finalPrice}
+                      ${formatPriceCOP(p.price)}
                     </span>
                   </div>
                 ) : (
                   <span className="text-xl font-black text-slate-900 dark:text-white">
-                    ${p.price}
+                    ${formatPriceCOP(p.price)}
                   </span>
                 )}
 
@@ -258,7 +259,7 @@ export default function Products() {
                     }
                   `}
                 >
-                  {p.stock > 0 ? `STOCK: ${p.stock}` : "SIN STOCK"}hola
+                  {p.stock > 0 ? `STOCK: ${p.stock}` : "SIN STOCK"}
                 </span>
               </div>
               {/* ENVÍO */}
@@ -447,11 +448,11 @@ export default function Products() {
 {selectedProduct.hasDiscount && selectedProduct.discount ? (
   <div className="mb-3">
     <p className="text-sm line-through text-gray-400">
-      ${selectedProduct.price}
+      ${formatPriceCOP(selectedProduct.price)}
     </p>
 
     <p className="text-2xl font-black text-red-600">
-      ${selectedProduct.finalPrice}
+      ${formatPriceCOP(selectedProduct.price)}
     </p>
 
     <p className="text-[11px] text-green-600 font-semibold mt-1">
@@ -463,7 +464,7 @@ export default function Products() {
   </div>
 ) : (
   <p className="text-xl font-black text-blue-600 mb-3">
-    ${selectedProduct.price}
+    ${formatPriceCOP(selectedProduct.price)}
   </p>
 )}
 

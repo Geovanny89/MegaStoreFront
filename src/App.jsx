@@ -95,6 +95,7 @@ export default function AppRouter() {
           <Route path="privacidad" element={<Privacidad />} />
           <Route path="terminos-condiciones" element={<Terminos />} />
           <Route path="contacto" element={<Contacto />} />
+          <Route path="success" element={<Success />} />
 
 
 
