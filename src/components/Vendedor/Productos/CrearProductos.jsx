@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "../../../api/axios";
-import { Upload, ShieldAlert, CheckCircle, Camera, X, AlertCircle } from "lucide-react";
+import { Upload, ShieldAlert, CheckCircle, Camera, X, AlertCircle, Download } from "lucide-react";
 
 export default function CrearProductos() {
   // Referencia para resetear el input de archivos manualmente
@@ -441,7 +441,14 @@ const handleBulkUpload = async () => {
   <h3 className="text-lg font-bold mb-4 text-gray-800">
     Carga Masiva de Productos (Excel)
   </h3>
-
+<a
+      href="/plantillas/plantilla_productos_kdice.xlsx" // Ruta relativa a la carpeta public
+      download="plantilla_carga_masiva.xlsx"      // Nombre con el que se guardará el archivo
+      className="flex items-center gap-2 text-xs font-bold bg-white border border-purple-200 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition-all shadow-sm"
+    >
+      <Download size={14} />
+      DESCARGAR PLANTILLA EXCEL
+    </a>
   {bulkMessage && (
     <div className={`mb-4 p-3 rounded-lg text-sm font-semibold ${
       bulkError
