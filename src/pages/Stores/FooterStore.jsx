@@ -19,14 +19,26 @@ export default function FooterStore() {
               MARKETPLACE<span className="text-blue-600">.</span>
             </h4>
             <p className="text-gray-500 dark:text-slate-400 leading-relaxed text-sm">
-              Conectando el comercio con el mundo digital. 
+            
             </p>
             <div className="flex gap-4">
-              {[Facebook, Instagram, Twitter].map((Icon, index) => (
-                <a key={index} href="#" className="p-2 bg-gray-50 dark:bg-slate-900 rounded-full text-gray-400 dark:text-slate-500 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white transition-all duration-300">
-                  <Icon size={18} />
-                </a>
-              ))}
+             {[
+    { Icon: Facebook, url: "https://www.facebook.com/kdicevitrinadigital" },
+    { Icon: Instagram, url: "https://instagram.com/kdice2026" },
+    // { Icon: Twitter, url: "https://twitter.com/tu-usuario" }
+  ].map(({ Icon, url }, index) => (
+    <a
+      key={index}
+      href={url}
+      target="_blank"           // Importante: abre en pestaña nueva
+      rel="noopener noreferrer" // Seguridad para links externos
+      className="p-2 bg-gray-50 dark:bg-gray-800 
+                 rounded-full text-gray-400 dark:text-gray-300
+                 hover:bg-blue-600 hover:text-white transition-all duration-300"
+    >
+      <Icon size={18} />
+    </a>
+  ))}
             </div>
           </div>
 
@@ -125,7 +137,7 @@ export default function FooterStore() {
         {/* SECCIÓN INFERIOR */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-gray-50 dark:border-slate-900 pt-10">
           <p className="text-gray-400 dark:text-slate-600 text-[11px] font-bold uppercase tracking-widest">
-            © {currentYear} MARKETPLACE · TODOS LOS DERECHOS RESERVADOS.
+            © {currentYear} K-DICE · TODOS LOS DERECHOS RESERVADOS.
           </p>
           <p className="text-gray-400 dark:text-slate-600 text-sm font-medium italic">
             Hecho para el comercio.

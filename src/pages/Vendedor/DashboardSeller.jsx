@@ -86,11 +86,10 @@ export default function DashboardSeller() {
           <div>
             <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
               <span
-                className={`text-white text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 md:py-1.5 rounded-lg uppercase tracking-widest shadow-sm ${
-                  planName.toLowerCase() === "premium"
+                className={`text-white text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 md:py-1.5 rounded-lg uppercase tracking-widest shadow-sm ${planName.toLowerCase() === "premium"
                     ? "bg-gradient-to-r from-amber-500 to-orange-600 shadow-amber-200"
                     : "bg-blue-600 shadow-blue-200"
-                }`}
+                  }`}
               >
                 Plan {planName}
               </span>
@@ -150,11 +149,10 @@ export default function DashboardSeller() {
               </code>
               <button
                 onClick={handleCopy}
-                className={`px-4 md:px-6 py-2 md:py-2.5 rounded-xl font-black text-[10px] md:text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
-                  copied
+                className={`px-4 md:px-6 py-2 md:py-2.5 rounded-xl font-black text-[10px] md:text-xs uppercase tracking-wider transition-all whitespace-nowrap ${copied
                     ? "bg-emerald-500 text-white"
                     : "bg-white text-slate-900 shadow-sm border border-slate-200"
-                }`}
+                  }`}
               >
                 {copied ? "Copiado!" : "Copiar"}
               </button>
@@ -291,11 +289,10 @@ function StatCard({ title, value, trend, isUp, icon, color }) {
           {React.cloneElement(icon, { size: 20 })}
         </div>
         <div
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] md:text-[10px] font-black ${
-            isUp
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] md:text-[10px] font-black ${isUp
               ? "bg-emerald-100 text-emerald-700"
               : "bg-rose-100 text-rose-700"
-          }`}
+            }`}
         >
           {isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
           {trend}
@@ -308,11 +305,11 @@ function StatCard({ title, value, trend, isUp, icon, color }) {
         {value}
       </h2>
       {/* SOPORTE WHATSAPP – ESTILO PROFESIONAL */}
-<a
-  href={`https://wa.me/573507918591?text=Hola,%20necesito%20soporte%20con%20mi%20tienda`}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="
+      <a
+        href="https://wa.me/message/IKDCAF5OJT6XI1"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="
     fixed bottom-5 right-5 z-[100]
     flex items-center gap-2
     bg-white
@@ -325,29 +322,29 @@ function StatCard({ title, value, trend, isUp, icon, color }) {
     text-slate-700
     hover:text-slate-900
   "
-  aria-label="Soporte por WhatsApp"
->
-  {/* ICONO */}
-  <div className="
+        aria-label="Soporte por WhatsApp"
+      >
+        {/* ICONO */}
+        <div className="
     w-8 h-8
     rounded-full
     bg-emerald-500
     flex items-center justify-center
   ">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      className="w-4 h-4 fill-white"
-    >
-      <path d="M16.003 2.003c-7.732 0-14 6.268-14 14 0 2.47.646 4.878 1.873 7.012L2 30l7.18-1.85a13.91 13.91 0 006.823 1.754c7.732 0 14-6.268 14-14s-6.268-14-14-14z"/>
-    </svg>
-  </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 32 32"
+            className="w-4 h-4 fill-white"
+          >
+            <path d="M16.003 2.003c-7.732 0-14 6.268-14 14 0 2.47.646 4.878 1.873 7.012L2 30l7.18-1.85a13.91 13.91 0 006.823 1.754c7.732 0 14-6.268 14-14s-6.268-14-14-14z" />
+          </svg>
+        </div>
 
-  {/* TEXTO */}
-  <span className="text-sm font-medium hidden sm:block">
-    Soporte
-  </span>
-</a>
+        {/* TEXTO */}
+        <span className="text-sm font-medium hidden sm:block">
+          Soporte
+        </span>
+      </a>
 
     </div>
   );

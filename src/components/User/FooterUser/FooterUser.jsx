@@ -16,7 +16,7 @@ export default function FooterUser() {
           {/* BRAND */}
           <div className="space-y-6">
             <h4 className="text-2xl font-black text-gray-900 dark:text-gray-100 tracking-tighter">
-              MARKETPLACE<span className="text-green-600">.</span>
+              K-DICE<span className="text-green-600">.</span>
             </h4>
 
             <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
@@ -24,20 +24,23 @@ export default function FooterUser() {
             </p>
 
             <div className="flex gap-4">
-              {[Facebook, Instagram, Twitter].map((Icon, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className="
-                    p-2 rounded-full transition-all
-                    bg-gray-50 dark:bg-gray-900
-                    text-gray-400 dark:text-gray-500
-                    hover:bg-green-600 hover:text-white
-                  "
-                >
-                  <Icon size={18} />
-                </a>
-              ))}
+             {[
+    { Icon: Facebook, url: "https://www.facebook.com/kdicevitrinadigital" },
+    { Icon: Instagram, url: "https://instagram.com/kdice2026" },
+    // { Icon: Twitter, url: "https://twitter.com/tu-usuario" }
+  ].map(({ Icon, url }, index) => (
+    <a
+      key={index}
+      href={url}
+      target="_blank"           // Importante: abre en pestaña nueva
+      rel="noopener noreferrer" // Seguridad para links externos
+      className="p-2 bg-gray-50 dark:bg-gray-800 
+                 rounded-full text-gray-400 dark:text-gray-300
+                 hover:bg-blue-600 hover:text-white transition-all duration-300"
+    >
+      <Icon size={18} />
+    </a>
+  ))}
             </div>
           </div>
 
@@ -114,7 +117,7 @@ export default function FooterUser() {
         {/* FOOTER BOTTOM */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-gray-50 dark:border-gray-800 pt-10">
           <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest text-center">
-            © {currentYear} MARKETPLACE · ÁREA DE USUARIO · COMPRAS SEGURAS
+            © {currentYear} K-DICE · ÁREA DE USUARIO · COMPRAS SEGURAS
           </p>
         </div>
       </div>

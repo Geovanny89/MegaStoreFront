@@ -23,21 +23,26 @@ export default function Footer() {
 
               Conectando el comercio con el mundo digital. 
             </p>
-            <div className="flex gap-4">
-              {[Facebook, Instagram, Twitter].map((Icon, index) => (
-                <a
-  key={index}
-  href="#"
-  className="p-2 bg-gray-50 dark:bg-gray-800 
-             rounded-full text-gray-400 dark:text-gray-300
-             hover:bg-blue-600 hover:text-white transition-all duration-300"
->
-
-                  <Icon size={18} />
-                </a>
-              ))}
-            </div>
-          </div>
+           <div className="flex gap-4">
+  {[
+    { Icon: Facebook, url: "https://www.facebook.com/kdicevitrinadigital" },
+    { Icon: Instagram, url: "https://instagram.com/kdice2026" },
+    // { Icon: Twitter, url: "https://twitter.com/tu-usuario" }
+  ].map(({ Icon, url }, index) => (
+    <a
+      key={index}
+      href={url}
+      target="_blank"           // Importante: abre en pestaña nueva
+      rel="noopener noreferrer" // Seguridad para links externos
+      className="p-2 bg-gray-50 dark:bg-gray-800 
+                 rounded-full text-gray-400 dark:text-gray-300
+                 hover:bg-blue-600 hover:text-white transition-all duration-300"
+    >
+      <Icon size={18} />
+    </a>
+  ))}
+</div>
+</div>
 
           {/* SECCIÓN NEWSLETTER CORREGIDA */}
 <div className="bg-blue-50/50 dark:bg-gray-800 p-6 md:p-8 rounded-2xl flex-1 max-w-xl">
@@ -150,8 +155,8 @@ Ubicación</h4>
 
               <MapPin size={18} className="text-blue-600 shrink-0" />
               <p>
-                Cúcuta, Norte de Santander <br />
-                Colombia · CP 540001
+              
+                Colombia 
               </p>
             </div>
           </div>
@@ -161,14 +166,14 @@ Ubicación</h4>
             <h4 className="font-black text-gray-900 dark:text-white mb-6 text-xs uppercase tracking-[0.2em]">
 Contacto Directo</h4>
             <p className="text-gray-500 text-sm font-medium">¿Tienes dudas?</p>
-            <p className="text-blue-600 font-bold text-lg">+57 (300) 000-0000</p>
+            <p className="text-blue-600 font-bold text-lg">+57 300 315 9976</p>
           </div>
         </div>
 
         {/* SECCIÓN INFERIOR */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-gray-50 dark:border-gray-800 pt-10">
           <p className="text-gray-400 text-[11px] font-bold uppercase tracking-widest">
-            © {currentYear} MARKETPLACE · TODOS LOS DERECHOS RESERVADOS.
+            © {currentYear} K-DICE· TODOS LOS DERECHOS RESERVADOS.
           </p>
           <p className="dark:text-gray-500 text-sm font-medium italic">
             Hecho para el comercio .

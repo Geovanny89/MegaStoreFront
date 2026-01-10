@@ -95,8 +95,7 @@ export default function LayoutSeller() {
                 ) && (
                   <div className="mb-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-semibold text-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <span>
-                      💳 No olvides agregar el método de pago contraentrega (COD)
-                      para poder recibir pedidos.
+                      💳 No olvides agregar los Métodos de Pago
                     </span>
 
                     <a
