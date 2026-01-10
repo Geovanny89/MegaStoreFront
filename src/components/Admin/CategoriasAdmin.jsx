@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { Trash2, Pencil, CheckCircle, Plus } from "lucide-react";
+import { Trash2, Pencil, CheckCircle, Plus, X } from "lucide-react";
 
-// Lista de rubros principales del marketplace para asignar a las subcategorías
+// Lista de rubros principales del marketplace
 const SECTORES_MARKETPLACE = [
   "Tecnología y Electrónica",
   "Moda y Accesorios",
@@ -37,7 +37,7 @@ export default function CategoriasAdmin() {
 
   const showMessage = (msg) => {
     setMessage(msg);
-    setTimeout(() => setMessage(null), 2000);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   const fetchCategorias = async () => {
@@ -45,7 +45,7 @@ export default function CategoriasAdmin() {
       const res = await api.get("/all/tipes");
       setCategorias(res.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error al obtener categorías:", error);
     }
   };
 
@@ -63,17 +63,13 @@ export default function CategoriasAdmin() {
       fetchCategorias();
       showMessage("✔️ Categoría creada satisfactoriamente");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Error al crear categoría");
     }
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "⚠️ ¿Estás seguro que deseas eliminar esta categoría?"
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm("⚠️ ¿Estás seguro que deseas eliminar esta categoría?")) return;
 
     try {
       setLoading(id);
@@ -82,7 +78,8 @@ export default function CategoriasAdmin() {
       setLoading(null);
       showMessage("🗑️ Eliminado satisfactoriamente");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setLoading(null);
     }
   };
 
@@ -94,7 +91,7 @@ export default function CategoriasAdmin() {
       fetchCategorias();
       showMessage("✏️ Actualizado satisfactoriamente");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -105,6 +102,7 @@ export default function CategoriasAdmin() {
       categoriaPadre: cat.categoriaPadre || "", 
       usaTalla: cat.usaTalla || false 
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const totalPages = Math.ceil(categorias.length / perPage);
@@ -112,168 +110,183 @@ export default function CategoriasAdmin() {
   const paginated = categorias.slice(start, start + perPage);
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto min-h-screen text-gray-900">
+      <h1 className="text-2xl md:text-3xl font-black mb-6 flex items-center gap-3">
+        <div className="w-2 h-8 bg-blue-600 rounded-full"></div>
         Gestión de Subcategorías
       </h1>
 
       {message && (
-        <div className="mb-4 bg-green-100 border border-green-300 text-green-800 px-4 py-2 rounded-lg text-center font-medium">
+        <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-6 py-3 rounded-2xl text-center font-bold shadow-sm animate-in fade-in slide-in-from-top-2">
           {message}
         </div>
       )}
 
-      <div className="bg-white shadow-lg rounded-xl p-4 md:p-6 border">
+      {/* Formulario de Creación / Edición */}
+      <div className="bg-white dark:bg-slate-900 shadow-xl rounded-[2rem] p-6 md:p-8 border border-gray-100 dark:border-slate-800 mb-10">
+        <h2 className="text-lg font-bold mb-6 text-gray-400 uppercase tracking-widest text-sm">
+          {editingId ? "Editar Subcategoría" : "Nueva Subcategoría"}
+        </h2>
         
-        {/* Formulario de Creación / Edición */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 items-end">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-gray-600">Nombre del Producto</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-black text-gray-500 uppercase ml-1">Nombre</label>
             <input
               type="text"
               placeholder="Ej: Camisas, Taladros..."
-              value={form.name}
+              value={form.name || ""}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white font-medium transition-all"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-gray-600">Rubro de la Tienda</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-black text-gray-500 uppercase ml-1">Rubro Padre</label>
             <select
-              value={form.categoriaPadre}
+              value={form.categoriaPadre || ""}
               onChange={(e) => setForm({ ...form, categoriaPadre: e.target.value })}
-              className="border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white font-medium transition-all appearance-none"
             >
-              <option value="">Seleccionar Sector...</option>
+              <option value="" disabled>Seleccionar Sector...</option>
               {SECTORES_MARKETPLACE.map((sector) => (
-                <option key={sector} value={sector}>{sector}</option>
+                <option key={sector} value={sector} className="text-gray-900">
+                  {sector}
+                </option>
               ))}
             </select>
           </div>
 
-          <div className="flex items-center gap-2 pb-2">
+          <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800 p-3 rounded-xl border border-gray-200 dark:border-slate-700 h-[50px]">
             <input
               type="checkbox"
               id="usaTalla"
               checked={form.usaTalla}
               onChange={(e) => setForm({ ...form, usaTalla: e.target.checked })}
-              className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+              className="w-5 h-5 text-blue-600 rounded-lg focus:ring-blue-500 cursor-pointer"
             />
-            <label htmlFor="usaTalla" className="text-sm font-medium text-gray-700 cursor-pointer">
+            <label htmlFor="usaTalla" className="text-sm font-bold text-gray-600 dark:text-gray-300 cursor-pointer select-none">
               ¿Requiere Tallas?
             </label>
           </div>
 
           <div className="flex gap-2">
             {editingId ? (
-              <button
-                onClick={handleUpdate}
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-lg shadow"
-              >
-                <CheckCircle size={18} /> Guardar
-              </button>
+              <>
+                <button
+                  onClick={handleUpdate}
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95"
+                >
+                  <CheckCircle size={18} /> Actualizar
+                </button>
+                <button 
+                  onClick={() => { setEditingId(null); setForm({name: "", categoriaPadre: "", usaTalla: false}); }}
+                  className="p-3 bg-gray-100 dark:bg-slate-800 text-gray-500 rounded-xl hover:bg-gray-200 transition-all"
+                  title="Cancelar"
+                >
+                  <X size={20} />
+                </button>
+              </>
             ) : (
               <button
                 onClick={handleCreate}
-                className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-lg shadow"
+                className="w-full flex items-center justify-center gap-2 bg-slate-900 dark:bg-blue-600 hover:bg-black dark:hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-bold shadow-lg transition-all active:scale-95"
               >
-                <Plus size={18} /> Agregar
-              </button>
-            )}
-            {editingId && (
-              <button 
-                onClick={() => { setEditingId(null); setForm({name: "", categoriaPadre: "", usaTalla: false}); }}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-              >
-                Cancelar
+                <Plus size={18} /> Agregar Subcategoría
               </button>
             )}
           </div>
         </div>
+      </div>
 
+      {/* Tabla de Resultados */}
+      <div className="bg-white dark:bg-slate-900 shadow-xl rounded-[2rem] overflow-hidden border border-gray-100 dark:border-slate-800">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] border-collapse rounded-lg overflow-hidden shadow-sm">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-100 text-gray-700">
-                <th className="p-3 text-left">Subcategoría</th>
-                <th className="p-3 text-left">Sector (Padre)</th>
-                <th className="p-3 text-center">Tallas</th>
-                <th className="p-3 text-center w-32">Acciones</th>
+              <tr className="bg-gray-50 dark:bg-slate-800/50 text-gray-400 text-xs font-black uppercase tracking-widest">
+                <th className="p-5">Subcategoría</th>
+                <th className="p-5">Sector (Padre)</th>
+                <th className="p-5 text-center">Tallas</th>
+                <th className="p-5 text-center">Acciones</th>
               </tr>
             </thead>
 
-            <tbody>
-              {paginated.map((cat) => (
-                <tr key={cat._id} className="border-b hover:bg-gray-50 transition">
-                  <td className="p-3 text-gray-800 font-medium">{cat.name}</td>
-                  <td className="p-3 text-gray-600">
-                    <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-bold border border-blue-100 uppercase">
-                      {cat.categoriaPadre || "No asignado"}
-                    </span>
-                  </td>
-                  <td className="p-3 text-center">
-                    {cat.usaTalla ? (
-                      <span className="text-green-600 text-xs font-bold uppercase bg-green-50 px-2 py-1 rounded border border-green-100">Sí</span>
-                    ) : (
-                      <span className="text-gray-400 text-xs">No</span>
-                    )}
-                  </td>
-                  <td className="p-3 flex justify-center gap-3">
-                    <button
-                      onClick={() => startEdit(cat)}
-                      className="text-blue-600 hover:text-blue-800 transition p-1 hover:bg-blue-50 rounded"
-                    >
-                      <Pencil size={18} />
-                    </button>
-
-                    <button
-                      onClick={() => handleDelete(cat._id)}
-                      className="text-red-600 hover:text-red-800 transition p-1 hover:bg-red-50 rounded"
-                    >
-                      {loading === cat._id ? (
-                        <span className="animate-pulse text-sm">...</span>
+            <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
+              {paginated.length > 0 ? (
+                paginated.map((cat) => (
+                  <tr key={cat._id} className="hover:bg-gray-50 dark:hover:bg-slate-800/30 transition-colors group">
+                    <td className="p-5">
+                      <p className="font-bold text-gray-800 dark:text-gray-200">{cat.name}</p>
+                    </td>
+                    <td className="p-5">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
+                        {cat.categoriaPadre || "No asignado"}
+                      </span>
+                    </td>
+                    <td className="p-5 text-center">
+                      {cat.usaTalla ? (
+                        <span className="text-green-500 font-bold text-xs bg-green-50 dark:bg-green-900/20 px-3 py-1 rounded-lg">SI</span>
                       ) : (
-                        <Trash2 size={18} />
+                        <span className="text-gray-300 dark:text-gray-600 text-xs">—</span>
                       )}
-                    </button>
+                    </td>
+                    <td className="p-5">
+                      <div className="flex justify-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => startEdit(cat)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(cat._id)}
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                        >
+                          {loading === cat._id ? (
+                            <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            <Trash2 size={18} />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="p-20 text-center text-gray-400 font-medium">
+                    No hay subcategorías registradas aún.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Paginación */}
-        <div className="flex flex-col sm:flex-row justify-center items-center mt-6 gap-3">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className={`px-3 py-1 rounded ${
-              page === 1
-                ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                : "bg-gray-800 text-white hover:bg-black"
-            }`}
-          >
-            ⬅
-          </button>
-
-          <span className="text-gray-700 font-medium text-center">
-            Página {page} de {totalPages || 1}
-          </span>
-
-          <button
-            disabled={page === totalPages || totalPages === 0}
-            onClick={() => setPage(page + 1)}
-            className={`px-3 py-1 rounded ${
-              page === totalPages || totalPages === 0
-                ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                : "bg-gray-800 text-white hover:bg-black"
-            }`}
-          >
-            ➡
-          </button>
-        </div>
+        {totalPages > 1 && (
+          <div className="p-6 bg-gray-50 dark:bg-slate-800/30 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-gray-500 font-bold">
+              Página <span className="text-blue-600">{page}</span> de {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+                className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl disabled:opacity-30 font-bold text-gray-600 dark:text-gray-300 hover:shadow-md transition-all"
+              >
+                Anterior
+              </button>
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+                className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl disabled:opacity-30 font-bold text-gray-600 dark:text-gray-300 hover:shadow-md transition-all"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
