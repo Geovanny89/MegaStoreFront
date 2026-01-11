@@ -254,7 +254,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col gap-3">
-                <Link to="/register" onClick={cerrarModal} className="w-full bg-blue-600 hover:bg-slate-900 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-blue-100 dark:shadow-none flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
+                <Link to="/register-vendedor" onClick={cerrarModal} className="w-full bg-blue-600 hover:bg-slate-900 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-blue-100 dark:shadow-none flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
                   Registrarse ahora <ArrowRight size={18} />
                 </Link>
                 <button onClick={cerrarModal} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors">
