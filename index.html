@@ -4,12 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/kdice.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>K-DICE Vitrina digital</title>
 
+    <!-- 🔥 PRELOAD LCP IMAGE -->
+    <link
+      rel="preload"
+      as="image"
+      href="/baner.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+
+    <!-- Dark mode BEFORE paint (bien hecho) -->
     <script>
       if (
         localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        (!('theme' in localStorage) &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
       ) {
         document.documentElement.classList.add('dark');
       } else {
@@ -17,7 +29,7 @@
       }
     </script>
   </head>
-  
+
   <body class="bg-white dark:bg-[#0b1120] transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
