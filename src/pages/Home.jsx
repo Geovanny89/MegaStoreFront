@@ -17,7 +17,7 @@ import {
   X
 } from "lucide-react";
 import Logo from "../assets/Logo31.png"
-import baner from "../assets/baner.png"
+import baner from "../assets/baner.webp"
 
 // Lazy load componentes pesados
 const Products = lazy(() => import("../components/Products/products.jsx"));
@@ -92,14 +92,15 @@ export default function Home() {
   className={`relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group
   ${vendedorSeleccionado ? "hidden" : ""}`}
 >
-  <img
-    src={baner}
-    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-    alt="Marketplace Banner"
-    fetchPriority="high"
-    width="1200"
-    height="800"
-  />
+<img
+  src={baner}
+  alt="Marketplace Banner"
+  width="1200"
+  height="800"
+  fetchpriority="high"
+  decoding="async"
+  className="absolute inset-0 w-full h-full object-cover"
+/>
 
   <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
     <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
