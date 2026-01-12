@@ -13,20 +13,45 @@ import {
   FileText,
   Palette,
   Briefcase,
-  Store,
   X
 } from "lucide-react";
-import Logo from "../assets/Logo31.png"
-// import baner from "../assets/baner.webp"
+import Logo from "../assets/Logo31.png";
+
+// --- COMPONENTES OPTIMIZADOS ---
+
+/**
+ * Optimizador de imágenes:
+ * 1. Agrega parámetros de Cloudinary (f_auto, q_auto) para reducir peso.
+ * 2. Maneja Lazy Loading automáticamente excepto para elementos críticos.
+ */
+const OptimizedImage = memo(({ src, alt, className, width, height, priority = false }) => {
+  const isCloudinary = src?.includes('cloudinary.com');
+  const optimizedSrc = isCloudinary 
+    ? src.replace('/upload/', '/upload/f_auto,q_auto,w_auto/') 
+    : src;
+
+  return (
+    <img
+      src={optimizedSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={priority ? "eager" : "lazy"}
+      fetchpriority={priority ? "high" : "auto"}
+      decoding="async"
+      className={className}
+    />
+  );
+});
 
 // Lazy load componentes pesados
 const Products = lazy(() => import("../components/Products/products.jsx"));
 const Tienda = lazy(() => import("./Tienda.jsx"));
 const ProductosTienda = lazy(() => import("./ProductosTienda.jsx"));
 
-// 1. Memoizamos TrustItem para evitar re-renders innecesarios
+// Memoizado para evitar re-renders y saltos visuales
 const TrustItem = memo(({ icon, title, desc }) => (
-  <div className="flex-shrink-0 w-[250px] md:w-auto snap-center bg-white dark:bg-[#020617] rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-gray-800 flex flex-col items-center text-center transition-all hover:shadow-xl hover:border-blue-200">
+  <div className="flex-shrink-0 w-[250px] md:w-auto snap-center bg-white dark:bg-[#020617] rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-gray-800 flex flex-col items-center text-center transition-[transform,shadow] hover:shadow-xl hover:border-blue-200">
     <div className="mb-3">{icon}</div>
     <h4 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-1">{title}</h4>
     <p className="text-gray-500 text-sm">{desc}</p>
@@ -39,7 +64,6 @@ export default function Home() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const location = useLocation();
 
-  // Lógica para resetear estados al volver al inicio
   useEffect(() => {
     if (location.pathname === "/") {
       setVendedorSeleccionado(null);
@@ -48,14 +72,12 @@ export default function Home() {
     }
   }, [location.pathname, location.key]);
 
-  // Lógica para el Modal Publicitario (Aparece 1 vez por sesión)
   useEffect(() => {
     const hasSeenPromo = sessionStorage.getItem("hasSeenKdicePromo");
     if (!hasSeenPromo) {
-      // Aumentamos ligeramente el tiempo a 2s para no bloquear la carga inicial crítica
       const timer = setTimeout(() => {
         setShowPromoModal(true);
-      }, 2000);
+      }, 2500); // Aumentado para priorizar la interactividad inicial
       return () => clearTimeout(timer);
     }
   }, []);
@@ -65,7 +87,6 @@ export default function Home() {
     sessionStorage.setItem("hasSeenKdicePromo", "true");
   };
 
-  // 2. Usamos useMemo para que el array de categorías no se recree en cada render
   const categorias = useMemo(() => [
     { name: "Todas", icon: <LayoutGrid size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-gray-600" },
     { name: "Tecnología y Electrónica", icon: <Laptop size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-blue-600" },
@@ -87,56 +108,41 @@ export default function Home() {
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans text-gray-900 dark:text-gray-100">
 
-      {/* 1. HERO SECTION - OPTIMIZADA */}
-     <div
-  className={`relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group
-  ${vendedorSeleccionado ? "hidden" : ""}`}
->
-<img
-  src="/baner.webp"
-  alt="Marketplace Banner"
-  width="1200"
-  height="800"
-  loading="eager"
-  decoding="async"
-  fetchPriority="high"
-  className="absolute inset-0 w-full h-full object-cover"
-/>
-
-
-  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
-    <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-      </span>
-      El marketplace que impulsa negocios
-    </div>
-
-    <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-        Tus tiendas.
-      </span>
-    </h1>
-
-    <div className="flex flex-wrap gap-4">
-      <a
-        href="#tiendas"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2"
-      >
-        Explorar Tiendas <ArrowRight size={20} />
-      </a>
-
-      <Link
-        to="/register-vendedor"
-        className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-all"
-      >
-        Vender aquí
-      </Link>
-    </div>
-  </div>
-</div>
-
+      {/* 1. HERO SECTION - MÁXIMA PRIORIDAD (LCP) */}
+      {!vendedorSeleccionado && (
+        <div className="relative w-full h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group bg-gray-200 dark:bg-gray-800">
+          <OptimizedImage
+            src="/baner.webp"
+            alt="Marketplace Banner"
+            width={1400}
+            height={500}
+            priority={true}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
+            <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              El marketplace que impulsa negocios
+            </div>
+            <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+                Tus tiendas.
+              </span>
+            </h1>
+            <div className="flex flex-wrap gap-4">
+              <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
+                Explorar Tiendas <ArrowRight size={20} />
+              </a>
+              <Link to="/register-vendedor" className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-colors">
+                Vender aquí
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. SECCIÓN DE CATEGORÍAS */}
       {!vendedorSeleccionado && (
@@ -147,19 +153,18 @@ export default function Home() {
               <p className="text-gray-500 font-medium">Los mejores comercios organizados para ti</p>
             </div>
           </div>
-
           <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide px-2">
             {categorias.map((cat) => (
               <button
                 key={cat.name}
                 onClick={() => setCategoriaActiva(cat.name)}
-                className={`relative flex flex-col items-center justify-center min-w-[160px] h-[180px] rounded-[3rem] transition-all duration-500 group snap-center
+                className={`relative flex flex-col items-center justify-center min-w-[160px] h-[180px] rounded-[3rem] transition-[transform,colors,border-color] duration-500 group snap-center
                 ${categoriaActiva === cat.name
                     ? "bg-white dark:bg-[#0f172a] shadow-2xl shadow-blue-200/60 dark:shadow-none border-2 border-blue-500 transform -translate-y-3"
                     : "bg-white dark:bg-[#020617] border border-gray-100 dark:border-gray-800 hover:border-blue-200"
                   }`}
               >
-                <div className={`p-5 rounded-[2rem] mb-4 bg-gradient-to-br ${cat.gradient} ${cat.text} transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                <div className={`p-5 rounded-[2rem] mb-4 bg-gradient-to-br ${cat.gradient} ${cat.text} transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                   {cat.icon}
                 </div>
                 <span className="text-[10px] px-2 text-center font-black uppercase tracking-tighter leading-tight">
@@ -186,7 +191,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* 4. SECCIÓN DE TIENDAS (Lazy Loaded) */}
+      {/* 4. SECCIÓN DE TIENDAS */}
       {!vendedorSeleccionado && (
         <section id="tiendas" className="mb-24 scroll-mt-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
@@ -239,64 +244,47 @@ export default function Home() {
             <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
               Únete a la red comercial más grande. Digitaliza tu tienda y aumenta tus ventas hoy mismo.
             </p>
-            <Link to="/register-vendedor" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all duration-300 hover:scale-[1.02]">
+            <Link to="/register-vendedor" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-transform hover:scale-105">
               Empezar ahora
             </Link>
           </div>
         </div>
       )}
 
-      {/* 8. MODAL PUBLICITARIO - SIN SCROLL Y OPTIMIZADO */}
+      {/* 8. MODAL PUBLICITARIO OPTIMIZADO */}
       {showPromoModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border-2 border-white/40 flex flex-col">
-
             <button
               onClick={cerrarModal}
               className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors"
             >
               <X className="text-white" size={18} />
             </button>
-
             <div className="p-5 sm:p-10 text-center text-white flex flex-col items-center gap-3 sm:gap-5">
-              <h3 className="text-2xl sm:text-4xl font-black leading-tight drop-shadow-lg">
+              <h3 className="text-2xl sm:text-4xl font-black leading-tight">
                 ¡Tu Venta <span className="text-yellow-300">100%</span> para ti!
               </h3>
-
               <p className="text-sm sm:text-lg font-bold text-green-300 uppercase tracking-wide">
                 CERO COMISIONES
               </p>
-
-              <img
+              <OptimizedImage
                 src={Logo}
                 alt="K-Dice"
-                width="256"
-                height="128"
-                loading="lazy"
-                className="
-    w-40 sm:w-56
-    max-h-[100px] sm:max-h-[140px]
-    object-contain
-    drop-shadow-2xl
-    my-2 sm:my-4
-    transition-transform
-    hover:scale-105
-  "
+                width={256}
+                height={128}
+                className="w-40 sm:w-56 max-h-[140px] object-contain drop-shadow-2xl my-2 transition-transform hover:scale-105"
               />
-
-
-              <p className="text-xs sm:text-base leading-relaxed opacity-90 max-w-[280px] sm:max-w-full">
+              <p className="text-xs sm:text-base opacity-90">
                 ¡Es hora de que tu esfuerzo valga el 100%! Quédate con cada centavo. **5 días GRATIS**.
               </p>
-
               <Link
                 to="/register-vendedor"
                 onClick={cerrarModal}
-                className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-6 py-3.5 sm:px-10 sm:py-4 rounded-2xl font-black text-base sm:text-xl transition-all shadow-lg active:scale-95"
+                className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-6 py-3.5 sm:px-10 sm:py-4 rounded-2xl font-black text-base sm:text-xl transition-transform active:scale-95 shadow-lg"
               >
                 ¡Quiero mis 5 días GRATIS!
               </Link>
-
               <p className="text-white/60 text-[10px] sm:text-xs">
                 Sin tarjeta de crédito. Sin compromiso.
               </p>
