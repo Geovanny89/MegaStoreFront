@@ -88,38 +88,52 @@ export default function Home() {
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans text-gray-900 dark:text-gray-100">
 
       {/* 1. HERO SECTION - OPTIMIZADA */}
-      {!vendedorSeleccionado && (
-        <div className="relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
-          <img
-            src={baner}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-            alt="Marketplace Banner"
-            fetchPriority="high" // Prioridad alta para mejorar LCP
-            width="1200"
-            height="800"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
-            <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              El marketplace que impulsa negocios
-            </div>
-            <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Tus tiendas.</span>
-            </h1>
-            <div className="flex flex-wrap gap-4">
-              <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
-                Explorar Tiendas <ArrowRight size={20} />
-              </a>
-              <Link to="/register-vendedor" className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-all">
-                Vender aquí
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+     <div
+  className={`relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group
+  ${vendedorSeleccionado ? "hidden" : ""}`}
+>
+  <img
+    src={baner}
+    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+    alt="Marketplace Banner"
+    fetchPriority="high"
+    width="1200"
+    height="800"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
+    <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
+      <span className="relative flex h-2 w-2">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+      </span>
+      El marketplace que impulsa negocios
+    </div>
+
+    <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+        Tus tiendas.
+      </span>
+    </h1>
+
+    <div className="flex flex-wrap gap-4">
+      <a
+        href="#tiendas"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2"
+      >
+        Explorar Tiendas <ArrowRight size={20} />
+      </a>
+
+      <Link
+        to="/register-vendedor"
+        className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-all"
+      >
+        Vender aquí
+      </Link>
+    </div>
+  </div>
+</div>
+
 
       {/* 2. SECCIÓN DE CATEGORÍAS */}
       {!vendedorSeleccionado && (
