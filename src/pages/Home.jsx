@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import Products from "../components/Products/products.jsx";
-import Tienda from "./Tienda.jsx";
-import ProductosTienda from "./ProductosTienda.jsx";
+import React, { useEffect, useState, Suspense, lazy, useMemo, memo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   ShieldCheck, Truck, Headphones, CreditCard, ChevronRight,
   Laptop, Shirt, Hammer, ShoppingCart, Home as HomeIcon, Heart,
@@ -18,7 +16,21 @@ import {
   Store,
   X
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import Logo from "../assets/Logo31.png"
+
+// Lazy load componentes pesados
+const Products = lazy(() => import("../components/Products/products.jsx"));
+const Tienda = lazy(() => import("./Tienda.jsx"));
+const ProductosTienda = lazy(() => import("./ProductosTienda.jsx"));
+
+// 1. Memoizamos TrustItem para evitar re-renders innecesarios
+const TrustItem = memo(({ icon, title, desc }) => (
+  <div className="flex-shrink-0 w-[250px] md:w-auto snap-center bg-white dark:bg-[#020617] rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-gray-800 flex flex-col items-center text-center transition-all hover:shadow-xl hover:border-blue-200">
+    <div className="mb-3">{icon}</div>
+    <h4 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-1">{title}</h4>
+    <p className="text-gray-500 text-sm">{desc}</p>
+  </div>
+));
 
 export default function Home() {
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
@@ -39,9 +51,10 @@ export default function Home() {
   useEffect(() => {
     const hasSeenPromo = sessionStorage.getItem("hasSeenKdicePromo");
     if (!hasSeenPromo) {
+      // Aumentamos ligeramente el tiempo a 2s para no bloquear la carga inicial crítica
       const timer = setTimeout(() => {
         setShowPromoModal(true);
-      }, 1500); // Aparece 1.5 segundos después de cargar
+      }, 2000); 
       return () => clearTimeout(timer);
     }
   }, []);
@@ -51,7 +64,8 @@ export default function Home() {
     sessionStorage.setItem("hasSeenKdicePromo", "true");
   };
 
-  const categorias = [
+  // 2. Usamos useMemo para que el array de categorías no se recree en cada render
+  const categorias = useMemo(() => [
     { name: "Todas", icon: <LayoutGrid size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-gray-600" },
     { name: "Tecnología y Electrónica", icon: <Laptop size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-blue-600" },
     { name: "Moda y Accesorios", icon: <Shirt size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-pink-600" },
@@ -67,18 +81,21 @@ export default function Home() {
     { name: "Papelería y Oficina", icon: <FileText size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-indigo-600" },
     { name: "Arte y Artesanías", icon: <Palette size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-violet-600" },
     { name: "Servicios Profesionales", icon: <Briefcase size={28} />, gradient: "from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700", text: "text-cyan-600" },
-  ];
+  ], []);
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans text-gray-900 dark:text-gray-100">
 
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION - OPTIMIZADA */}
       {!vendedorSeleccionado && (
         <div className="relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
           <img
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070"
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200" 
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             alt="Marketplace Banner"
+            fetchPriority="high" // Prioridad alta para mejorar LCP
+            width="1200" 
+            height="800" 
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
             <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
@@ -151,7 +168,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* 4. SECCIÓN DE TIENDAS */}
+      {/* 4. SECCIÓN DE TIENDAS (Lazy Loaded) */}
       {!vendedorSeleccionado && (
         <section id="tiendas" className="mb-24 scroll-mt-20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 px-2">
@@ -168,14 +185,18 @@ export default function Home() {
               Ver el directorio <ChevronRight size={18} />
             </Link>
           </div>
-          <Tienda setVendedorSeleccionado={setVendedorSeleccionado} filtroCategoria={categoriaActiva} soloPremium={true} esCarrusel={true} limite={12} />
+          <Suspense fallback={<div className="h-40 flex items-center justify-center">Cargando tiendas...</div>}>
+            <Tienda setVendedorSeleccionado={setVendedorSeleccionado} filtroCategoria={categoriaActiva} soloPremium={true} esCarrusel={true} limite={12} />
+          </Suspense>
         </section>
       )}
 
       {/* 5. PRODUCTOS DE TIENDA SELECCIONADA */}
       {vendedorSeleccionado && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <ProductosTienda vendedorId={vendedorSeleccionado._id} volver={() => setVendedorSeleccionado(null)} />
+          <Suspense fallback={<div className="h-40 flex items-center justify-center">Cargando catálogo...</div>}>
+            <ProductosTienda vendedorId={vendedorSeleccionado._id} volver={() => setVendedorSeleccionado(null)} />
+          </Suspense>
         </div>
       )}
 
@@ -185,7 +206,9 @@ export default function Home() {
           <h2 className="text-3xl font-black mb-10 px-2 flex items-center gap-4 text-gray-900 dark:text-gray-100">
             Productos <div className="h-px flex-1 bg-gray-100 dark:bg-gray-800"></div>
           </h2>
-          <Products />
+          <Suspense fallback={<div className="h-40 flex items-center justify-center">Cargando productos...</div>}>
+            <Products />
+          </Suspense>
         </section>
       )}
 
@@ -198,85 +221,60 @@ export default function Home() {
             <p className="text-gray-400 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
               Únete a la red comercial más grande. Digitaliza tu tienda y aumenta tus ventas hoy mismo.
             </p>
-            <Link to="/register" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all duration-300 hover:scale-[1.02]">
+            <Link to="/register-vendedor" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-12 py-5 rounded-[2rem] font-black text-lg transition-all duration-300 hover:scale-[1.02]">
               Empezar ahora
             </Link>
           </div>
         </div>
       )}
 
-      {/* 8. MODAL PUBLICITARIO (K-DICE PROMO) */}
+      {/* 8. MODAL PUBLICITARIO - SIN SCROLL Y OPTIMIZADO */}
       {showPromoModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border-2 border-white/40 flex flex-col">
             
-            <button onClick={cerrarModal} className="absolute top-6 right-6 z-20 bg-black/5 hover:bg-black/10 dark:bg-white/10 p-2 rounded-full transition-colors">
-              <X className="text-slate-800 dark:text-white" size={20} />
+            <button 
+              onClick={cerrarModal} 
+              className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors"
+            >
+              <X className="text-white" size={18} />
             </button>
 
-            <div className="relative h-44 bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-10 -translate-y-10 blur-3xl"></div>
-              </div>
-              <Store size={80} className="text-white/20 absolute -left-4 -bottom-4 rotate-12" />
-              <div className="relative text-center">
-                <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] font-black uppercase tracking-[0.3em] py-1 px-4 rounded-full mb-3 inline-block">
-                  Oferta de Lanzamiento
-                </div>
-                <h3 className="text-white text-3xl font-black">¡Impulsa tu Negocio!</h3>
-              </div>
-            </div>
+            <div className="p-5 sm:p-10 text-center text-white flex flex-col items-center gap-3 sm:gap-5">
+              <h3 className="text-2xl sm:text-4xl font-black leading-tight drop-shadow-lg">
+                ¡Tu Venta <span className="text-yellow-300">100%</span> para ti!
+              </h3>
 
-            <div className="p-8 md:p-10 text-center">
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-4 text-left bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800/50">
-                  <div className="bg-blue-600 text-white p-2 rounded-xl mt-1"><ShieldCheck size={20}/></div>
-                  <div>
-                    <p className="font-black text-blue-900 dark:text-blue-100 leading-tight">Prueba 5 días GRATIS</p>
-                    <p className="text-xs text-blue-700 dark:text-blue-300 font-medium mt-1">Regístrate y prueba todas las funciones sin costo.</p>
-                  </div>
-                </div>
+              <p className="text-sm sm:text-lg font-bold text-green-300 uppercase tracking-wide">
+                CERO COMISIONES
+              </p>
+              
+              <img
+                src={Logo} 
+                alt="K-Dice"
+                className="w-48 sm:w-64 object-contain drop-shadow-2xl my-4 transform hover:scale-105 transition-transform"
+                loading="lazy"
+              />
 
-                <div className="flex items-start gap-4 text-left bg-green-50 dark:bg-green-900/20 p-4 rounded-2xl border border-green-100 dark:border-green-800/50">
-                  <div className="bg-green-600 text-white p-2 rounded-xl mt-1"><CreditCard size={20}/></div>
-                  <div>
-                    <p className="font-black text-green-900 dark:text-green-100 leading-tight">50% DCTO por 2 meses</p>
-                    <p className="text-xs text-green-700 dark:text-green-300 font-medium mt-1">Aprovecha el descuento especial en tu suscripción.</p>
-                  </div>
-                </div>
+              <p className="text-xs sm:text-base leading-relaxed opacity-90 max-w-[280px] sm:max-w-full">
+                ¡Es hora de que tu esfuerzo valga el 100%! Quédate con cada centavo. **5 días GRATIS**.
+              </p>
 
-                <div className="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-2xl">
-                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">🚀 CERO COMISIONES</p>
-                  <p className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                    Pago directo <span className="font-bold">Vendedor ➔ Cliente</span>. ¡Toda la ganancia es tuya!
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <Link to="/register-vendedor" onClick={cerrarModal} className="w-full bg-blue-600 hover:bg-slate-900 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-blue-100 dark:shadow-none flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
-                  Registrarse ahora <ArrowRight size={18} />
-                </Link>
-                <button onClick={cerrarModal} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors">
-                  Quizás más tarde
-                </button>
-              </div>
+              <Link
+                to="/register-vendedor"
+                onClick={cerrarModal}
+                className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-6 py-3.5 sm:px-10 sm:py-4 rounded-2xl font-black text-base sm:text-xl transition-all shadow-lg active:scale-95"
+              >
+                ¡Quiero mis 5 días GRATIS!
+              </Link>
+              
+              <p className="text-white/60 text-[10px] sm:text-xs">
+                Sin tarjeta de crédito. Sin compromiso.
+              </p>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function TrustItem({ icon, title, desc }) {
-  return (
-    <div className="flex-none w-[260px] md:w-full snap-center bg-white dark:bg-[#0f172a] p-6 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm flex items-center gap-4">
-      <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-2xl flex-shrink-0">{icon}</div>
-      <div className="text-left">
-        <h5 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{title}</h5>
-        <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">{desc}</p>
-      </div>
     </div>
   );
 }

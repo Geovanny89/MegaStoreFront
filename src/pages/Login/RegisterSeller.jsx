@@ -271,16 +271,43 @@ export default function RegisterSeller() {
               </div>
 
               {/* INFO TRIAL */}
-              {planSeleccionado && (
-                <div className="bg-green-600/10 border border-green-500/30 p-4 rounded-xl text-xs">
-                  <p className="text-green-400 font-black uppercase mb-1 flex items-center gap-2">
-                    <ShieldCheck size={14} /> Prueba gratuita activa
-                  </p>
-                  <p className="text-gray-300">
-                    Al registrarte en el plan <b>{planSeleccionado.nombre}</b>, tendrás acceso total por <b>5 días</b> sin costo.
-                  </p>
-                </div>
-              )}
+              {/* INFO TRIAL ACTUALIZADA Y LLAMATIVA */}
+{planSeleccionado && (
+  <div className="relative overflow-hidden bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border-2 border-blue-500/50 p-5 rounded-2xl animate-in zoom-in-95 duration-500">
+    {/* Decoración de fondo */}
+    <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+    
+    <div className="relative z-10">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="flex h-3 w-3 relative">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        </span>
+        <p className="text-green-400 font-black text-sm uppercase tracking-tighter">
+          ¡Beneficio Exclusivo Activado!
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-white text-base leading-tight">
+          Estás registrándote en el plan <span className="text-blue-400 font-black uppercase">{planSeleccionado.nombre}</span>.
+        </p>
+        
+        <div className="bg-white/5 p-3 rounded-xl border border-white/10 mt-2">
+          <p className="text-gray-200 text-xs leading-relaxed">
+            🚀 Disfruta <span className="text-white font-bold">5 DÍAS GRATIS</span> de acceso total. 
+            <br />
+            <span className="text-yellow-400 font-black">¡OFERTA DE LANZAMIENTO!</span> Si activas tu cuenta hoy, obtén un <span className="bg-yellow-400 text-blue-900 px-1 rounded font-black">50% DE DESCUENTO</span> en tus primeros 2 meses.
+          </p>
+        </div>
+        
+        <p className="text-[10px] text-blue-300 italic mt-2 flex items-center gap-1">
+          <Check size={12} /> Sin contratos amarrados • Cancela cuando quieras
+        </p>
+      </div>
+    </div>
+  </div>
+)}
             </div>
 
             {/* DATOS PERSONALES */}
