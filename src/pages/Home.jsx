@@ -17,6 +17,7 @@ import {
   X
 } from "lucide-react";
 import Logo from "../assets/Logo31.png"
+import baner from "../assets/baner.png"
 
 // Lazy load componentes pesados
 const Products = lazy(() => import("../components/Products/products.jsx"));
@@ -54,7 +55,7 @@ export default function Home() {
       // Aumentamos ligeramente el tiempo a 2s para no bloquear la carga inicial crítica
       const timer = setTimeout(() => {
         setShowPromoModal(true);
-      }, 2000); 
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -90,12 +91,12 @@ export default function Home() {
       {!vendedorSeleccionado && (
         <div className="relative w-full h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
           <img
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200" 
+            src={baner}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             alt="Marketplace Banner"
             fetchPriority="high" // Prioridad alta para mejorar LCP
-            width="1200" 
-            height="800" 
+            width="1200"
+            height="800"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
             <div className="inline-flex items-center gap-2 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
@@ -112,7 +113,7 @@ export default function Home() {
               <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
                 Explorar Tiendas <ArrowRight size={20} />
               </a>
-              <Link to="/register" className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-all">
+              <Link to="/register-vendedor" className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-all">
                 Vender aquí
               </Link>
             </div>
@@ -232,9 +233,9 @@ export default function Home() {
       {showPromoModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border-2 border-white/40 flex flex-col">
-            
-            <button 
-              onClick={cerrarModal} 
+
+            <button
+              onClick={cerrarModal}
               className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors"
             >
               <X className="text-white" size={18} />
@@ -248,13 +249,24 @@ export default function Home() {
               <p className="text-sm sm:text-lg font-bold text-green-300 uppercase tracking-wide">
                 CERO COMISIONES
               </p>
-              
+
               <img
-                src={Logo} 
+                src={Logo}
                 alt="K-Dice"
-                className="w-48 sm:w-64 object-contain drop-shadow-2xl my-4 transform hover:scale-105 transition-transform"
+                width="256"
+                height="128"
                 loading="lazy"
+                className="
+    w-40 sm:w-56
+    max-h-[100px] sm:max-h-[140px]
+    object-contain
+    drop-shadow-2xl
+    my-2 sm:my-4
+    transition-transform
+    hover:scale-105
+  "
               />
+
 
               <p className="text-xs sm:text-base leading-relaxed opacity-90 max-w-[280px] sm:max-w-full">
                 ¡Es hora de que tu esfuerzo valga el 100%! Quédate con cada centavo. **5 días GRATIS**.
@@ -267,7 +279,7 @@ export default function Home() {
               >
                 ¡Quiero mis 5 días GRATIS!
               </Link>
-              
+
               <p className="text-white/60 text-[10px] sm:text-xs">
                 Sin tarjeta de crédito. Sin compromiso.
               </p>
