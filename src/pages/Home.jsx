@@ -64,13 +64,17 @@ export default function Home() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setVendedorSeleccionado(null);
-      setCategoriaActiva("Todas");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [location.pathname, location.key]);
+useEffect(() => {
+  if (location.pathname === "/") {
+    setVendedorSeleccionado(null);
+    setCategoriaActiva("Todas");
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0 });
+    });
+  }
+}, [location.pathname]);
+
 
   useEffect(() => {
     const hasSeenPromo = sessionStorage.getItem("hasSeenKdicePromo");
