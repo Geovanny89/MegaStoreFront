@@ -4,26 +4,50 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/kdice.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>K-DICE | Marketplace sin comisiones</title>
-    <meta name="description" content="K-DICE es el marketplace líder para tiendas locales. Compra con 0% de comisión." />
-    
-    <link rel="preload" as="image" href="/baner.webp" fetchpriority="high" />
-    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
 
+    <title>K-DICE | Marketplace sin comisiones</title>
+    <meta
+      name="description"
+      content="K-DICE es el marketplace líder para tiendas locales. Compra con 0% de comisión."
+    />
+
+    <!-- 🔥 PRELOAD LCP (correcto por breakpoint) -->
+    <link
+      rel="preload"
+      as="image"
+      href="/banner-mobile.webp"
+      media="(max-width: 768px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/baner.webp"
+      media="(min-width: 769px)"
+      fetchpriority="high"
+    />
+
+    <!-- ⚡ Conexiones tempranas -->
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="preconnect" href="https://api.k-dice.com" crossorigin />
+
+    <!-- 🌙 Tema oscuro sin CLS -->
     <script>
       (function () {
-        const t = localStorage.getItem("theme");
-        const d = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (t === "dark" || (!t && d)) document.documentElement.classList.add("dark");
+        const theme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (theme === "dark" || (!theme && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
       })();
     </script>
   </head>
+
   <body class="bg-white dark:bg-[#0b1120]">
-    <div id="root">
-      <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
-        <div style="height: 400px; background: #1f2937; border-radius: 3rem; opacity: 0.1; animation: pulse 2s infinite;"></div>
-      </div>
-    </div>
+    <!-- ❌ Eliminamos skeleton inline para evitar CLS -->
+    <div id="root"></div>
+
+    <!-- React -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
