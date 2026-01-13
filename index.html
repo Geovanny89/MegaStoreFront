@@ -5,16 +5,11 @@
     <link rel="icon" type="image/svg+xml" href="/kdice.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>K-DICE | Marketplace sin comisiones</title>
+    <title>K-DICE | Compra y Vende en Tiendas Locales Sin Comisiones</title>
+    <meta name="description" content="K-DICE es el marketplace líder para tiendas locales. Compra tecnología, moda y hogar con pagos seguros y 0% de comisión para vendedores." />
+    
+    <link rel="canonical" href="https://tu-dominio.com/" />
 
-    <meta
-      name="description"
-      content="K-DICE es un marketplace sin comisiones donde compras y vendes en tiendas locales con pagos seguros y envíos rápidos."
-    />
-
-    <meta name="color-scheme" content="light dark" />
-
-    <!-- 🔥 PRELOAD HERO (LCP) -->
     <link
       rel="preload"
       as="image"
@@ -23,31 +18,26 @@
       fetchpriority="high"
     />
 
-    <!-- 🚀 CSS NO BLOQUEANTE -->
-    <link
-      rel="preload"
-      href="/assets/index-twdDZrKv.css"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link rel="stylesheet" href="/assets/index-twdDZrKv.css" />
-    </noscript>
+    <link rel="dns-prefetch" href="//res.cloudinary.com">
 
-    <!-- 🌙 Dark mode BEFORE paint (0 CLS) -->
     <script>
-      if (
-        localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        document.documentElement.classList.add('dark');
-      }
+      (function() {
+        const t = localStorage.getItem('theme');
+        const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (!t && d)) document.documentElement.classList.add('dark');
+      })();
     </script>
+
+    <link rel="stylesheet" href="/assets/index-twdDZrKv.css" />
   </head>
 
-  <body class="bg-white dark:bg-[#0b1120] transition-colors duration-300">
-    <div id="root"></div>
+  <body class="bg-white dark:bg-[#0b1120] text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div id="root">
+      <div id="loader-fallback" style="padding: 20px; font-family: sans-serif;">
+        <div style="height: 400px; background: #e5e7eb; border-radius: 3rem; margin-bottom: 2rem; animate: pulse 2s infinite;"></div>
+      </div>
+    </div>
+    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
