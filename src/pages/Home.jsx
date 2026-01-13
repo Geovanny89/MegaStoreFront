@@ -24,15 +24,43 @@ import Logo from "../assets/Logo31.png";
  * 1. Agrega parámetros de Cloudinary (f_auto, q_auto) para reducir peso.
  * 2. Maneja Lazy Loading automáticamente excepto para elementos críticos.
  */
-const OptimizedImage = memo(({ src, alt, className, width, height, priority = false }) => {
-  const isCloudinary = src?.includes('cloudinary.com');
-  const optimizedSrc = isCloudinary 
-    ? src.replace('/upload/', '/upload/f_auto,q_auto,w_auto/') 
-    : src;
+const OptimizedImage = memo(({
+  src,
+  alt,
+  className,
+  width,
+  height,
+  priority = false,
+  sizes = "100vw"
+}) => {
+  const isCloudinary = src?.includes("cloudinary.com");
+
+  if (isCloudinary) {
+    const base = src.replace("/upload/", "/upload/f_auto,q_auto,dpr_auto/");
+    return (
+      <img
+        src={`${base}w_640`}
+        srcSet={`
+          ${base}w_480 480w,
+          ${base}w_640 640w,
+          ${base}w_960 960w,
+          ${base}w_1200 1200w
+        `}
+        sizes={sizes}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
+        className={className}
+      />
+    );
+  }
 
   return (
     <img
-      src={optimizedSrc}
+      src={src}
       alt={alt}
       width={width}
       height={height}
@@ -43,6 +71,7 @@ const OptimizedImage = memo(({ src, alt, className, width, height, priority = fa
     />
   );
 });
+
 
 // Lazy load componentes pesados
 const Products = lazy(() => import("../components/Products/products.jsx"));
