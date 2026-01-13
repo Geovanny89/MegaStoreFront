@@ -204,6 +204,7 @@ useEffect(() => {
               <button
                 key={cat.name}
                 onClick={() => setCategoriaActiva(cat.name)}
+                aria-label={`Seleccionar categoría ${cat.name}`} // ✅ Accesibilidad
                 className={`relative flex flex-col items-center justify-center min-w-[160px] h-[180px] rounded-[3rem] transition-[transform,colors,border-color] duration-500 group snap-center
                 ${categoriaActiva === cat.name
                     ? "bg-white dark:bg-[#0f172a] shadow-2xl shadow-blue-200/60 dark:shadow-none border-2 border-blue-500 transform -translate-y-3"
@@ -303,6 +304,7 @@ useEffect(() => {
           <div className="relative bg-gradient-to-br from-blue-600 to-purple-700 w-full max-w-md rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border-2 border-white/40 flex flex-col">
             <button
               onClick={cerrarModal}
+              aria-label="Cerrar modal" 
               className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors"
             >
               <X className="text-white" size={18} />
