@@ -1,6 +1,13 @@
-import { Routes, Route } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import ReactGA from "react-ga4";
+import ReactPixel from "react-facebook-pixel";
 import PrivateRoute from "./utils/PrivateRoute";
+
+
+/* ================== CONFIGURACIÓN DE ANALÍTICA ================== */
+const GA_ID = "G-EFRSBLFLV5"; // Tu ID de Google Analytics
+const PIXEL_ID = "221452844542263"; // Reemplaza cuando lo tengas
 
 /* ================== LAZY LOAD PAGES ================== */
 
@@ -72,6 +79,37 @@ const Reports = lazy(() => import("./components/Admin/Reports"));
 /* ================== ROUTER ================== */
 
 export default function AppRouter() {
+  const location = useLocation();
+
+  // 1. Inicialización (Solo ocurre una vez al cargar la web)
+ // 1. Inicialización (Solo ocurre una vez al cargar la web)
+  useEffect(() => {
+    // Inicializar Google Analytics
+    ReactGA.initialize(GA_ID);
+    
+    // Inicializar Facebook Pixel Evitando Duplicados
+    if (PIXEL_ID) {
+      // Solo inicializamos si no existe ya el objeto de rastreo de Facebook
+      if (!window._fbq) { 
+        ReactPixel.init(PIXEL_ID, { autoConfig: true, debug: false });
+      }
+    }
+  }, []);
+
+  // 2. Seguimiento de páginas (Ocurre cada vez que cambia la URL)
+  useEffect(() => {
+    const currentPath = location.pathname + location.search;
+    
+    // Reportar a Google
+    ReactGA.send({ hitType: "pageview", page: currentPath });
+    
+    // Reportar a Facebook
+    if (PIXEL_ID) {
+      ReactPixel.pageView();
+    }
+    
+    console.log("Visitando página:", currentPath);
+  }, [location]);
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center">Cargando…</div>}>
       <Routes>
