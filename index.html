@@ -1,13 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/kdice.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>K-DICE Vitrina digital</title>
+    <title>K-DICE | Marketplace sin comisiones</title>
 
-    <!-- 🔥 PRELOAD LCP IMAGE -->
+    <meta
+      name="description"
+      content="K-DICE es un marketplace sin comisiones donde compras y vendes en tiendas locales con pagos seguros y envíos rápidos."
+    />
+
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- 🔥 PRELOAD LCP IMAGE (HERO) -->
     <link
       rel="preload"
       as="image"
@@ -16,7 +23,18 @@
       fetchpriority="high"
     />
 
-    <!-- Dark mode BEFORE paint (bien hecho) -->
+    <!-- 🚀 PRELOAD CSS CRÍTICO (reduce render-blocking) -->
+    <link
+      rel="preload"
+      href="/assets/index-twdDZrKv.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="/assets/index-twdDZrKv.css" />
+    </noscript>
+
+    <!-- 🌙 Dark mode BEFORE first paint (0 CLS) -->
     <script>
       if (
         localStorage.theme === 'dark' ||
@@ -24,14 +42,14 @@
           window.matchMedia('(prefers-color-scheme: dark)').matches)
       ) {
         document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
       }
     </script>
   </head>
 
   <body class="bg-white dark:bg-[#0b1120] transition-colors duration-300">
     <div id="root"></div>
+
+    <!-- React entry -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

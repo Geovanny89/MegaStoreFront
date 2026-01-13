@@ -5,18 +5,19 @@ import './index.css';
 
 import App from './App.jsx';
 
-// IMPORTA EL PROVIDER
+// CONTEXT
 import { FavoritesProvider } from './context/FavoriteContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-
-      {/* ENVUELVE AQUÍ TODA LA APP */}
+    <BrowserRouter
+      future={{
+        v7_relativeSplatPath: true,
+      }}
+    >
       <FavoritesProvider>
         <App />
       </FavoritesProvider>
-
     </BrowserRouter>
   </StrictMode>
 );
