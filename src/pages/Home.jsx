@@ -36,7 +36,10 @@ const OptimizedImage = memo(({
   const isCloudinary = src?.includes("cloudinary.com");
 
   if (isCloudinary) {
-    const base = src.replace("/upload/", "/upload/f_auto,q_auto,dpr_auto/");
+    const base = src.replace(
+  "/upload/",
+  "/upload/f_auto,q_auto,dpr_auto,w_640/"
+);
     return (
       <img
         src={`${base}w_640`}
