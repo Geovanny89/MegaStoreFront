@@ -14,14 +14,7 @@
 
     <meta name="color-scheme" content="light dark" />
 
-    <!-- 🚀 PRECONNECT CRÍTICOS (reduce TTFB y LCP) -->
-    <link rel="preconnect" href="https://api.k-dice.com" crossorigin />
-    <link rel="dns-prefetch" href="https://api.k-dice.com" />
-
-    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-
-    <!-- 🔥 PRELOAD LCP IMAGE (HERO) -->
+    <!-- 🔥 PRELOAD HERO (LCP) -->
     <link
       rel="preload"
       as="image"
@@ -30,7 +23,7 @@
       fetchpriority="high"
     />
 
-    <!-- 🚀 PRELOAD CSS CRÍTICO (evita render-blocking) -->
+    <!-- 🚀 CSS NO BLOQUEANTE -->
     <link
       rel="preload"
       href="/assets/index-twdDZrKv.css"
@@ -41,7 +34,7 @@
       <link rel="stylesheet" href="/assets/index-twdDZrKv.css" />
     </noscript>
 
-    <!-- 🌙 Dark mode BEFORE first paint (0 CLS garantizado) -->
+    <!-- 🌙 Dark mode BEFORE paint (0 CLS) -->
     <script>
       if (
         localStorage.theme === 'dark' ||
@@ -55,8 +48,6 @@
 
   <body class="bg-white dark:bg-[#0b1120] transition-colors duration-300">
     <div id="root"></div>
-
-    <!-- React entry (no defer necesario, ya es module) -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
