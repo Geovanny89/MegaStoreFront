@@ -37,9 +37,9 @@ const OptimizedImage = memo(({
 
   if (isCloudinary) {
     const base = src.replace(
-  "/upload/",
-  "/upload/f_auto,q_auto,dpr_auto,w_640/"
-);
+      "/upload/",
+      "/upload/f_auto,q_auto,dpr_auto,w_640/"
+    );
     return (
       <img
         src={`${base}w_640`}
@@ -96,16 +96,16 @@ export default function Home() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const location = useLocation();
 
-useEffect(() => {
-  if (location.pathname === "/") {
-    setVendedorSeleccionado(null);
-    setCategoriaActiva("Todas");
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setVendedorSeleccionado(null);
+      setCategoriaActiva("Todas");
 
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0 });
-    });
-  }
-}, [location.pathname]);
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0 });
+      });
+    }
+  }, [location.pathname]);
 
 
   useEffect(() => {
@@ -144,51 +144,51 @@ useEffect(() => {
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans text-gray-900 dark:text-gray-100">
 
-     {/* 1. HERO SECTION - OPTIMIZADA (LCP FIX) */}
-{!vendedorSeleccionado && (
-  <section className="relative w-full h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group bg-[#0f172a]">
-    <picture>
-      {/* 📱 Carga automática para móviles (Imagen que creaste en Squoosh) */}
-      <source media="(max-width: 768px)" srcSet="/banner-mobile.webp" />
-      
-      {/* 💻 Carga para pantallas grandes */}
-      <img
-        src="/baner.webp"
-        alt="K-DICE Marketplace: Compra y vende en tiendas locales"
-        width={1400}
-        height={500}
-        fetchPriority="high"
-        loading="eager"
-        decoding="sync"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-      />
-    </picture>
-    
-    {/* Overlay y contenido (Mantenemos tu diseño original con mejor contraste) */}
-    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
-      <div className="inline-flex items-center gap-2 bg-blue-600/30 backdrop-blur-md border border-blue-500/30 text-blue-300 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-        </span>
-        El marketplace que impulsa negocios
-      </div>
-      <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-          Tus tiendas.
-        </span>
-      </h1>
-      <div className="flex flex-wrap gap-4">
-        <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
-          Explorar Tiendas <ArrowRight size={20} />
-        </a>
-        <Link to="/register-vendedor" className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-colors">
-          Vender aquí
-        </Link>
-      </div>
-    </div>
-  </section>
-)}
+      {/* 1. HERO SECTION - OPTIMIZADA (LCP FIX) */}
+      {!vendedorSeleccionado && (
+        <section className="relative w-full h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group bg-[#0f172a]">
+          <picture>
+            {/* 📱 Carga automática para móviles (Imagen que creaste en Squoosh) */}
+            <source media="(max-width: 768px)" srcSet="/banner-mobile.webp" />
+
+            {/* 💻 Carga para pantallas grandes */}
+            <img
+              src="/baner.webp"
+              alt="K-DICE Marketplace: Compra y vende en tiendas locales"
+              width={1400}
+              height={500}
+              fetchPriority="high"
+              loading="eager"
+              decoding="sync"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </picture>
+
+          {/* Overlay y contenido (Mantenemos tu diseño original con mejor contraste) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-20">
+            <div className="inline-flex items-center gap-2 bg-blue-600/30 backdrop-blur-md border border-blue-500/30 text-blue-300 px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              </span>
+              El marketplace que impulsa negocios
+            </div>
+            <h1 className="text-white text-5xl md:text-7xl font-black leading-[1.1] max-w-2xl mb-8">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+                Tus tiendas.
+              </span>
+            </h1>
+            <div className="flex flex-wrap gap-4">
+              <a href="#tiendas" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-transform hover:scale-105 shadow-lg shadow-blue-600/30 flex items-center gap-2">
+                Explorar Tiendas <ArrowRight size={20} />
+              </a>
+              <Link to="/register-vendedor" className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white px-10 py-4 rounded-2xl font-bold border border-white/20 transition-colors">
+                Vender aquí
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 2. SECCIÓN DE CATEGORÍAS */}
       {!vendedorSeleccionado && (
@@ -319,6 +319,7 @@ useEffect(() => {
                 alt="K-Dice"
                 width={256}
                 height={128}
+                priority={true} // <--- CAMBIO CLAVE: Esto quita el lazy loading
                 className="w-40 sm:w-56 max-h-[140px] object-contain drop-shadow-2xl my-2 transition-transform hover:scale-105"
               />
               <p className="text-xs sm:text-base opacity-90">

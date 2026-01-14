@@ -88,22 +88,21 @@ export default function AppRouter() {
  const location = useLocation();
 
   /* ===== TRACK PAGE VIEW (SPA) ===== */
-  useEffect(() => {
-    const page = location.pathname + location.search;
+useEffect(() => {
+  const page = location.pathname + location.search;
 
-    // Google Analytics
-    ReactGA.send({
-      hitType: "pageview",
-      page,
-    });
+  // Google Analytics (Importante)
+  ReactGA.send({ hitType: "pageview", page });
 
-    // Meta Pixel
-    ReactPixel.pageView();
-
-    if (import.meta.env.DEV) {
-      console.log("📍 PageView:", page);
+  // Meta Pixel (Diferido 2 segundos para no afectar métricas iniciales)
+  const timer = setTimeout(() => {
+    if (typeof window.fbq !== 'undefined') {
+      ReactPixel.pageView();
     }
-  }, [location]);
+  }, 2000);
+
+  return () => clearTimeout(timer);
+}, [location]);
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center">Cargando…</div>}>
       <Routes>
