@@ -144,7 +144,7 @@ useEffect(() => {
             <Route path="/homeAdmin" element={<HomeAdmin />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin/Categorias" element={<CategoriasAdmin />} />
-            <Route path="/admin/editarUsuario" element={<AdminUser />} />
+            <Route path="/admin/usuarios" element={<AdminUser />} />
             <Route path="/admin/sellers/pagos" element={<ValidarPagos />} />
             <Route path="/admin/sellers/verificar-identidad" element={<ValidarIdentidad />} />
             <Route path="/admin/reportes" element={<Reports />} />
