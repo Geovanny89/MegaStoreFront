@@ -7,7 +7,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 
 /* ================== CONFIGURACIÓN DE ANALÍTICA ================== */
 const GA_ID = "G-EFRSBLFLV5"; // Tu ID de Google Analytics
-const PIXEL_ID = "221452844542263"; // Reemplaza cuando lo tengas
+const PIXEL_ID = "1777352596269707"; // Reemplaza cuando lo tengas
 
 /* ================== LAZY LOAD PAGES ================== */
 
