@@ -174,6 +174,7 @@ useEffect(() => {
             <Route path="/pedidosVendedor" element={<SellerOrders />} />
             <Route path="/questions" element={<SellerQuestions />} />
             <Route path="/pedidos/:orderId/messages" element={<SellerMessages />} />
+            <Route path="/notificaciones" element={<SellerNotifications />} />
             <Route path="/verificar/documento" element={<UploadIdentityDocuments />} />
             <Route path="/banners" element={<BannerManager />} />
           </Route>
