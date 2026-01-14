@@ -13,6 +13,50 @@ export default function LayoutSeller() {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [trialRemaining, setTrialRemaining] = useState({
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 0
+});
+
+useEffect(() => {
+  // 1. Extraemos los datos según tu consola:
+  const status = seller?.sellerStatus; // "trial"
+  const expiresAt = seller?.subscription?.expiresAt; // "2026-01-16T..."
+
+  // Si no es trial o no hay fecha, no hacemos nada
+  if (status !== "trial" || !expiresAt) {
+    console.log("Esperando datos válidos o el usuario no es trial...");
+    return;
+  }
+
+  const endDate = new Date(expiresAt);
+
+  const updateRemaining = () => {
+    const now = new Date();
+    const diff = endDate - now;
+
+    if (diff <= 0) {
+      setTrialRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
+
+    // Cálculos de tiempo
+    setTrialRemaining({
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds: Math.floor((diff % (1000 * 60)) / 1000),
+    });
+  };
+
+  updateRemaining();
+  const interval = setInterval(updateRemaining, 1000);
+
+  return () => clearInterval(interval);
+}, [seller]); // Se ejecuta cuando el objeto 'seller' llega de la API
+
 
   useEffect(() => {
     const fetchSeller = async () => {
@@ -82,11 +126,36 @@ export default function LayoutSeller() {
               )}
 
               {/* ⏳ AVISO TRIAL */}
-              {seller?.sellerStatus === "trial" && (
-                <div className="mb-4 p-4 rounded-xl bg-yellow-50 border border-yellow-200 text-yellow-800 font-bold text-sm">
-                  ⏳ Estás usando el período gratuito de 5 días.
-                </div>
-              )}
+           {seller?.sellerStatus === "trial" && (
+  <div className="mb-4 p-4 rounded-xl bg-yellow-50 border border-yellow-200 text-yellow-800 font-bold text-sm flex items-center justify-between">
+    <div className="flex items-center gap-2">
+      <span>⏳</span>
+      <span>Estás usando el período gratuito</span>
+    </div>
+    
+    <div className="flex gap-2 font-mono bg-white px-3 py-1 rounded-lg border border-yellow-200 shadow-sm">
+      <div className="text-center">
+        <span className="block text-xs text-yellow-600">Días</span>
+        {trialRemaining.days}
+      </div>
+      <span className="mt-4">:</span>
+      <div className="text-center">
+        <span className="block text-xs text-yellow-600">Hrs</span>
+        {trialRemaining.hours}
+      </div>
+      <span className="mt-4">:</span>
+      <div className="text-center">
+        <span className="block text-xs text-yellow-600">Min</span>
+        {trialRemaining.minutes}
+      </div>
+      <span className="mt-4">:</span>
+      <div className="text-center">
+        <span className="block text-xs text-yellow-600">Seg</span>
+        {trialRemaining.seconds}
+      </div>
+    </div>
+  </div>
+)}
 
               {/* 💳 AVISO MÉTODOS DE PAGO */}
               {!hasCOD &&

@@ -335,14 +335,14 @@ export default function Home() {
                 className="w-40 sm:w-56 max-h-[140px] object-contain drop-shadow-2xl my-2 transition-transform hover:scale-105"
               />
               <p className="text-xs sm:text-base opacity-90">
-                ¡Es hora de que tu esfuerzo valga el 100%! Quédate con cada centavo. **5 días GRATIS**.
+                ¡Es hora de que tu esfuerzo valga el 100%! Quédate con cada centavo. **10 días GRATIS**.
               </p>
               <Link
                 to="/register-vendedor"
                 onClick={cerrarModal}
                 className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-6 py-3.5 sm:px-10 sm:py-4 rounded-2xl font-black text-base sm:text-xl transition-transform active:scale-95 shadow-lg"
               >
-                ¡Quiero mis 5 días GRATIS!
+                ¡Quiero mis 10 días GRATIS!
               </Link>
               <p className="text-white/60 text-[10px] sm:text-xs">
                 Sin tarjeta de crédito. Sin compromiso.

@@ -66,7 +66,7 @@ const TerminosContent = () => {
         </div>
         <section>
           <h2 className="font-black text-gray-900 uppercase mb-2">1. Periodo de Prueba</h2>
-          <p className="text-gray-600">Al registrarse, accede a 5 días de prueba gratuita. Posterior a este periodo, el acceso al panel de vendedor requerirá el pago del plan seleccionado.</p>
+          <p className="text-gray-600">Al registrarse, accede a 10 días de prueba gratuita. Posterior a este periodo, el acceso al panel de vendedor requerirá el pago del plan seleccionado.</p>
         </section>
       </div>
     </div>
@@ -106,13 +106,34 @@ export default function RegisterSeller() {
     const fetchPlanes = async () => {
       try {
         const res = await api.get("/vendedor/planes");
-        setPlanes(Array.isArray(res.data) ? res.data : res.data.planes || []);
+
+        const planesData = Array.isArray(res.data)
+          ? res.data
+          : res.data.planes || [];
+
+        // 🔥 SOLO PLAN PREMIUM (79.900)
+        const planesFiltrados = planesData.filter(
+          (plan) => plan.precio === 79900
+        );
+
+        setPlanes(planesFiltrados);
+
+        // ✅ AUTO-SELECCIONAR SI SOLO HAY UNO
+        if (planesFiltrados.length === 1) {
+          setForm((prev) => ({
+            ...prev,
+            planId: planesFiltrados[0]._id
+          }));
+        }
+
       } catch (err) {
         console.error("Error cargando planes:", err);
       }
     };
+
     fetchPlanes();
   }, []);
+
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -140,11 +161,11 @@ export default function RegisterSeller() {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!aceptarTerminos) return alert("Debes aceptar los términos y condiciones.");
-    
+
     setLoading(true);
     try {
       const formData = new FormData();
-      
+
       // Añadimos campos básicos
       Object.keys(form).forEach((key) => {
         if (key !== "addresses") formData.append(key, form[key]);
@@ -153,7 +174,7 @@ export default function RegisterSeller() {
       // Añadimos dirección estructurada
       formData.append("addresses[0][street]", form.addresses[0].street);
       formData.append("addresses[0][city]", form.addresses[0].city);
-      
+
       // Añadimos el logo si existe
       if (storeLogo) formData.append("image", storeLogo);
 
@@ -175,12 +196,12 @@ export default function RegisterSeller() {
 
   return (
     <div className="min-h-screen bg-[#111827] flex items-center justify-center p-4 md:p-10 font-sans text-gray-200 relative">
-      
+
       {/* MODAL LEGAL */}
       {modalLegal.abierto && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl relative text-gray-900">
-            <button 
+            <button
               onClick={() => setModalLegal({ abierto: false, tipo: null })}
               className="absolute top-6 right-6 p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors z-50"
             >
@@ -190,7 +211,7 @@ export default function RegisterSeller() {
               {modalLegal.tipo === "terminos" ? <TerminosContent /> : <PrivacidadContent />}
             </div>
             <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
-              <button 
+              <button
                 onClick={() => setModalLegal({ abierto: false, tipo: null })}
                 className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg"
               >
@@ -214,7 +235,7 @@ export default function RegisterSeller() {
           </div>
 
           <h2 className="text-3xl font-black text-white tracking-tight mb-2">Crea tu Tienda</h2>
-          <p className="text-gray-400 mb-8">Regístrate y activa tus <span className="text-blue-400 font-bold">5 días de prueba gratuita</span>.</p>
+          <p className="text-gray-400 mb-8">Regístrate y activa tus <span className="text-blue-400 font-bold">10 días de prueba gratuita</span>.</p>
 
           <form onSubmit={handleRegister} className="space-y-6">
 
@@ -227,10 +248,10 @@ export default function RegisterSeller() {
                 </div>
                 <div>
                   <label className={labelStyle}>Categoría de Negocio</label>
-                  <select 
-                    name="storeCategory" 
-                    required 
-                    className={inputStyle} 
+                  <select
+                    name="storeCategory"
+                    required
+                    className={inputStyle}
                     onChange={handleChange}
                     value={form.storeCategory}
                   >
@@ -272,42 +293,46 @@ export default function RegisterSeller() {
 
               {/* INFO TRIAL */}
               {/* INFO TRIAL ACTUALIZADA Y LLAMATIVA */}
-{planSeleccionado && (
-  <div className="relative overflow-hidden bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border-2 border-blue-500/50 p-5 rounded-2xl animate-in zoom-in-95 duration-500">
-    {/* Decoración de fondo */}
-    <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
-    
-    <div className="relative z-10">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="flex h-3 w-3 relative">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-        </span>
-        <p className="text-green-400 font-black text-sm uppercase tracking-tighter">
-          ¡Beneficio Exclusivo Activado!
-        </p>
-      </div>
+              {planSeleccionado && (
+                <div className="relative overflow-hidden bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border-2 border-blue-500/50 p-5 rounded-2xl animate-in zoom-in-95 duration-500">
+                  {/* Decoración de fondo */}
+                  <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
 
-      <div className="space-y-2">
-        <p className="text-white text-base leading-tight">
-          Estás registrándote en el plan <span className="text-blue-400 font-black uppercase">{planSeleccionado.nombre}</span>.
-        </p>
-        
-        <div className="bg-white/5 p-3 rounded-xl border border-white/10 mt-2">
-          <p className="text-gray-200 text-xs leading-relaxed">
-            🚀 Disfruta <span className="text-white font-bold">5 DÍAS GRATIS</span> de acceso total. 
-            <br />
-            <span className="text-yellow-400 font-black">¡OFERTA DE LANZAMIENTO!</span> Si activas tu cuenta hoy, obtén un <span className="bg-yellow-400 text-blue-900 px-1 rounded font-black">50% DE DESCUENTO</span> en tus primeros 2 meses.
-          </p>
-        </div>
-        
-        <p className="text-[10px] text-blue-300 italic mt-2 flex items-center gap-1">
-          <Check size={12} /> Sin contratos amarrados • Cancela cuando quieras
-        </p>
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="flex h-3 w-3 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                      </span>
+                      <p className="text-green-400 font-black text-sm uppercase tracking-tighter">
+                        ¡Beneficio Exclusivo Activado!
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+
+
+                      <div className="bg-white/5 p-3 rounded-xl border border-white/10 mt-2">
+                        <p className="text-gray-200 text-xs leading-relaxed">
+                          🚀 Disfruta <span className="text-white font-bold">10 DÍAS GRATIS</span> de acceso total.
+                          <br />
+                          <span className="text-yellow-400 font-black">¡OFERTA DE LANZAMIENTO!</span>{" "}
+                          Si activas tu cuenta hoy, obtén un{" "}
+                          <span className="bg-yellow-400 text-blue-900 px-1 rounded font-black">
+                            75% DE DESCUENTO
+                          </span>{" "}
+                          en tus primeros 4 meses por{" "}
+                          <span className="text-white font-black">$19.900</span>.
+                        </p>
+                      </div>
+
+                      <p className="text-[10px] text-blue-300 italic mt-2 flex items-center gap-1">
+                        <Check size={12} /> Sin contratos amarrados • Cancela cuando quieras
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* DATOS PERSONALES */}
@@ -400,10 +425,10 @@ export default function RegisterSeller() {
 
             {/* TÉRMINOS */}
             <div className="flex items-start gap-3 p-2">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 id="terms"
-                checked={aceptarTerminos} 
+                checked={aceptarTerminos}
                 onChange={e => setAceptarTerminos(e.target.checked)}
                 className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
@@ -430,7 +455,7 @@ export default function RegisterSeller() {
         <div className="hidden md:flex md:w-5/12 bg-[#111827] flex-col items-center justify-center p-12 text-center relative overflow-hidden border-l border-[#374151]">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
-          
+
           <div className="relative z-10 space-y-6">
             <div className="bg-blue-600/20 p-6 rounded-[2.5rem] inline-block mb-4 border border-blue-500/20">
               <Store size={48} className="text-blue-500" />
