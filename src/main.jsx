@@ -15,11 +15,14 @@ import { FavoritesProvider } from "./context/FavoriteContext.jsx";
 const PIXEL_ID = "1777352596269707";
 
 if (typeof window !== "undefined") {
-  ReactPixel.init(PIXEL_ID, {
-    autoConfig: true,
-    debug: false,
+  requestIdleCallback(() => {
+    ReactPixel.init(PIXEL_ID, {
+      autoConfig: true,
+      debug: false,
+    });
   });
 }
+
 
 // ===============================
 // RENDER APP

@@ -153,14 +153,18 @@ export default function Home() {
 
             {/* 💻 Carga para pantallas grandes */}
             <img
-              src="/baner.webp"
-              alt="K-DICE Marketplace: Compra y vende en tiendas locales"
+              src="/banner-mobile.webp"
+              srcSet="
+    /banner-mobile.webp 768w,
+    /baner.webp 1400w
+  "
+              sizes="(max-width: 768px) 100vw, 1400px"
               width={1400}
               height={500}
               fetchPriority="high"
               loading="eager"
-              decoding="sync"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </picture>
 
@@ -254,9 +258,16 @@ export default function Home() {
               Ver el directorio <ChevronRight size={18} />
             </Link>
           </div>
-          <Suspense fallback={<div className="h-40 flex items-center justify-center">Cargando tiendas...</div>}>
-            <Tienda setVendedorSeleccionado={setVendedorSeleccionado} filtroCategoria={categoriaActiva} soloPremium={true} esCarrusel={true} limite={12} />
-          </Suspense>
+          <Suspense fallback={<div style={{ height: 1 }} />}>
+  <Tienda
+    setVendedorSeleccionado={setVendedorSeleccionado}
+    filtroCategoria={categoriaActiva}
+    soloPremium={true}
+    esCarrusel={true}
+    limite={12}
+  />
+</Suspense>
+
         </section>
       )}
 
@@ -319,7 +330,6 @@ export default function Home() {
                 alt="K-Dice"
                 width={256}
                 height={128}
-                priority={true} // <--- CAMBIO CLAVE: Esto quita el lazy loading
                 className="w-40 sm:w-56 max-h-[140px] object-contain drop-shadow-2xl my-2 transition-transform hover:scale-105"
               />
               <p className="text-xs sm:text-base opacity-90">
