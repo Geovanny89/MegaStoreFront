@@ -18,7 +18,6 @@
     <link rel="preconnect" href="https://api.k-dice.com" crossorigin />
 
     <script>
-      // Usamos el evento 'load' para que el Pixel no compita con el Banner (LCP)
       window.addEventListener('load', function() {
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -32,10 +31,6 @@
         fbq('track', 'PageView');
       });
     </script>
-    <noscript>
-      <img height="1" width="1" style="display:none" 
-           src="https://www.facebook.com/tr?id=1777352596269707&ev=PageView&noscript=1"/>
-    </noscript>
 
     <script>
       (function () {
@@ -49,6 +44,11 @@
   </head>
 
   <body class="bg-white dark:bg-[#0b1120]">
+    <noscript>
+      <img height="1" width="1" style="display:none" 
+           src="https://www.facebook.com/tr?id=1777352596269707&ev=PageView&noscript=1"/>
+    </noscript>
+
     <div id="root"></div>
 
     <script type="module" src="/src/main.jsx"></script>
