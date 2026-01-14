@@ -9,6 +9,12 @@ import PrivateRoute from "./utils/PrivateRoute";
 const GA_ID = "G-EFRSBLFLV5"; // Tu ID de Google Analytics
 const PIXEL_ID = "1777352596269707"; // Reemplaza cuando lo tengas
 
+/* ================== INIT GA (SOLO UNA VEZ) ================== */
+if (typeof window !== "undefined" && !window.__GA_INIT__) {
+  ReactGA.initialize(GA_ID);
+  window.__GA_INIT__ = true;
+}
+
 /* ================== LAZY LOAD PAGES ================== */
 
 // Públicas
@@ -81,22 +87,21 @@ const Reports = lazy(() => import("./components/Admin/Reports"));
 export default function AppRouter() {
  const location = useLocation();
 
-
-
-  // 2. Seguimiento de rutas (Este es el que realmente envía los datos)
+  /* ===== TRACK PAGE VIEW (SPA) ===== */
   useEffect(() => {
-    const currentPath = location.pathname + location.search;
-    
-    // Reportar a Google
-    ReactGA.send({ hitType: "pageview", page: currentPath });
-    
-    // Reportar a Facebook
-    if (PIXEL_ID) {
-      ReactPixel.pageView();
-    }
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log("K-DICE Nav: ", currentPath);
+    const page = location.pathname + location.search;
+
+    // Google Analytics
+    ReactGA.send({
+      hitType: "pageview",
+      page,
+    });
+
+    // Meta Pixel
+    ReactPixel.pageView();
+
+    if (import.meta.env.DEV) {
+      console.log("📍 PageView:", page);
     }
   }, [location]);
   return (
