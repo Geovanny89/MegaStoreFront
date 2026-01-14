@@ -146,26 +146,28 @@ export default function Home() {
 
       {/* 1. HERO SECTION - OPTIMIZADA (LCP FIX) */}
       {!vendedorSeleccionado && (
-        <section className="relative w-full h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group bg-[#0f172a]">
+        <section className="relative w-full h-[360px] md:h-[500px] rounded-[3rem] overflow-hidden md:shadow-2xl mb-16 group bg-[#0f172a]">
+
           <picture>
             {/* 📱 Carga automática para móviles (Imagen que creaste en Squoosh) */}
             <source media="(max-width: 768px)" srcSet="/banner-mobile.webp" />
 
             {/* 💻 Carga para pantallas grandes */}
             <img
-              src="/banner-mobile.webp"
-              srcSet="
+  src="/banner-mobile.webp"
+  srcSet="
     /banner-mobile.webp 768w,
     /baner.webp 1400w
   "
-              sizes="(max-width: 768px) 100vw, 1400px"
-              width={1400}
-              height={500}
-              fetchPriority="high"
-              loading="eager"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+  sizes="(max-width: 768px) 100vw, 1400px"
+  width={768}
+  height={360}
+  fetchPriority="high"
+  loading="eager"
+  decoding="async"
+  className="absolute inset-0 w-full h-full object-cover"
+/>
+
           </picture>
 
           {/* Overlay y contenido (Mantenemos tu diseño original con mejor contraste) */}
