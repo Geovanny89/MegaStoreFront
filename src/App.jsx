@@ -84,19 +84,12 @@ export default function AppRouter() {
   // 1. Inicialización (Solo ocurre una vez al cargar la web)
  // 1. Inicialización (Solo ocurre una vez al cargar la web)
  useEffect(() => {
-  // Inicializar Google Analytics
   ReactGA.initialize(GA_ID);
-  
-  // Inicializar Facebook Pixel
-  if (PIXEL_ID) {
-    // La librería ya se encarga de no duplicar si se llama correctamente
-    ReactPixel.init(PIXEL_ID, { 
-      autoConfig: true, 
-      debug: false 
-    });
-    ReactPixel.pageView();
-  }
+
+  ReactPixel.init("1777352596269707");
+  ReactPixel.pageView();
 }, []);
+
 
   // 2. Seguimiento de páginas (Ocurre cada vez que cambia la URL)
   useEffect(() => {
