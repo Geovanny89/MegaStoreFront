@@ -79,19 +79,24 @@ const Reports = lazy(() => import("./components/Admin/Reports"));
 /* ================== ROUTER ================== */
 
 export default function AppRouter() {
-  const location = useLocation();
+ const location = useLocation();
 
-  // 1. Inicialización (Solo ocurre una vez al cargar la web)
- // 1. Inicialización (Solo ocurre una vez al cargar la web)
- useEffect(() => {
-  ReactGA.initialize(GA_ID);
+  // 1. Inicialización Única
+  useEffect(() => {
+    // Google Analytics
+    ReactGA.initialize(GA_ID);
 
-  ReactPixel.init("1777352596269707");
-  ReactPixel.pageView();
-}, []);
+    // Facebook Pixel - Configuración optimizada
+    if (PIXEL_ID) {
+      ReactPixel.init(PIXEL_ID, {
+        autoConfig: true, 
+        debug: false
+      });
+      // Importante: No disparamos pageView aquí para evitar duplicados con el router
+    }
+  }, []);
 
-
-  // 2. Seguimiento de páginas (Ocurre cada vez que cambia la URL)
+  // 2. Seguimiento de rutas (Este es el que realmente envía los datos)
   useEffect(() => {
     const currentPath = location.pathname + location.search;
     
@@ -103,7 +108,9 @@ export default function AppRouter() {
       ReactPixel.pageView();
     }
     
-    console.log("Visitando página:", currentPath);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("K-DICE Nav: ", currentPath);
+    }
   }, [location]);
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center">Cargando…</div>}>
