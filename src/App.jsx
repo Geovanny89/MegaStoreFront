@@ -81,20 +81,7 @@ const Reports = lazy(() => import("./components/Admin/Reports"));
 export default function AppRouter() {
  const location = useLocation();
 
-  // 1. Inicialización Única
-  useEffect(() => {
-    // Google Analytics
-    ReactGA.initialize(GA_ID);
 
-    // Facebook Pixel - Configuración optimizada
-    if (PIXEL_ID) {
-      ReactPixel.init(PIXEL_ID, {
-        autoConfig: true, 
-        debug: false
-      });
-      // Importante: No disparamos pageView aquí para evitar duplicados con el router
-    }
-  }, []);
 
   // 2. Seguimiento de rutas (Este es el que realmente envía los datos)
   useEffect(() => {
