@@ -15,7 +15,10 @@ import { FavoritesProvider } from "./context/FavoriteContext.jsx";
 const PIXEL_ID = "1777352596269707";
 
 if (typeof window !== "undefined") {
-  requestIdleCallback(() => {
+  // Creamos un "fallback" seguro para iPhone
+  const scheduleTask = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
+  
+  scheduleTask(() => {
     ReactPixel.init(PIXEL_ID, {
       autoConfig: true,
       debug: false,

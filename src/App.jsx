@@ -10,9 +10,19 @@ const GA_ID = "G-EFRSBLFLV5"; // Tu ID de Google Analytics
 const PIXEL_ID = "1777352596269707"; // Reemplaza cuando lo tengas
 
 /* ================== INIT GA (SOLO UNA VEZ) ================== */
+/* ================== INIT GA (OPTIMIZADO) ================== */
 if (typeof window !== "undefined" && !window.__GA_INIT__) {
-  ReactGA.initialize(GA_ID);
-  window.__GA_INIT__ = true;
+  const initGA = () => {
+    ReactGA.initialize(GA_ID);
+    window.__GA_INIT__ = true;
+  };
+  
+  // Usamos el mismo truco de compatibilidad
+  if (window.requestIdleCallback) {
+    requestIdleCallback(initGA);
+  } else {
+    setTimeout(initGA, 2000); // 2 segundos después para iPhone
+  }
 }
 
 /* ================== LAZY LOAD PAGES ================== */
@@ -104,7 +114,13 @@ useEffect(() => {
   return () => clearTimeout(timer);
 }, [location]);
   return (
-    <Suspense fallback={<div className="h-screen flex items-center justify-center">Cargando…</div>}>
+ // En AppRouter.jsx, busca el Suspense fallback y asegúrate de que tenga min-h-screen
+<Suspense fallback={
+  <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white dark:bg-[#0b1120]">
+    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+    <p className="mt-4 text-gray-500 dark:text-gray-400">Cargando K-DICE...</p>
+  </div>
+}>
       <Routes>
 
         <Route path="/login" element={<Login />} />
