@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Mail, MapPin, ArrowRight } from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, ArrowRight, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 mt-24">
       <div className="max-w-[1400px] mx-auto px-6 pt-20 pb-10">
-        
+
         {/* SECCIÓN SUPERIOR: BRAND & NEWSLETTER */}
         <div className="flex flex-col lg:flex-row justify-between gap-12 mb-16">
           <div className="max-w-sm space-y-6">
@@ -16,7 +16,7 @@ export default function Footer() {
               K-DICE<span className="text-blue-600">.</span>
             </h4>
             <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
-              Conectando el comercio con el mundo digital. 
+              Conectando el comercio con el mundo digital.
             </p>
             <div className="flex gap-4">
               {[
@@ -46,14 +46,14 @@ export default function Footer() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
               Recibe novedades y ofertas exclusivas de las mejores tiendas.
             </p>
-            
-            <form 
-              className="flex flex-col sm:flex-row gap-3" 
+
+            <form
+              className="flex flex-col sm:flex-row gap-3"
               onSubmit={(e) => e.preventDefault()}
             >
-              <input 
-                type="email" 
-                placeholder="Tu correo electrónico" 
+              <input
+                type="email"
+                placeholder="Tu correo electrónico"
                 className="flex-1 min-w-0 px-4 py-3 rounded-xl border-none 
                            ring-1 ring-gray-200 dark:ring-gray-700 
                            focus:ring-2 focus:ring-blue-600 outline-none text-sm transition-all 
@@ -76,7 +76,7 @@ export default function Footer() {
 
         {/* SECCIÓN MEDIA: LINKS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-          
+
           {/* PLATAFORMA */}
           <div>
             <h4 className="font-black text-gray-900 dark:text-white mb-6 text-xs uppercase tracking-[0.2em]">
@@ -147,7 +147,19 @@ export default function Footer() {
               Contacto Directo
             </h4>
             <p className="text-gray-500 text-sm font-medium">¿Tienes dudas?</p>
-            <p className="text-blue-600 font-bold text-lg">+57 300 315 9976</p>
+            <p className="text-blue-600 font-bold text-lg">
+              <a
+                href="https://wa.me/573003159976"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-green-500 hover:text-green-600 transition-colors"
+              >
+                <MessageCircle size={24} />
+                <span className="text-sm font-semibold">¡Escríbenos por WhatsApp!</span>
+              </a>
+
+            </p>
+
           </div>
         </div>
 

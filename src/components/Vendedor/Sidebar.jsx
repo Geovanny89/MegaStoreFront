@@ -30,7 +30,7 @@ export default function Sidebar({ open, setOpen }) {
       setUnreadNotifications(unread);
 
       // 2. Datos del Vendedor (Para ver el sellerStatus)
-      const resSeller = await api.get("/seller/me"); 
+      const resSeller = await api.get("/seller/me");
       setSellerData(resSeller.data);
     } catch (error) {
       console.error("Error obteniendo datos del sidebar", error);
@@ -58,32 +58,37 @@ export default function Sidebar({ open, setOpen }) {
 
       <aside
         className={`
-          fixed md:static top-0 left-0 h-full w-64 
-          bg-white border-r border-gray-200 shadow-xl z-50
-          transition-transform duration-300
-          ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `}
+        fixed md:static top-0 left-0 h-full w-64
+        bg-white dark:bg-gray-900
+        border-r border-gray-200 dark:border-gray-800
+        shadow-xl z-50
+        transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+      `}
       >
         {/* Close mobile */}
         <button
           onClick={() => setOpen(false)}
-          className="md:hidden absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+          className="md:hidden absolute top-4 right-4
+          text-gray-600 dark:text-gray-300
+          hover:text-gray-900 dark:hover:text-white"
         >
           <X size={26} />
         </button>
 
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">🛍️ Panel Vendedor</h2>
-          <p className="text-sm text-gray-500">Administración general</p>
+        <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">🛍️ Panel Vendedor</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Administración general</p>
         </div>
 
         {/* Navigation */}
-        <nav className="px-4 py-6 flex flex-col gap-2 text-gray-700">
+        <nav className="px-4 py-6 flex flex-col gap-2 text-gray-700 dark:text-gray-300">
           <SidebarItem to="/HomeVendedor" label="Dashboard" icon={<LayoutDashboard size={18} />} />
           <SidebarItem to="/PerfilVendedor" label="Mi Perfil" icon={<User size={18} />} />
 
-          <div className="pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase">Gestión</div>
+          <div className="pt-3 pb-1 text-xs font-semibold uppercase
+          text-gray-400 dark:text-gray-500">Gestión</div>
 
           <SidebarItem to="/pedidosVendedor" label="Pedidos" icon={<Package size={18} />} />
 
@@ -91,7 +96,13 @@ export default function Sidebar({ open, setOpen }) {
           <div>
             <button
               onClick={() => setProductosOpen(!productosOpen)}
-              className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 hover:text-blue-600 transition"
+              className="
+              flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium
+              text-gray-700 dark:text-gray-300
+              hover:bg-blue-50 dark:hover:bg-gray-800
+              hover:text-blue-600 dark:hover:text-blue-400
+              transition
+            "
             >
               <div className="flex items-center gap-3">
                 <Boxes size={18} />
@@ -122,10 +133,10 @@ export default function Sidebar({ open, setOpen }) {
             />
           )}
           <SidebarItem
-  to="/banners"
-  label="Mis Banners"
-  icon={<LayoutDashboard size={18} />} // Cambia el ícono si quieres uno más adecuado
-/>
+            to="/banners"
+            label="Mis Banners"
+            icon={<LayoutDashboard size={18} />} // Cambia el ícono si quieres uno más adecuado
+          />
         </nav>
       </aside>
     </>
@@ -138,11 +149,11 @@ function SidebarItem({ to, label, icon, badge }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium
+        ` flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium
         transition-all duration-200
         ${isActive
           ? "bg-blue-600 text-white shadow-md"
-          : "hover:bg-blue-50 hover:text-blue-600 text-gray-700"}
+          : " text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400"}
       `
       }
     >
@@ -152,7 +163,10 @@ function SidebarItem({ to, label, icon, badge }) {
       </div>
 
       {badge > 0 && (
-        <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+        <span className="bg-red-500 text-white
+            text-[10px] font-bold
+            px-2 py-0.5 rounded-full
+            shadow-sm">
           {badge}
         </span>
       )}

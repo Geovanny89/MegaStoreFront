@@ -218,20 +218,25 @@ export default function CrearProductos() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 px-4 pb-20">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Panel de Vendedor</h2>
+    <div className="max-w-3xl mx-auto mt-10 px-4 pb-20 bg-white dark:bg-gray-800 text-slate-900 dark:text-slate-100">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">Panel de Vendedor</h2>
 
       {message && (
-        <div className={`mb-6 p-4 rounded-lg font-medium border flex items-center gap-2 ${isError ? "bg-red-50 border-red-200 text-red-700" : "bg-green-50 border-green-200 text-green-700"
-          }`}>
+        <div
+          className={`mb-6 p-4 rounded-lg font-medium border flex items-center gap-2 ${isError
+              ? "bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400"
+              : "bg-green-50 dark:bg-green-900 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400"
+            }`}
+        >
           {isError ? <AlertCircle size={20} /> : <CheckCircle size={20} />}
           {message}
         </div>
       )}
 
+
       {/* Alerta dinámica si se pasa de 5 imágenes */}
       {images.length > 5 && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg flex items-center gap-2 font-bold animate-pulse">
+        <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-400 rounded-lg flex items-center gap-2 font-bold animate-pulse">
           <AlertCircle size={20} />
           <span>Atención: Has seleccionado {images.length} fotos. Por favor elimina {images.length - 5} para poder publicar.</span>
         </div>
@@ -239,24 +244,24 @@ export default function CrearProductos() {
 
       {/* --- SECCIÓN DE VERIFICACIÓN --- */}
       {showVerify && (
-        <div className="mb-8 bg-blue-900/5 border-2 border-blue-200 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-3 mb-4 text-blue-800">
+        <div className="mb-8 bg-blue-900/5 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-4 text-blue-800 dark:text-blue-400">
             <ShieldAlert size={24} />
             <h3 className="text-xl font-black uppercase tracking-tight">Verificar tu Identidad</h3>
           </div>
-          <p className="text-sm text-blue-700 mb-6 font-medium">
+          <p className="text-sm text-blue-700 dark:text-blue-300 mb-6 font-medium">
             Para activar las ventas en el Marketplace, necesitamos validar tu identidad legal.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase">Cédula Frontal</label>
-              <div className="relative border-2 border-dashed border-blue-300 rounded-xl p-4 hover:bg-blue-50 transition-colors text-center">
+              <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Cédula Frontal</label>
+              <div className="relative border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-4 hover:bg-blue-50 dark:hover:bg-blue-800 transition-colors text-center">
                 <input type="file" accept="image/*" onChange={(e) => handleIdFileChange(e, "idDocument")} className="absolute inset-0 opacity-0 cursor-pointer" />
                 {idPreviews.idDocument ? (
                   <img src={idPreviews.idDocument} className="h-32 mx-auto rounded-lg object-cover" alt="Preview ID" />
                 ) : (
-                  <div className="py-4 text-blue-500 flex flex-col items-center gap-2">
+                  <div className="py-4 text-blue-500 dark:text-blue-400 flex flex-col items-center gap-2">
                     <Upload size={30} />
                     <span className="text-xs font-bold">Subir Foto Cédula</span>
                   </div>
@@ -265,13 +270,13 @@ export default function CrearProductos() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-500 uppercase">Selfie con el nombre de la tienda</label>
-              <div className="relative border-2 border-dashed border-blue-300 rounded-xl p-4 hover:bg-blue-50 transition-colors text-center">
+              <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Selfie con el nombre de la tienda</label>
+              <div className="relative border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-4 hover:bg-blue-50 dark:hover:bg-blue-800 transition-colors text-center">
                 <input type="file" accept="image/*" onChange={(e) => handleIdFileChange(e, "selfie")} className="absolute inset-0 opacity-0 cursor-pointer" />
                 {idPreviews.selfie ? (
                   <img src={idPreviews.selfie} className="h-32 mx-auto rounded-lg object-cover" alt="Preview Selfie" />
                 ) : (
-                  <div className="py-4 text-blue-500 flex flex-col items-center gap-2">
+                  <div className="py-4 text-blue-500 dark:text-blue-400 flex flex-col items-center gap-2">
                     <Camera size={30} />
                     <span className="text-xs font-bold">Tomar Selfie</span>
                   </div>
@@ -283,7 +288,7 @@ export default function CrearProductos() {
           <button
             onClick={handleUploadIdentity}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md disabled:bg-gray-400"
+            className="w-full bg-blue-600 dark:bg-blue-700 text-white py-3 rounded-xl font-bold hover:bg-blue-700 dark:hover:bg-blue-800 transition-all shadow-md disabled:bg-gray-400"
           >
             {loading ? "Procesando..." : "Enviar Documentos de Identidad"}
           </button>
@@ -293,61 +298,61 @@ export default function CrearProductos() {
       {/* --- FORMULARIO DE PRODUCTOS --- */}
 
       <div className={`mt-10 ${showVerify ? 'opacity-30 pointer-events-none grayscale' : 'opacity-100'}`}>
-        <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
+        <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800 dark:text-gray-100">
           Detalles del Producto
         </h3>
 
-        <form onSubmit={handleSubmit} className="bg-white shadow-xl border border-gray-100 rounded-2xl p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 rounded-2xl p-8 space-y-5">
           {/* Nombre del Producto */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Nombre del Producto</label>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Nombre del Producto</label>
             <input
               type="text" name="name" placeholder="Ej: Zapatillas Deportivas"
               value={form.name} onChange={handleChange} required
-              className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+              className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           {/* Precio y Stock */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Precio (COP)</label>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Precio (COP)</label>
               <input
                 type="number" name="price" placeholder="0.00"
                 value={form.price} onChange={handleChange} required
-                className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+                className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Unidades Stock</label>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Unidades Stock</label>
               <input
                 type="number" name="stock" placeholder="10"
                 value={form.stock} onChange={handleChange} required
-                className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+                className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* Marca */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Marca</label>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Marca</label>
             <input
               type="text" name="brand" placeholder="Ej: Nike, Sony, Genérico"
               value={form.brand} onChange={handleChange}
-              className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+              className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           {/* Categoría */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Categoría de Producto</label>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Categoría de Producto</label>
             <select
               name="tipoId" value={form.tipoId} onChange={handleChange} required
-              className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all"
+              className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all"
             >
-              <option value="" className="text-gray-900">Selecciona un tipo</option>
+              <option value="" className="text-gray-900 dark:text-gray-100">Selecciona un tipo</option>
               {tipos.map((tipo) => (
-                <option key={tipo._id} value={tipo._id} className="text-gray-900">{tipo.name}</option>
+                <option key={tipo._id} value={tipo._id} className="text-gray-900 dark:text-gray-100">{tipo.name}</option>
               ))}
             </select>
           </div>
@@ -355,44 +360,44 @@ export default function CrearProductos() {
           {/* Tallas Dinámicas (RESTAURADO) */}
           {form.tipoId && tipos.find(t => t._id === form.tipoId)?.usaTalla && (
             <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Tallas Disponibles</label>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Tallas Disponibles</label>
               <input
                 type="text" name="sise" placeholder="Ej: S, M, L o 38, 40, 42"
                 value={form.sise} onChange={handleChange}
-                className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+                className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
           )}
 
           {/* Colores */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Colores</label>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Colores</label>
             <input
               type="text" name="color" placeholder="Ej: Negro, Blanco, Rojo"
               value={form.color} onChange={handleChange}
-              className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+              className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           {/* Descripción */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Descripción del Producto</label>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Descripción del Producto</label>
             <textarea
               name="description" value={form.description} onChange={handleChange} rows={4}
               placeholder="Describe las características principales..."
-              className="w-full bg-white text-gray-900 border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400"
+              className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           {/* Política de Envío */}
-          <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
-            <label className="block text-xs font-bold text-gray-500 mb-3 uppercase">Política de Envío</label>
+          <div className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 bg-gray-50 dark:bg-gray-800">
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-3 uppercase">Política de Envío</label>
             <div className="flex gap-6 mb-3">
-              <label className="flex items-center gap-2 cursor-pointer text-gray-800">
+              <label className="flex items-center gap-2 cursor-pointer text-gray-800 dark:text-gray-100">
                 <input type="radio" name="shippingPolicy" value="free" checked={form.shippingPolicy === "free"} onChange={handleChange} className="accent-green-600" />
                 <span className="font-medium">🚚 Envío gratis</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-gray-800">
+              <label className="flex items-center gap-2 cursor-pointer text-gray-800 dark:text-gray-100">
                 <input type="radio" name="shippingPolicy" value="coordinar" checked={form.shippingPolicy === "coordinar"} onChange={handleChange} className="accent-green-600" />
                 <span className="font-medium">📦 Coordinar con el vendedor</span>
               </label>
@@ -400,16 +405,16 @@ export default function CrearProductos() {
             <textarea
               name="shippingNote" value={form.shippingNote} onChange={handleChange} rows={2}
               placeholder="Opcional: Ej. Envío gratis por promoción..."
-              className="w-full bg-white text-gray-900 border border-gray-200 px-3 py-2 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm placeholder:text-gray-400"
+              className="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600 px-3 py-2 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           {/* Fotos del Producto (RESTAURADO) */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Fotos del Producto ({images.length}/5)</label>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase">Fotos del Producto ({images.length}/5)</label>
             <input
               type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImageChange}
-              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"
+              className="w-full text-sm text-gray-500 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 dark:file:bg-green-700 file:text-green-700 dark:file:text-green-200 hover:file:bg-green-100 dark:hover:file:bg-green-600 cursor-pointer"
             />
           </div>
 
@@ -419,16 +424,18 @@ export default function CrearProductos() {
               <div key={i} className={`relative group ${i >= 5 ? 'opacity-50' : ''}`}>
                 <img
                   src={url}
-                  className={`w-20 h-20 object-cover rounded-xl border shadow-sm ${i >= 5 ? 'border-red-500 border-2' : 'border-gray-100'}`}
+                  className={`w-20 h-20 object-cover rounded-xl border shadow-sm ${i >= 5 ? 'border-red-500 border-2' : 'border-gray-100 dark:border-gray-600'
+                    }`}
                   alt="Preview product"
                 />
                 {i >= 5 && (
-                  <span className="absolute inset-0 flex items-center justify-center text-[10px] text-red-600 font-bold bg-white/60 rounded-xl pointer-events-none">
+                  <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-red-600 dark:text-red-400 bg-white/60 dark:bg-gray-700/60 rounded-xl pointer-events-none">
                     EXCESO
                   </span>
                 )}
                 <button
-                  type="button" onClick={() => removeImage(i)}
+                  type="button"
+                  onClick={() => removeImage(i)}
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   <X size={14} />
@@ -437,63 +444,74 @@ export default function CrearProductos() {
             ))}
           </div>
 
+
           {/* Botón de Publicar */}
           <button
             type="submit"
             disabled={loading || images.length > 5 || images.length === 0}
-            className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${(loading || images.length > 5 || images.length === 0)
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700 shadow-green-200"
+            className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2
+    ${(loading || images.length > 5 || images.length === 0)
+                ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                : "bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-800 shadow-green-200"
               }`}
           >
-            {loading ? "Subiendo..." : images.length > 5 ? `Borra ${images.length - 5} para publicar` : "Publicar Producto Ahora"}
+            {loading
+              ? "Subiendo..."
+              : images.length > 5
+                ? `Borra ${images.length - 5} para publicar`
+                : "Publicar Producto Ahora"}
           </button>
+
         </form>
       </div>
       {/* ================== CARGA MASIVA DESDE EXCEL ================== */}
-      <div className="mb-10 bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold mb-4 text-gray-800">
+      <div className="mb-10 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-2xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">
           Carga Masiva de Productos (Excel)
         </h3>
+
         <a
-          href="/plantillas/plantilla_carga_masiva.xlsx" // Ruta relativa a la carpeta public
-          download="plantilla_carga_masiva.xlsx"      // Nombre con el que se guardará el archivo
-          className="flex items-center gap-2 text-xs font-bold bg-white border border-purple-200 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition-all shadow-sm"
+          href="/plantillas/plantilla_carga_masiva.xlsx"
+          download="plantilla_carga_masiva.xlsx"
+          className="flex items-center gap-2 text-xs font-bold bg-white dark:bg-gray-700 border border-purple-200 dark:border-purple-600 text-purple-600 dark:text-purple-300 px-4 py-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-700 transition-all shadow-sm"
         >
           <Download size={14} />
           DESCARGAR PLANTILLA EXCEL
         </a>
+
         {bulkMessage && (
-          <div className={`mb-4 p-3 rounded-lg text-sm font-semibold ${bulkError
-              ? "bg-red-50 text-red-700 border border-red-200"
-              : "bg-green-50 text-green-700 border border-green-200"
-            }`}>
+          <div
+            className={`mb-4 p-3 rounded-lg text-sm font-semibold ${bulkError
+                ? "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/40 dark:text-red-400 dark:border-red-600"
+                : "bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-600"
+              }`}
+          >
             {bulkMessage}
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">
               Archivo Excel
             </label>
             <input
               type="file"
               accept=".xlsx,.xls"
               onChange={handleExcelChange}
-              className="w-full text-sm"
+              className="w-full text-sm text-gray-700 dark:text-gray-300"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">
               Imágenes (ZIP o RAR)
             </label>
             <input
               type="file"
               accept=".zip,.rar"
               onChange={handleZipChange}
-              className="w-full text-sm"
+              className="w-full text-sm text-gray-700 dark:text-gray-300"
             />
           </div>
         </div>
@@ -501,15 +519,19 @@ export default function CrearProductos() {
         <button
           onClick={handleBulkUpload}
           disabled={bulkLoading}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-bold transition-all disabled:bg-gray-400"
+          className={`w-full py-3 rounded-xl font-bold transition-all ${bulkLoading
+              ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+              : "bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-800 text-white"
+            }`}
         >
           {bulkLoading ? "Procesando Excel..." : "Subir Productos desde Excel"}
         </button>
 
-        <p className="text-xs text-gray-500 mt-3">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
           📌 El Excel debe coincidir con los nombres de las imágenes dentro del ZIP.
         </p>
       </div>
+
 
     </div>
   );

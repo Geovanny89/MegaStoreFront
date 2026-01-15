@@ -14,6 +14,7 @@ export default function HomeAdmin() {
   const fetchUsers = async () => {
     try {
       const response = await api.get("/all/admin/user");
+      console.log("Usuarios", response)
       setUsers(response.data);
     } catch (error) {
       console.error(error);

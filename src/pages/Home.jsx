@@ -154,19 +154,19 @@ export default function Home() {
 
             {/* 💻 Carga para pantallas grandes */}
             <img
-  src="/banner-mobile.webp"
-  srcSet="
+              src="/banner-mobile.webp"
+              srcSet="
     /banner-mobile.webp 768w,
     /baner.webp 1400w
   "
-  sizes="(max-width: 768px) 100vw, 1400px"
-  width={768}
-  height={360}
-  fetchPriority="high"
-  loading="eager"
-  decoding="async"
-  className="absolute inset-0 w-full h-full object-cover"
-/>
+              sizes="(max-width: 768px) 100vw, 1400px"
+              width={768}
+              height={360}
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
 
           </picture>
 
@@ -261,14 +261,14 @@ export default function Home() {
             </Link>
           </div>
           <Suspense fallback={<div style={{ height: 1 }} />}>
-  <Tienda
-    setVendedorSeleccionado={setVendedorSeleccionado}
-    filtroCategoria={categoriaActiva}
-    soloPremium={true}
-    esCarrusel={true}
-    limite={12}
-  />
-</Suspense>
+            <Tienda
+              setVendedorSeleccionado={setVendedorSeleccionado}
+              filtroCategoria={categoriaActiva}
+              soloPremium={true}
+              esCarrusel={true}
+              limite={12}
+            />
+          </Suspense>
 
         </section>
       )}

@@ -56,15 +56,15 @@ export default function UploadForm({ onAdd }) {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
       <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-1">Nuevo Banner</h2>
-        <p className="text-sm text-gray-500 mb-6">Promociona tus productos en la tienda</p>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Nuevo Banner</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Promociona tus productos en la tienda</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Input de Título */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Título del Banner
             </label>
             <input
@@ -72,30 +72,30 @@ export default function UploadForm({ onAdd }) {
               placeholder="Ej: Ofertas de Verano 50%"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 outline-none transition-all"
               required
             />
           </div>
 
           {/* Área de Carga de Imagen */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Imagen Publicitaria
             </label>
             
             {!preview ? (
               <div 
                 onClick={() => fileInputRef.current.click()}
-                className="group relative border-2 border-dashed border-gray-300 rounded-xl p-8 transition-all hover:border-blue-400 hover:bg-blue-50 cursor-pointer text-center"
-              >
-                <FiUploadCloud className="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                <p className="mt-2 text-sm text-gray-600">
-                  <span className="text-blue-600 font-semibold">Haz clic para subir</span> o arrastra y suelta
+                 className="group relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 transition-all hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 cursor-pointer text-center"
+          >
+                <FiUploadCloud className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold">Haz clic para subir</span> o arrastra y suelta
                 </p>
-                <p className="text-xs text-gray-400 mt-1">PNG, JPG o WEBP (Recomendado: 1200x400px)</p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">PNG, JPG o WEBP (Recomendado: 1200x400px)</p>
               </div>
             ) : (
-              <div className="relative rounded-xl overflow-hidden border border-gray-200">
+              <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-600">
                 <img src={preview} alt="Preview" className="w-full h-40 object-cover" />
                 <button
                   type="button"
@@ -120,11 +120,11 @@ export default function UploadForm({ onAdd }) {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold text-white transition-all shadow-md ${
-              loading 
-                ? "bg-gray-400 cursor-not-allowed" 
-                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
-            }`}
+           className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold text-white transition-all shadow-md ${
+          loading 
+            ? "bg-gray-400 cursor-not-allowed" 
+            : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+        }`}
           >
             {loading ? (
               <>

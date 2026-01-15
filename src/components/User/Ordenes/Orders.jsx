@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import ReviewForm from "../../User/Calificaciones/ReviewForm";
 import UserMessages from "../../User/messages/UserMessages.jsx";
+import { useParams } from "react-router-dom";
 
 /* ================= ESTILOS POR ESTADO ================= */
 const STATUS_THEME = {
@@ -67,6 +68,7 @@ const formatOrderDate = (dateString) => {
 };
 
 export default function Orders() {
+  const { slug } = useParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -85,19 +87,36 @@ export default function Orders() {
   const token = localStorage.getItem("token");
 
   const fetchOrders = async () => {
-    try {
-      if (!token) return;
-      const res = await api.get("/order/my-orders", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setOrders(res.data || []);
-      if (selectedOrder) {
-        const updated = res.data.find(o => o._id === selectedOrder._id);
-        if (updated) setSelectedOrder(updated);
-      }
-    } catch (err) { console.error(err); } finally { setLoading(false); }
-  };
+  try {
+    if (!token) return;
+    
+    // Decidimos la URL: si hay slug, filtramos por tienda, si no, es el historial global
+    const endpoint = slug 
+      ? `/order/my-orders?storeSlug=${slug}` 
+      : "/order/my-orders";
 
+    const res = await api.get(endpoint, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    setOrders(res.data || []);
+
+    if (selectedOrder) {
+      const updated = res.data.find(o => o._id === selectedOrder._id);
+      if (updated) setSelectedOrder(updated);
+    }
+  } catch (err) { 
+    console.error("Error al traer órdenes:", err); 
+  } finally { 
+    setLoading(false); 
+  }
+};
+
+// Es importante que el useEffect dependa del slug, 
+// por si el usuario cambia de tienda sin recargar la página
+useEffect(() => { 
+  fetchOrders(); 
+}, [slug]);
   useEffect(() => { fetchOrders(); }, []);
 
   const confirmReceived = async (orderId) => {

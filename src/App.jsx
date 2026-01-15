@@ -172,6 +172,13 @@ useEffect(() => {
           <Route element={<LayoutUser />}>
             <Route path="/homeUser" element={<HomeComprador />} />
             <Route path="/user/productos" element={<Products />} />
+            <Route path="/user/carAll" element={<Carrito />} />
+            <Route path="/favorito/all" element={<Favoritos />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/perfil/editar" element={<EditarPerfilUser />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/cambiar-password" element={<ChangePassword />} />
+            <Route path="/user/notificaciones" element={<Notificacion />} />
             <Route path="/user/categorias/:id" element={<Categorie />} />
             <Route path="/user/product/:name" element={<BuscarProducto />} />
             <Route path="/orders/:orderId/messages" element={<UserMessages />} />

@@ -28,19 +28,19 @@ export default function SellerQuestions() {
   return (
     <div className="space-y-4">
       {/* TÍTULO */}
-      <h2 className="text-xl font-bold">Preguntas de tus productos</h2>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Preguntas de tus productos</h2>
 
       {/* CONTADORES */}
       <div className="flex flex-wrap gap-3 text-sm">
-        <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-medium">
+        <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-200 font-medium">
           Total: {questions.length}
         </span>
 
-        <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
+        <span className="px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 font-medium">
           Pendientes: {questions.filter((q) => !q.answer).length}
         </span>
 
-        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+        <span className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 font-medium">
           Respondidas: {questions.filter((q) => q.answer).length}
         </span>
       </div>
@@ -49,17 +49,19 @@ export default function SellerQuestions() {
       {questions.map((q) => (
         <div
           key={q._id}
-          className={`border p-4 rounded-lg ${
-            q.answer ? "bg-white" : "bg-yellow-50 border-yellow-300"
-          }`}
+           className={`border rounded-lg p-4 ${
+        q.answer
+          ? "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+          : "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300 dark:border-yellow-700"
+      }`}
         >
-          <p className="font-medium">❓ {q.question}</p>
-          <p className="text-sm text-gray-500">
+          <p className="font-medium text-gray-900 dark:text-gray-100">❓ {q.question}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-300">
             Producto: {q.productId.name}
           </p>
 
           {q.answer ? (
-            <p className="mt-2 text-green-700">✅ {q.answer}</p>
+            <p className="mt-2 text-green-700 dark:text-green-300">✅ {q.answer}</p>
           ) : (
             <>
               <textarea
@@ -72,7 +74,7 @@ export default function SellerQuestions() {
               />
               <button
                 onClick={() => handleAnswer(q._id)}
-                className="mt-2 bg-indigo-600 text-white px-3 py-1 rounded"
+                className="mt-2 bg-indigo-600 dark:bg-indigo-700 hover:bg-indigo-700 dark:hover:bg-indigo-800 text-white px-3 py-1 rounded transition-all"
               >
                 Responder
               </button>

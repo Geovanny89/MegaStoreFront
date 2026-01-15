@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Rocket, Crown, ArrowRight, ShieldCheck, Zap, Loader2 } from 'lucide-react';
@@ -13,8 +12,8 @@ export default function Planes() {
     const fetchPlanes = async () => {
       try {
         const response = await api.get('/vendedor/planes');
+        console.log("soy el plan",response)
         setPlanes(response.data);
-        console.log(response)
       } catch (error) {
         console.error("Error cargando planes de la DB:", error);
       } finally {
@@ -24,7 +23,7 @@ export default function Planes() {
     fetchPlanes();
   }, []);
 
-  // Esta función es el "puente" entre tus datos de MongoDB y tu diseño visual
+  // Configuración visual de cada plan
   const getPlanVisualConfig = (nombre, productos) => {
     if (nombre === "Emprendedor") {
       return {
@@ -43,14 +42,14 @@ export default function Planes() {
         ]
       };
     }
-    // Asumimos que cualquier otro (como "Premium") usa el diseño "Empresarial"
+    // Configuración Premium
     return {
       icon: <Crown className="text-amber-500" size={32} />,
       color: "from-blue-600/20 to-blue-900/10",
       border: "border-blue-500",
       btnClass: "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40",
       slug: "avanzado",
-      popular: true, // El plan más caro suele marcarse como popular
+      popular: true,
       features: [
         `Hasta ${productos} productos activos`,
         "Estadísticas avanzadas",
@@ -74,32 +73,35 @@ export default function Planes() {
     );
   }
 
+  // Solo mostrar planes que no sean "Emprendedor"
+  const planesFiltrados = planes.filter(plan => plan.nombre !== "Emprendedor");
+
   return (
     <div className="min-h-screen bg-[#111827] text-gray-200 py-20 px-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto text-center">
 
-        {/* Encabezado Estilizado */}
-        <div className="text-center mb-16">
+        {/* Encabezado */}
+        <div className="mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest mb-6">
             <Zap size={14} /> Membresías Marketplace
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
-            Escala tu negocio en <span className="text-blue-500 text-shadow-blue">Cúcuta</span>
+            Escala tu negocio en <span className="text-blue-500 text-shadow-blue"></span>
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
             Elige el plan ideal para mostrar tus productos. Comienza hoy y llega a miles de clientes locales.
           </p>
         </div>
 
-        {/* Grid de Tarjetas (Iterando sobre los datos de la DB) */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {planes.map((plan) => {
+        {/* Mostrar solo el plan Premium */}
+        <div className="flex justify-center">
+          {planesFiltrados.map((plan) => {
             const visual = getPlanVisualConfig(plan.nombre, plan.productos_permitidos);
 
             return (
               <div
                 key={plan._id}
-                className={`relative rounded-[2.5rem] p-10 border-2 transition-all duration-500 hover:-translate-y-2 bg-[#1F2937] ${visual.border} flex flex-col`}
+                className={`relative rounded-[2.5rem] p-10 border-2 transition-all duration-500 hover:-translate-y-2 bg-[#1F2937] ${visual.border} flex flex-col max-w-md w-full`}
               >
                 {visual.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
@@ -121,10 +123,9 @@ export default function Planes() {
 
                 <h2 className="text-2xl font-black text-white mb-2">{plan.nombre}</h2>
                 <p className="text-gray-400 text-sm mb-8">
-                  Perfecto para negocios que buscan {visual.slug === 'basico' ? 'iniciarse' : 'liderar'} el mercado digital.
+                  Perfecto para negocios que buscan liderar el mercado digital.
                 </p>
 
-                {/* Lista de Características Dinámicas */}
                 <div className="space-y-4 mb-10 flex-grow">
                   {visual.features.map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-3">
@@ -136,7 +137,6 @@ export default function Planes() {
                   ))}
                 </div>
 
-                {/* Botón de Acción con ID de MongoDB */}
                 <button
                   onClick={() => seleccionarPlan(plan._id)}
                   className={`w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 transition-all active:scale-95 group ${visual.btnClass}`}
@@ -149,7 +149,7 @@ export default function Planes() {
           })}
         </div>
 
-        {/* Footer de Confianza */}
+        {/* Footer de confianza */}
         <div className="mt-20 flex flex-col md:flex-row items-center justify-center gap-10 opacity-60">
           <div className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest">
             <ShieldCheck className="text-blue-500" />

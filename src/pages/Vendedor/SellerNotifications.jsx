@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { 
-  Bell, 
-  ChevronRight, 
-  CheckCircle, 
-  Package, 
+import {
+  Bell,
+  ChevronRight,
+  CheckCircle,
+  Package,
   MessageSquare,
   Info
 } from "lucide-react";
@@ -12,20 +12,26 @@ import {
 // Colores VIBRANTES en formato COMPACTO
 const NOTIFICATION_THEMES = {
   order: {
-    bg: "bg-emerald-100", 
+    bg: "bg-emerald-100",
     border: "border-emerald-300",
     accent: "bg-emerald-600",
     iconColor: "text-emerald-700",
     textColor: "text-slate-900",
-    label: "Orden"
+    label: "Orden",
+    bgDark: "dark:bg-emerald-900",
+    borderDark: "dark:border-emerald-700",
+    textColorDark: "dark:text-emerald-300"
   },
   question: {
-    bg: "bg-amber-100", 
+    bg: "bg-amber-100",
     border: "border-amber-300",
     accent: "bg-amber-600",
     iconColor: "text-amber-700",
     textColor: "text-slate-900",
-    label: "Pregunta"
+    label: "Pregunta",
+    bgDark: "dark:bg-amber-900",
+    borderDark: "dark:border-amber-700",
+    textColorDark: "dark:text-amber-300"
   },
   default: {
     bg: "bg-indigo-100",
@@ -33,17 +39,24 @@ const NOTIFICATION_THEMES = {
     accent: "bg-indigo-600",
     iconColor: "text-indigo-700",
     textColor: "text-slate-900",
-    label: "Aviso"
+    label: "Aviso",
+    bgDark: "dark:bg-indigo-900",
+    borderDark: "dark:border-indigo-700",
+    textColorDark: "dark:text-indigo-300"
   },
   read: {
-    bg: "bg-slate-100", 
+    bg: "bg-slate-100",
     border: "border-slate-200",
     accent: "bg-slate-400",
     iconColor: "text-slate-400",
     textColor: "text-slate-500",
-    label: "Leída"
+    label: "Leída",
+    bgDark: "dark:bg-gray-700",
+    borderDark: "dark:border-gray-600",
+    textColorDark: "dark:text-gray-400"
   }
 };
+
 
 export default function SellerNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -54,7 +67,7 @@ export default function SellerNotifications() {
   const fetchNotifications = async () => {
     if (notifications.length === 0) setLoading(true);
     try {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token");
       const res = await api.get("/notifications/seller", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -90,7 +103,7 @@ export default function SellerNotifications() {
   const formatDate = (dateValue) => {
     if (!dateValue) return "";
     const date = new Date(dateValue);
-    return date.toLocaleDateString('es-ES', { 
+    return date.toLocaleDateString('es-ES', {
       day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
     });
   };
@@ -101,25 +114,26 @@ export default function SellerNotifications() {
   const totalPages = Math.ceil(notifications.length / itemsPerPage);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        
+
         {/* HEADER LIMPIO */}
-        <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+        <div className="flex items-center justify-between mb-6 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-200">
-               <Bell className="text-white" size={18} />
+            <div className="p-2 rounded-lg shadow-md bg-blue-600 shadow-blue-200 dark:bg-blue-700 dark:shadow-blue-900">
+              <Bell className="text-white" size={18} />
             </div>
-            <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight">Notificaciones</h2>
+
+            <h2 className="text-lg font-black text-slate-800 dark:text-gray-100 uppercase tracking-tight">Notificaciones</h2>
           </div>
-          <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black border border-slate-200">
+          <span className="bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-200 px-3 py-1 rounded-full text-[10px] font-black border border-slate-200 dark:border-gray-600">
             {notifications.filter(n => !n.isRead).length} NUEVAS
           </span>
         </div>
 
         {loading ? (
           <div className="flex justify-center py-10">
-            <div className="w-6 h-6 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-slate-200 dark:border-gray-700 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="space-y-3">
@@ -129,14 +143,17 @@ export default function SellerNotifications() {
               return (
                 <div
                   key={n._id}
-                  className={`relative border-2 rounded-xl transition-all duration-200 ${theme.bg} ${theme.border} shadow-sm overflow-hidden`}
+                  className={`relative border-2 rounded-xl transition-all duration-200 
+              ${theme.bg} dark:${theme.bgDark} 
+              ${theme.border} dark:${theme.borderDark} 
+              shadow-sm overflow-hidden`}
                 >
                   {/* Barra lateral de color */}
                   <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${theme.accent}`} />
 
                   <div className="py-3 px-4 flex items-center gap-4">
                     {/* Icono Reducido */}
-                    <div className={`p-2 rounded-lg bg-white/80 shadow-sm ${theme.iconColor} shrink-0`}>
+                    <div className={`p-2 rounded-lg bg-white/80 dark:bg-gray-700 shadow-sm ${theme.iconColor} shrink-0`}>
                       {n.type === "order" ? <Package size={18} /> : n.type === "question" ? <MessageSquare size={18} /> : <Info size={18} />}
                     </div>
 
@@ -146,11 +163,11 @@ export default function SellerNotifications() {
                         <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${theme.accent} text-white`}>
                           {theme.label}
                         </span>
-                        <span className="text-[10px] font-bold text-slate-500 italic">
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-gray-400 italic">
                           {formatDate(n.createdAt)}
                         </span>
                       </div>
-                      <p className={`text-sm leading-tight font-bold ${theme.textColor} line-clamp-2`}>
+                      <p className={`text-sm leading-tight font-bold ${theme.textColor} dark:${theme.textColorDark} line-clamp-2`}>
                         {n.message}
                       </p>
                     </div>
@@ -160,12 +177,11 @@ export default function SellerNotifications() {
                       {!n.isRead ? (
                         <button
                           onClick={() => markAsRead(n._id)}
-                          className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-blue-700 transition-colors shadow-md active:scale-95"
-                        >
+                          className="bg-slate-900 dark:bg-gray-200 text-white dark:text-gray-900 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-md active:scale-95">
                           Listo
                         </button>
                       ) : (
-                        <CheckCircle className="text-slate-400" size={20} />
+                        <CheckCircle className="text-slate-400 dark:text-gray-500" size={20} />
                       )}
                     </div>
                   </div>
@@ -178,20 +194,19 @@ export default function SellerNotifications() {
               <div className="flex justify-between items-center mt-8 px-2">
                 <button
                   disabled={currentPage === 1}
-                  onClick={() => { setCurrentPage(p => p - 1); window.scrollTo(0,0); }}
-                  className="p-2 bg-white border-2 border-slate-200 rounded-xl text-slate-800 disabled:opacity-30 hover:bg-slate-50 transition-all shadow-sm"
+                  onClick={() => { setCurrentPage(p => p - 1); window.scrollTo(0, 0); }}
+                  className="p-2 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-700 rounded-xl text-slate-800 dark:text-gray-100 disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-gray-700 transition-all shadow-sm"
                 >
                   <ChevronRight size={16} className="rotate-180" />
                 </button>
-                
-                <span className="font-black text-slate-800 text-[11px] bg-white px-4 py-1.5 rounded-full border-2 border-slate-200 shadow-sm">
+
+                <span className="font-black text-slate-800 dark:text-gray-100 text-[11px] bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full border-2 border-slate-200 dark:border-gray-700 shadow-sm">
                   {currentPage} / {totalPages}
                 </span>
-
                 <button
                   disabled={currentPage === totalPages}
-                  onClick={() => { setCurrentPage(p => p + 1); window.scrollTo(0,0); }}
-                  className="p-2 bg-white border-2 border-slate-200 rounded-xl text-slate-800 disabled:opacity-30 hover:bg-slate-50 transition-all shadow-sm"
+                  onClick={() => { setCurrentPage(p => p + 1); window.scrollTo(0, 0); }}
+                  className="p-2 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-700 rounded-xl text-slate-800 dark:text-gray-100 disabled:opacity-30 hover:bg-slate-50 dark:hover:bg-gray-700 transition-all shadow-sm"
                 >
                   <ChevronRight size={16} />
                 </button>
