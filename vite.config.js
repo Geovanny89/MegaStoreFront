@@ -44,10 +44,6 @@
 //     ],
 //   },
 // });
-import  defineConfig  from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -59,12 +55,8 @@ export default defineConfig({
   ],
 
   build: {
-    target: "esnext",       // 🔥 CLAVE (elimina JS legacy)
+    target: "esnext",     // ✅ rápido, moderno, iPhone OK
     cssCodeSplit: true,
     sourcemap: false,
   },
 });
-
-
-
-
