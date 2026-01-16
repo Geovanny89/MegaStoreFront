@@ -332,8 +332,7 @@ export default function Home() {
                 alt="K-Dice"
                 width={256}
                 height={128}
-                loading="eager"      // <-- CAMBIO: Carga inmediata
-                fetchpriority="high"
+                priority={true}
                 className="w-40 sm:w-56 max-h-[140px] object-contain drop-shadow-2xl my-2 transition-transform hover:scale-105"
               />
               <p className="text-xs sm:text-base opacity-90">
