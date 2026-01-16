@@ -48,27 +48,21 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
   ],
-  resolve: {
-    alias: {
-      react: "react",
-      "react-dom": "react-dom",
-    },
-  },
-  optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react-router-dom",
-      "lucide-react",
-    ],
-  },
+
   build: {
+    target: "esnext",       // 🔥 CLAVE (elimina JS legacy)
     cssCodeSplit: true,
+    sourcemap: false,
   },
 });
+
 
