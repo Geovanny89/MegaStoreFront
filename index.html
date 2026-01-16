@@ -8,24 +8,33 @@
     <title>K-DICE | Marketplace sin comisiones</title>
     <meta name="description" content="K-DICE es el marketplace líder para tiendas locales." />
    
-    <link rel="preload" as="image" href="/banner-mobile.webp" fetchpriority="high" />
-
-    <link rel="preload" as="image" href="/baner.webp" media="(min-width: 769px)" fetchpriority="high" />
-    
+    <!-- 1. PRIORIDAD ALTA: Preconectar a la API y Cloudinary -->
     <link rel="preconnect" href="https://api.k-dice.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-    <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
-    
     <link rel="dns-prefetch" href="https://api.k-dice.com" />
+
+    <!-- 2. ANTICIPAR DATOS: Pedir productos mientras se descarga el JS -->
+    <link rel="preload" href="https://api.k-dice.com/v1/user/allProducts" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="https://api.k-dice.com/v1/vendedor/all" as="fetch" crossorigin="anonymous">
+
+    <!-- 3. IMÁGENES CRÍTICAS (LCP ): Carga prioritaria del banner -->
+    <link rel="preload" as="image" href="/banner-mobile.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/baner.webp" media="(min-width: 769px)" fetchpriority="high" />
+    
+    <!-- 4. ANALÍTICA: Preconectar pero no bloquear -->
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin />
     <link rel="dns-prefetch" href="https://connect.facebook.net" />
 
     <script>
+      // Script de tema optimizado (inline para evitar parpadeo blanco )
       (function () {
-        const theme = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (theme === "dark" || (!theme && prefersDark)) {
-          document.documentElement.classList.add("dark");
-        }
+        try {
+          const theme = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (theme === "dark" || (!theme && prefersDark)) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
       })();
     </script>
   </head>
@@ -37,6 +46,8 @@
     </noscript>
 
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- 5. SCRIPT PRINCIPAL: Con fetchpriority para que sea lo primero en bajar -->
+    <script type="module" src="/src/main.jsx" fetchpriority="high"></script>
   </body>
 </html>
