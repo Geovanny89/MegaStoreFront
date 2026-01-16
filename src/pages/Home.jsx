@@ -260,7 +260,15 @@ export default function Home() {
               Ver el directorio <ChevronRight size={18} />
             </Link>
           </div>
-          <Suspense fallback={<div style={{ height: 1 }} />}>
+          <Suspense
+            fallback={
+              <div className="h-64 w-full flex items-center justify-center animate-pulse bg-gray-100 dark:bg-gray-800 rounded-xl">
+                <span className="text-gray-400 dark:text-gray-500 text-sm">
+                  Cargando tiendas...
+                </span>
+              </div>
+            }
+          >
             <Tienda
               setVendedorSeleccionado={setVendedorSeleccionado}
               filtroCategoria={categoriaActiva}
@@ -269,6 +277,7 @@ export default function Home() {
               limite={12}
             />
           </Suspense>
+
 
         </section>
       )}
