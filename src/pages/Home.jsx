@@ -1,20 +1,43 @@
 import React, { useEffect, useState, Suspense, lazy, useMemo, memo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  ShieldCheck, Truck, Headphones, CreditCard, ChevronRight,
-  Laptop, Shirt, Hammer, ShoppingCart, Home as HomeIcon, Heart,
-  ArrowRight,
-  LayoutGrid,
-  Brush,
-  Utensils,
-  Baby,
-  Dog,
-  Car,
-  FileText,
-  Palette,
-  Briefcase,
-  X
-} from "lucide-react";
+// import {
+//   ShieldCheck, Truck, Headphones, CreditCard, ChevronRight,
+//   Laptop, Shirt, Hammer, ShoppingCart, Home as HomeIcon, Heart,
+//   ArrowRight,
+//   LayoutGrid,
+//   Brush,
+//   Utensils,
+//   Baby,
+//   Dog,
+//   Car,
+//   FileText,
+//   Palette,
+//   Briefcase,
+//   X
+// } from "lucide-react";
+// --- IMPORTACIONES OPTIMIZADAS ---
+import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
+import Truck from "lucide-react/dist/esm/icons/truck";
+import Headphones from "lucide-react/dist/esm/icons/headphones";
+import CreditCard from "lucide-react/dist/esm/icons/credit-card";
+import ChevronRight from "lucide-react/dist/esm/icons/chevron-right";
+import Laptop from "lucide-react/dist/esm/icons/laptop";
+import Shirt from "lucide-react/dist/esm/icons/shirt";
+import Hammer from "lucide-react/dist/esm/icons/hammer";
+import ShoppingCart from "lucide-react/dist/esm/icons/shopping-cart";
+import HomeIcon from "lucide-react/dist/esm/icons/home"; // Lo llamamos HomeIcon para evitar conflicto
+import Heart from "lucide-react/dist/esm/icons/heart";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
+import LayoutGrid from "lucide-react/dist/esm/icons/layout-grid";
+import Brush from "lucide-react/dist/esm/icons/brush";
+import Utensils from "lucide-react/dist/esm/icons/utensils";
+import Baby from "lucide-react/dist/esm/icons/baby";
+import Dog from "lucide-react/dist/esm/icons/dog";
+import Car from "lucide-react/dist/esm/icons/car";
+import FileText from "lucide-react/dist/esm/icons/file-text";
+import Palette from "lucide-react/dist/esm/icons/palette";
+import Briefcase from "lucide-react/dist/esm/icons/briefcase";
+import X from "lucide-react/dist/esm/icons/x";
 import Logo from "../assets/Logo31.png";
 
 // --- COMPONENTES OPTIMIZADOS ---
