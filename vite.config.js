@@ -60,15 +60,22 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react-router-dom",
-      "lucide-react",
-    ],
+    include: ["react", "react-dom", "react-router-dom", "lucide-react"],
   },
   build: {
+    // 'es2020' es seguro para iPhones con iOS 13.4 o superior (el 98% del mercado)
+    // Esto elimina los polyfills basura pero mantiene la compatibilidad necesaria.
+    target: 'es2020', 
     cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        // ESTO ES CLAVE: Divide el archivo de 2MB en trozos pequeños
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor'; 
+          }
+        },
+      },
+    },
   },
 });
-
