@@ -113,7 +113,7 @@ export default function Home() {
     if (!hasSeenPromo) {
       const timer = setTimeout(() => {
         setShowPromoModal(true);
-      }, 2500); // Aumentado para priorizar la interactividad inicial
+      }, 5000); // Aumentado para priorizar la interactividad inicial
       return () => clearTimeout(timer);
     }
   }, []);
