@@ -7,7 +7,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 
 /* ================== CONFIGURACIÓN DE ANALÍTICA ================== */
 const GA_ID = "G-EFRSBLFLV5"; // Tu ID de Google Analytics
-const PIXEL_ID = "1777352596269707"; // Reemplaza cuando lo tengas
+// const PIXEL_ID = "1777352596269707"; // Reemplaza cuando lo tengas
 
 /* ================== INIT GA (SOLO UNA VEZ) ================== */
 /* ================== INIT GA (OPTIMIZADO) ================== */
@@ -28,69 +28,136 @@ if (typeof window !== "undefined" && !window.__GA_INIT__) {
 /* ================== LAZY LOAD PAGES ================== */
 
 // Públicas
-const Home = lazy(() => import("./pages/Home"));
-const Login = lazy(() => import("./pages/Login/Login"));
-const Register = lazy(() => import("./pages/Login/Register"));
-const RegisterSeller = lazy(() => import("./pages/Login/RegisterSeller"));
-const RecuperarContraseña = lazy(() => import("./pages/Login/RecuperarContraseña"));
-const RestablecerContraseña = lazy(() => import("./pages/Login/RestablecerContraseña"));
-const Unauthorized = lazy(() => import("./utils/Unauthorized"));
-const Success = lazy(() => import("./pages/Success"));
+// const Home = lazy(() => import("./pages/Home"));
+// const Login = lazy(() => import("./pages/Login/Login"));
+// const Register = lazy(() => import("./pages/Login/Register"));
+// const RegisterSeller = lazy(() => import("./pages/Login/RegisterSeller"));
+// const RecuperarContraseña = lazy(() => import("./pages/Login/RecuperarContraseña"));
+// const RestablecerContraseña = lazy(() => import("./pages/Login/RestablecerContraseña"));
+// const Unauthorized = lazy(() => import("./utils/Unauthorized"));
+// const Success = lazy(() => import("./pages/Success"));
+
+// // Layouts
+// const Layout = lazy(() => import("./components/layout/Layout"));
+// const LayoutUser = lazy(() => import("./components/User/LayoutUser"));
+// const LayoutSeller = lazy(() => import("./components/Vendedor/LayautSeller"));
+// const LayoutAdmin = lazy(() => import("./components/Admin/layaoutAdmin"));
+
+// // Marketplace
+// const Products = lazy(() => import("./components/Products/products"));
+// const TodasTiendas = lazy(() => import("./components/Home/TodasTiendas"));
+// const Storefront = lazy(() => import("./pages/Stores/Storefront"));
+// const Productosvendedor = lazy(() => import("./components/User/Tiendas/ProductoVendedor"));
+
+// // Home sections
+// const AboutUs = lazy(() => import("./components/Home/AboutUs"));
+// const Terminos = lazy(() => import("./components/Home/Terminos"));
+// const Privacidad = lazy(() => import("./components/Home/Privacidad"));
+// const Contacto = lazy(() => import("./components/Home/Contacto"));
+// const Planes = lazy(() => import("./components/Planes/Planes"));
+
+// // Usuario
+// const HomeComprador = lazy(() => import("./pages/User/HomeComprador"));
+// const Carrito = lazy(() => import("./components/User/Car/Carrito"));
+// const Favoritos = lazy(() => import("./components/User/Favoritos/Favoritos"));
+// const Orders = lazy(() => import("./components/User/Ordenes/Orders"));
+// const Perfil = lazy(() => import("./components/User/Perfil/Perfil"));
+// const EditarPerfilUser = lazy(() => import("./components/User/Perfil/EditarPerfilUser"));
+// const ChangePassword = lazy(() => import("./components/User/Contraseñas/ChangePassword"));
+// const Categorie = lazy(() => import("./components/User/Categoria/Categorie"));
+// const BuscarProducto = lazy(() => import("./components/User/ProductoNombre/BuscarProducto"));
+// const Notificacion = lazy(() => import("./components/User/Notificaciones/Notificacion"));
+// const UserMessages = lazy(() => import("./components/User/messages/UserMessages"));
+
+// // Seller
+// const DashboardSeller = lazy(() => import("./pages/Vendedor/DashboardSeller"));
+// const PerfilVendedor = lazy(() => import("./components/Vendedor/PerfilVendedor"));
+// const EditarPerfilVendedor = lazy(() => import("./components/Vendedor/EditarPerfil"));
+// const VerProductos = lazy(() => import("./components/Vendedor/Productos/VerProductos"));
+// const CrearProductos = lazy(() => import("./components/Vendedor/Productos/CrearProductos"));
+// const EditarProducto = lazy(() => import("./components/Vendedor/Productos/EditarProducto"));
+// const SellerOrders = lazy(() => import("./components/Vendedor/Ordenes/SellerOrdes"));
+// const SellerNotifications = lazy(() => import("./pages/Vendedor/SellerNotifications"));
+// const SellerQuestions = lazy(() => import("./components/Vendedor/Questions/SellerQuestions"));
+// const SellerMessages = lazy(() => import("./components/Vendedor/messages/SellerMessages"));
+// const UploadIdentityDocuments = lazy(() => import("./components/Vendedor/ValidarIdentidad/UploadIdentityDocuments"));
+// const BannerManager = lazy(() => import("./components/Vendedor/banners/BannerManager"));
+
+// // Admin
+// const HomeAdmin = lazy(() => import("./pages/Admin/HomeAdmin"));
+// const Dashboard = lazy(() => import("./components/Admin/Dashboard"));
+// const CategoriasAdmin = lazy(() => import("./components/Admin/CategoriasAdmin"));
+// const AdminUser = lazy(() => import("./components/Admin/Users/AdminUser"));
+// const ValidarPagos = lazy(() => import("./pages/Admin/ValidarPagos"));
+// const ValidarIdentidad = lazy(() => import("./components/Admin/ValidarIdentidad"));
+// const Reports = lazy(() => import("./components/Admin/Reports"));
+
+
+// Públicas
+import Home from "./pages/Home";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Login/Register";
+import RegisterSeller from "./pages/Login/RegisterSeller";
+import RecuperarContraseña from "./pages/Login/RecuperarContraseña";
+import RestablecerContraseña from "./pages/Login/RestablecerContraseña";
+import Unauthorized from "./utils/Unauthorized";
+import Success from "./pages/Success";
 
 // Layouts
-const Layout = lazy(() => import("./components/layout/Layout"));
-const LayoutUser = lazy(() => import("./components/User/LayoutUser"));
-const LayoutSeller = lazy(() => import("./components/Vendedor/LayautSeller"));
-const LayoutAdmin = lazy(() => import("./components/Admin/layaoutAdmin"));
+import Layout from "./components/layout/Layout";
+import LayoutUser from "./components/User/LayoutUser";
+import LayoutSeller from "./components/Vendedor/LayautSeller";
+import LayoutAdmin from "./components/Admin/layaoutAdmin";
 
 // Marketplace
-const Products = lazy(() => import("./components/Products/products"));
-const TodasTiendas = lazy(() => import("./components/Home/TodasTiendas"));
-const Storefront = lazy(() => import("./pages/Stores/Storefront"));
-const Productosvendedor = lazy(() => import("./components/User/Tiendas/ProductoVendedor"));
+import Products from "./components/Products/products";
+import TodasTiendas from "./components/Home/TodasTiendas";
+import Storefront from "./pages/Stores/Storefront";
+import Productosvendedor from "./components/User/Tiendas/ProductoVendedor";
 
 // Home sections
-const AboutUs = lazy(() => import("./components/Home/AboutUs"));
-const Terminos = lazy(() => import("./components/Home/Terminos"));
-const Privacidad = lazy(() => import("./components/Home/Privacidad"));
-const Contacto = lazy(() => import("./components/Home/Contacto"));
-const Planes = lazy(() => import("./components/Planes/Planes"));
+import AboutUs from "./components/Home/AboutUs";
+import Terminos from "./components/Home/Terminos";
+import Privacidad from "./components/Home/Privacidad";
+import Contacto from "./components/Home/Contacto";
+import Planes from "./components/Planes/Planes";
 
 // Usuario
-const HomeComprador = lazy(() => import("./pages/User/HomeComprador"));
-const Carrito = lazy(() => import("./components/User/Car/Carrito"));
-const Favoritos = lazy(() => import("./components/User/Favoritos/Favoritos"));
-const Orders = lazy(() => import("./components/User/Ordenes/Orders"));
-const Perfil = lazy(() => import("./components/User/Perfil/Perfil"));
-const EditarPerfilUser = lazy(() => import("./components/User/Perfil/EditarPerfilUser"));
-const ChangePassword = lazy(() => import("./components/User/Contraseñas/ChangePassword"));
-const Categorie = lazy(() => import("./components/User/Categoria/Categorie"));
-const BuscarProducto = lazy(() => import("./components/User/ProductoNombre/BuscarProducto"));
-const Notificacion = lazy(() => import("./components/User/Notificaciones/Notificacion"));
-const UserMessages = lazy(() => import("./components/User/messages/UserMessages"));
+import HomeComprador from "./pages/User/HomeComprador";
+import Carrito from "./components/User/Car/Carrito";
+import Favoritos from "./components/User/Favoritos/Favoritos";
+import Orders from "./components/User/Ordenes/Orders";
+import Perfil from "./components/User/Perfil/Perfil";
+import EditarPerfilUser from "./components/User/Perfil/EditarPerfilUser";
+import ChangePassword from "./components/User/Contraseñas/ChangePassword";
+import Categorie from "./components/User/Categoria/Categorie";
+import BuscarProducto from "./components/User/ProductoNombre/BuscarProducto";
+import Notificacion from "./components/User/Notificaciones/Notificacion";
+import UserMessages from "./components/User/messages/UserMessages";
 
 // Seller
-const DashboardSeller = lazy(() => import("./pages/Vendedor/DashboardSeller"));
-const PerfilVendedor = lazy(() => import("./components/Vendedor/PerfilVendedor"));
-const EditarPerfilVendedor = lazy(() => import("./components/Vendedor/EditarPerfil"));
-const VerProductos = lazy(() => import("./components/Vendedor/Productos/VerProductos"));
-const CrearProductos = lazy(() => import("./components/Vendedor/Productos/CrearProductos"));
-const EditarProducto = lazy(() => import("./components/Vendedor/Productos/EditarProducto"));
-const SellerOrders = lazy(() => import("./components/Vendedor/Ordenes/SellerOrdes"));
-const SellerNotifications = lazy(() => import("./pages/Vendedor/SellerNotifications"));
-const SellerQuestions = lazy(() => import("./components/Vendedor/Questions/SellerQuestions"));
-const SellerMessages = lazy(() => import("./components/Vendedor/messages/SellerMessages"));
-const UploadIdentityDocuments = lazy(() => import("./components/Vendedor/ValidarIdentidad/UploadIdentityDocuments"));
-const BannerManager = lazy(() => import("./components/Vendedor/banners/BannerManager"));
+import DashboardSeller from "./pages/Vendedor/DashboardSeller";
+import PerfilVendedor from "./components/Vendedor/PerfilVendedor";
+import EditarPerfilVendedor from "./components/Vendedor/EditarPerfil";
+import VerProductos from "./components/Vendedor/Productos/VerProductos";
+import CrearProductos from "./components/Vendedor/Productos/CrearProductos";
+import EditarProducto from "./components/Vendedor/Productos/EditarProducto";
+import SellerOrders from "./components/Vendedor/Ordenes/SellerOrdes";
+import SellerNotifications from "./pages/Vendedor/SellerNotifications";
+import SellerQuestions from "./components/Vendedor/Questions/SellerQuestions";
+import SellerMessages from "./components/Vendedor/messages/SellerMessages";
+import UploadIdentityDocuments from "./components/Vendedor/ValidarIdentidad/UploadIdentityDocuments";
+import BannerManager from "./components/Vendedor/banners/BannerManager";
 
 // Admin
-const HomeAdmin = lazy(() => import("./pages/Admin/HomeAdmin"));
-const Dashboard = lazy(() => import("./components/Admin/Dashboard"));
-const CategoriasAdmin = lazy(() => import("./components/Admin/CategoriasAdmin"));
-const AdminUser = lazy(() => import("./components/Admin/Users/AdminUser"));
-const ValidarPagos = lazy(() => import("./pages/Admin/ValidarPagos"));
-const ValidarIdentidad = lazy(() => import("./components/Admin/ValidarIdentidad"));
-const Reports = lazy(() => import("./components/Admin/Reports"));
+import HomeAdmin from "./pages/Admin/HomeAdmin";
+import Dashboard from "./components/Admin/Dashboard";
+import CategoriasAdmin from "./components/Admin/CategoriasAdmin";
+import AdminUser from "./components/Admin/Users/AdminUser";
+import ValidarPagos from "./pages/Admin/ValidarPagos";
+import ValidarIdentidad from "./components/Admin/ValidarIdentidad";
+import Reports from "./components/Admin/Reports";
+
 
 /* ================== ROUTER ================== */
 

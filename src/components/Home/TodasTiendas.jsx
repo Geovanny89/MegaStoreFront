@@ -108,30 +108,54 @@ export default function TodasTiendas() {
       {/* 2. CABECERA */}
       <div className="mb-12 border-b border-gray-100 pb-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-1 w-10 bg-blue-600 rounded-full"></div>
-              <span className="text-blue-600 font-black text-xs uppercase tracking-widest">Marketplace</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-4">
-              Directorio de Tiendas
-            </h1>
-            <p className="text-gray-500 text-lg max-w-xl font-medium">
-              Explora y encuentra tus comercios favoritos.
-            </p>
-          </div>
+  <div>
+    <div className="flex items-center gap-3 mb-2">
+      <div className="h-1 w-10 bg-blue-600 dark:bg-blue-500 rounded-full"></div>
+      <span className="text-blue-600 dark:text-blue-400 font-black text-xs uppercase tracking-widest">
+        Marketplace
+      </span>
+    </div>
 
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Buscar tienda por nombre..."
-              value={busqueda}
-              onChange={manejarBusqueda}
-              className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-medium shadow-sm"
-            />
-          </div>
-        </div>
+    <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4
+      text-gray-900 dark:text-gray-100">
+      Directorio de Tiendas
+    </h1>
+
+    <p className="text-lg max-w-xl font-medium
+      text-gray-500 dark:text-gray-400">
+      Explora y encuentra tus comercios favoritos.
+    </p>
+  </div>
+
+  <div className="relative w-full md:w-96">
+    <Search
+      className="absolute left-4 top-1/2 -translate-y-1/2
+      text-gray-400 dark:text-gray-500"
+      size={20}
+    />
+
+    <input
+      type="text"
+      placeholder="Buscar tienda por nombre..."
+      value={busqueda}
+      onChange={manejarBusqueda}
+      className="
+        w-full pl-12 pr-4 py-4 rounded-2xl font-medium shadow-sm
+        transition-all outline-none
+
+        bg-gray-50 dark:bg-[#0f172a]
+        border border-gray-200 dark:border-gray-700
+
+        text-gray-900 dark:text-gray-100
+        placeholder-gray-400 dark:placeholder-gray-500
+
+        focus:ring-2 focus:ring-blue-500
+        focus:border-transparent
+      "
+    />
+  </div>
+</div>
+
       </div>
 
       {/* 3. RESULTADOS */}

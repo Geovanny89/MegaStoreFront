@@ -37,6 +37,7 @@ createRoot(document.getElementById("root")).render(
         v7_relativeSplatPath: true,
       }}
     >
+      
       <FavoritesProvider>
         <App />
       </FavoritesProvider>
