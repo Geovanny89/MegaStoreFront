@@ -70,14 +70,16 @@ export default function UserMessages({ orderId }) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-hidden">
       {/* HEADER */}
-      <div className="bg-white p-3 border-b flex items-center gap-3 shadow-sm">
-        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+      <div className="bg-white dark:bg-slate-800 p-3 border-b border-slate-200 dark:border-slate-700
+                  flex items-center gap-3 shadow-sm">
+        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40
+                    flex items-center justify-center text-blue-600 dark:text-blue-400">
           <Info size={16} />
         </div>
         <div>
-          <h4 className="font-black text-[12px] text-slate-800 uppercase leading-none">Chat con el Vendedor</h4>
+          <h4 className="font-black text-[12px] text-slate-800 dark:text-slate-100 uppercase leading-none">Chat con el Vendedor</h4>
           <p className="text-[9px] text-emerald-500 font-bold uppercase tracking-tighter mt-1">En línea - Soporte</p>
         </div>
       </div>
@@ -86,13 +88,13 @@ export default function UserMessages({ orderId }) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full space-y-2">
-             <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-             <p className="text-[10px] font-bold text-slate-400 uppercase">Cargando...</p>
+             <div className="w-4 h-4 border-2 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Cargando...</p>
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-10 px-6">
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No hay mensajes</p>
-            <p className="text-[9px] text-slate-400 mt-2 italic">Dile al vendedor si tienes dudas sobre tu pedido.</p>
+            <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">No hay mensajes</p>
+            <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-2 italic">Dile al vendedor si tienes dudas sobre tu pedido.</p>
           </div>
         ) : (
           messages.map((m) => (
@@ -100,10 +102,10 @@ export default function UserMessages({ orderId }) {
               <div className={`max-w-[85%] p-3 rounded-2xl shadow-sm text-xs ${
                 m.senderType === "customer" || m.senderType === "user"
                   ? "bg-blue-600 text-white rounded-tr-none" 
-                  : "bg-white text-slate-700 border border-slate-200 rounded-tl-none"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-tl-none"
               }`}>
                 <p className="leading-relaxed">{m.text}</p>
-                <div className={`flex items-center gap-1 mt-1 text-[8px] opacity-60 ${m.senderType === "customer" || m.senderType === "user" ? "justify-end" : "justify-start"}`}>
+                <div className={`flex items-center gap-1 mt-1 text-[8px] opacity-60 ${m.senderType === "customer" || m.senderType === "user" ? "justify-end" : "justify-start text-slate-500 dark:text-slate-400"}`}>
                   <Clock size={10} />
                   {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
@@ -115,18 +117,23 @@ export default function UserMessages({ orderId }) {
       </div>
 
       {/* INPUT */}
-      <div className="p-3 bg-white border-t">
-        <form onSubmit={sendMessage} className="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+      <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+        <form onSubmit={sendMessage} className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl
+               border border-slate-200 dark:border-slate-700
+               focus-within:ring-2 focus-within:ring-blue-500">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="flex-1 bg-transparent border-none focus:ring-0 text-xs px-2 outline-none"
+            className="flex-1 bg-transparent border-none focus:ring-0 text-xs px-2 outline-none
+                 text-slate-700 dark:text-slate-200
+                 placeholder-slate-400 dark:placeholder-slate-500"
             placeholder="Escribe un mensaje..."
           />
           <button 
             type="submit" 
             disabled={!text.trim()}
-            className="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="bg-blue-600 p-2 rounded-lg text-white hover:bg-blue-700
+                 disabled:opacity-50 transition-colors"
           >
             <Send size={16} />
           </button>
