@@ -40,6 +40,8 @@ export default function DashboardSeller() {
   // --- NUEVA FUNCIÓN DE EXPORTACIÓN PROFESIONAL CON EXCELJS ---
   const exportToExcel = async () => {
     if (!data?.recentOrders?.length) return;
+console.log("RECENT ORDERS:", recentOrders);
+console.log("RECENT ORDERS LENGTH:", recentOrders?.length);
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Reporte de Ventas");
