@@ -206,7 +206,7 @@ export default function DashboardSeller() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Ventas Hoy"
-            value={`$${data?.summary?.totalToday?.toLocaleString() || '0'}`}
+            value={`$${data?.summary?.today?.toLocaleString() || '0'}`}
             trend="+20%"
             isPositive={true}
             icon={<DollarSign size={20} />}
