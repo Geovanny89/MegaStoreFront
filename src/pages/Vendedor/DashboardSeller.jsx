@@ -24,6 +24,7 @@ export default function DashboardSeller() {
     setLoading(true);
     try {
       const res = await api.get("/seller/dashboard");
+      console.log("soy la orden ",res.data)
       setData(res.data);
     } catch (error) {
       console.error("Error al cargar datos reales:", error);
