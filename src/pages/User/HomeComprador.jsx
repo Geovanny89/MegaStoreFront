@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Products from "../../components/Products/products.jsx";
 import Tienda from "../Tienda.jsx";
 import ProductosTienda from "../ProductosTienda.jsx";
@@ -21,6 +21,9 @@ import { Link } from "react-router-dom";
 export default function HomeComprador() {
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
   const [categoriaActiva, setCategoriaActiva] = useState("Todas");
+  const [paginaTiendas, setPaginaTiendas] = useState(0);
+const [hasNextPage, setHasNextPage] = useState(false);
+
 
   const categorias = [
     { name: "Todas", icon: <LayoutGrid size={28} />, gradient: "from-gray-50 to-gray-200", text: "text-gray-600" },
@@ -40,6 +43,10 @@ export default function HomeComprador() {
     { name: "Servicios Profesionales", icon: <Briefcase size={28} />, gradient: "from-cyan-50 to-cyan-200", text: "text-cyan-600" },
   ];
   
+useEffect(() => {
+  setPaginaTiendas(0);
+  setHasNextPage(false);
+}, [categoriaActiva]);
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 md:px-6 pb-20 font-sans
@@ -176,13 +183,58 @@ export default function HomeComprador() {
                 </Link>
               </div>
     
-              <Tienda
-                setVendedorSeleccionado={setVendedorSeleccionado}
-                filtroCategoria={categoriaActiva}
-                soloPremium={true}
-                esCarrusel={true}
-                limite={12}
-              />
+             <Tienda
+  setVendedorSeleccionado={setVendedorSeleccionado}
+  filtroCategoria={categoriaActiva}
+  soloPremium
+  limite={6}
+  pagina={paginaTiendas}
+  onHasNextPage={setHasNextPage}
+/>
+<div className="flex justify-center items-center gap-4 mt-10">
+
+  {/* Anterior */}
+  <button
+    onClick={() => setPaginaTiendas(p => Math.max(p - 1, 0))}
+    disabled={paginaTiendas === 0}
+    className="
+      px-5 py-2 rounded-full text-sm font-bold
+      bg-gray-100 dark:bg-gray-800
+      text-gray-700 dark:text-gray-300
+      hover:bg-gray-200 dark:hover:bg-gray-700
+      disabled:opacity-40 disabled:cursor-not-allowed
+      transition
+    "
+  >
+    Anterior
+  </button>
+
+  {/* Página actual */}
+  <span className="
+    min-w-[80px] text-center text-sm font-bold
+    text-gray-600 dark:text-gray-400
+  ">
+    Página {paginaTiendas + 1}
+  </span>
+
+  {/* Siguiente */}
+  <button
+    onClick={() => setPaginaTiendas(p => p + 1)}
+    disabled={!hasNextPage}
+    className={`
+      px-5 py-2 rounded-full text-sm font-bold
+      transition
+      ${hasNextPage
+        ? "bg-blue-600 text-white hover:bg-blue-700"
+        : "bg-blue-600/40 text-white/70 cursor-not-allowed"
+      }
+    `}
+  >
+    Siguiente
+  </button>
+
+</div>
+
             </section>
           )}
     

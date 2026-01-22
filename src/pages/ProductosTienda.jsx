@@ -134,7 +134,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
     try {
       setLoadingProduct(id);
       const res = await api.get(`/product/${id}`);
-      
+
       setSelectedProduct(res.data);
       setSelectedImg(res.data.image?.[0]?.url || "");
       setCantidad(1);
@@ -390,15 +390,15 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                       {p.hasDiscount ? (
                         <div className="flex flex-col">
                           <span className="text-sm line-through text-gray-400 dark:text-gray-500">
-                            ${p.price}
+                            ${formatPriceCOP(p.price)}
                           </span>
                           <span className="text-xl font-black text-red-600">
-                            ${p.finalPrice}
+                            ${formatPriceCOP(p.finalPrice)}
                           </span>
                         </div>
                       ) : (
                         <p className="text-xl font-black text-slate-900 dark:text-white">
-                          ${p.price}
+                          ${formatPriceCOP(p.price)}
                         </p>
                       )}
 
@@ -417,21 +417,21 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                     <div className="mt-3">
                       <div className="mt-1 flex items-center gap-1">
                         {p.shippingPolicy?.trim().toLowerCase() === "free" ? (
-    <span className="flex items-center gap-1 text-[11px] font-bold text-green-600 dark:text-green-400">
-      <Truck size={12} /> Envío Gratis
-    </span>
-  ) : (
-    <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500 dark:text-gray-400 italic">
-      <Truck size={12} /> Envío a coordinar
-    </span>
-  )}
+                          <span className="flex items-center gap-1 text-[11px] font-bold text-green-600 dark:text-green-400">
+                            <Truck size={12} /> Envío Gratis
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500 dark:text-gray-400 italic">
+                            <Truck size={12} /> Envío a coordinar
+                          </span>
+                        )}
 
-  {/* NOTA (solo si existe y es coordinar) */}
-  {p.shippingPolicy === "coordinar" && p.shippingNote && (
-    <span className="text-[10px] text-gray-400 dark:text-gray-500 italic line-clamp-1">
-      {p.shippingNote}
-    </span>
-  )}
+                        {/* NOTA (solo si existe y es coordinar) */}
+                        {p.shippingPolicy === "coordinar" && p.shippingNote && (
+                          <span className="text-[10px] text-gray-400 dark:text-gray-500 italic line-clamp-1">
+                            {p.shippingNote}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -551,7 +551,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
       {/* MODAL DETALLE */}
       {/* MODAL DETALLE */}
       {modalOpen && selectedProduct && (
-      <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 md:p-4">
+        <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 md:p-4">
 
           <div className="bg-white dark:bg-[#020617] w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[85vh]">
 
@@ -655,7 +655,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                         </div>
                       ) : (
                         <p className="text-xl font-black text-blue-600 mb-3">
-                         ${formatPriceCOP(selectedProduct.price)}
+                          ${formatPriceCOP(selectedProduct.price)}
                         </p>
                       )}
 
@@ -676,8 +676,8 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                         <p>
                           Stock:{" "}
                           <span className={`font-semibold ${selectedProduct.stock > 0
-                              ? "text-green-600"
-                              : "text-red-600"
+                            ? "text-green-600"
+                            : "text-red-600"
                             }`}>
                             {selectedProduct.stock} unidades
                           </span>
@@ -685,46 +685,46 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
 
                         {/* ENVÍO */}
                         {selectedProduct.shippingPolicy === "free" ? (
-    <div
-      className="flex items-center gap-1.5
+                          <div
+                            className="flex items-center gap-1.5
       text-green-600 bg-green-50 dark:bg-green-900/20
       px-2 py-1 rounded-md w-fit
       border border-green-100 dark:border-green-900"
-    >
-      <ShieldCheck size={14} />
-      <span className="text-xs font-bold uppercase">
-        Envío Gratis
-      </span>
-    </div>
-  ) : (
-    <div
-      className="flex items-center gap-1.5
+                          >
+                            <ShieldCheck size={14} />
+                            <span className="text-xs font-bold uppercase">
+                              Envío Gratis
+                            </span>
+                          </div>
+                        ) : (
+                          <div
+                            className="flex items-center gap-1.5
       text-amber-600 bg-amber-50 dark:bg-amber-900/20
       px-2 py-1 rounded-md w-fit
       border border-amber-100 dark:border-amber-900"
-    >
-      <MessageCircle size={14} />
-      <span className="text-xs font-bold uppercase">
-        Envío a coordinar
-      </span>
-    </div>
-  )}
+                          >
+                            <MessageCircle size={14} />
+                            <span className="text-xs font-bold uppercase">
+                              Envío a coordinar
+                            </span>
+                          </div>
+                        )}
 
-  {/* NOTA DEL VENDEDOR (SI EXISTE, SIEMPRE SE MUESTRA) */}
-  {selectedProduct.shippingNote && (
-    <div
-      className="bg-gray-50 dark:bg-gray-900
+                        {/* NOTA DEL VENDEDOR (SI EXISTE, SIEMPRE SE MUESTRA) */}
+                        {selectedProduct.shippingNote && (
+                          <div
+                            className="bg-gray-50 dark:bg-gray-900
       border-l-2 border-blue-400
       p-2"
-    >
-      <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
-        <span className="font-bold text-gray-800 dark:text-gray-200">
-          Nota del vendedor:
-        </span>{" "}
-        "{selectedProduct.shippingNote}"
-      </p>
-    </div>
-  )}
+                          >
+                            <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
+                              <span className="font-bold text-gray-800 dark:text-gray-200">
+                                Nota del vendedor:
+                              </span>{" "}
+                              "{selectedProduct.shippingNote}"
+                            </p>
+                          </div>
+                        )}
 
                         {/* DESCRIPCIÓN */}
                         {selectedProduct.description && (
@@ -734,7 +734,7 @@ export default function ProductosTienda({ vendedorId, volver, user }) {
                             <p className="font-bold text-gray-900 dark:text-gray-100 mb-0.5">
                               Descripción
                             </p>
-                            <p className="italic leading-relaxed line-clamp-3">
+                            <p className="italic leading-relaxed ">
                               "{selectedProduct.description}"
                             </p>
                           </div>

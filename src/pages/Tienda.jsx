@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { Store, BadgeCheck, AlertCircle } from "lucide-react";
+import { useMemo } from "react";
 
 export default function Tienda({
   setVendedorSeleccionado,
@@ -9,9 +10,21 @@ export default function Tienda({
   vendedoresData = null,
   esCarrusel = false, // Nueva prop para activar scroll horizontal
   limite = null, // Nueva prop para limitar cantidad de tiendas
+  pagina = 0,
 }) {
   const [vendedores, setVendedores] = useState([]);
   const [loading, setLoading] = useState(true);
+
+
+  /*===================== array para shuffle ==================== */
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
   /* ==================== FETCH / DATA SYNC ==================== */
   useEffect(() => {
@@ -46,37 +59,54 @@ export default function Tienda({
   };
 
   /* ==================== FILTRO LOGIC ==================== */
-  let vendedoresAMostrar = vendedores.filter((v) => {
-    // 1. Estado de actividad
-    const estaActivo = v.active !== undefined ? v.active : true;
-    const tieneStatusActivo = v.status
-      ? v.status === "activo" || v.status === "active"
-      : true;
+  const vendedoresAMostrar = useMemo(() => {
+    const filtrados = vendedores.filter((v) => {
+      const estaActivo = v.active !== undefined ? v.active : true;
+      const tieneStatusActivo = v.status
+        ? v.status === "activo" || v.status === "active"
+        : true;
 
-    // 2. Filtro por categoría
-    const coincideCategoria =
-      filtroCategoria === "Todas"
-        ? true
-        : v.storeCategory?.toLowerCase() === filtroCategoria.toLowerCase();
+      const coincideCategoria =
+        filtroCategoria === "Todas"
+          ? true
+          : v.storeCategory?.toLowerCase() === filtroCategoria.toLowerCase();
 
-    // 3. Ajuste de Planes
-    const nombrePlan = obtenerNombrePlan(v).toLowerCase();
-    const esPlanAceptado =
-      nombrePlan === "premium" ||
-      nombrePlan === "avanzado" ||
-      nombrePlan === "emprendedor";
+      const nombrePlan = obtenerNombrePlan(v).toLowerCase();
+      const esPlanAceptado =
+        nombrePlan === "premium" ||
+        nombrePlan === "avanzado" ||
+        nombrePlan === "emprendedor";
 
-    const cumpleFiltroPlan = soloPremium ? esPlanAceptado : true;
+      const cumpleFiltroPlan = soloPremium ? esPlanAceptado : true;
 
-    return (
-      estaActivo && tieneStatusActivo && coincideCategoria && cumpleFiltroPlan
-    );
-  });
+      return (
+        estaActivo &&
+        tieneStatusActivo &&
+        coincideCategoria &&
+        cumpleFiltroPlan
+      );
+    });
 
-  // Aplicar límite si existe
-  if (limite) {
-    vendedoresAMostrar = vendedoresAMostrar.slice(0, limite);
-  }
+    // 🔀 Aleatorizar (como ya lo haces)
+    const aleatorios = shuffleArray(filtrados);
+
+    // 👉 SI ES CARRUSEL: comportamiento actual
+    if (esCarrusel) {
+      return limite ? aleatorios.slice(0, limite) : aleatorios;
+    }
+
+    // 👉 GRID CON PAGINADO SUTIL
+    if (limite) {
+      const inicio = pagina * limite;
+      const fin = inicio + limite;
+      return aleatorios.slice(inicio, fin);
+    }
+
+    return aleatorios;
+  }, [vendedores, filtroCategoria, soloPremium, limite, pagina, esCarrusel]);
+
+
+
 
   /* ==================== UI ESTADOS (LOADING / VACÍO) ==================== */
   if (loading) {
@@ -106,10 +136,9 @@ export default function Tienda({
   return (
     <div
       className={`
-        ${
-          esCarrusel
-            ? "flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory scrollbar-hide px-2"
-            : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        ${esCarrusel
+          ? "flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory scrollbar-hide px-2"
+          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         }
       `}
     >

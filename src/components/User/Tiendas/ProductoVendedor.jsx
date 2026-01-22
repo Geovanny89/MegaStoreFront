@@ -184,10 +184,10 @@ export default function Productosvendedor({ vendedorId: propVendedorId, search }
                 {p.hasDiscount ? (
                   <div className="flex flex-col">
                     <span className="text-[10px] line-through text-gray-400 dark:text-slate-500 leading-none">${p.price}</span>
-                    <span className="text-xl md:text-2xl font-black text-red-600 dark:text-red-500">${p.finalPrice}</span>
+                    <span className="text-xl md:text-2xl font-black text-red-600 dark:text-red-500"> ${formatPriceCOP(p.finalPrice)}</span>
                   </div>
                 ) : (
-                  <span className="text-xl md:text-2xl font-black text-slate-900 dark:text-white">${p.price}</span>
+                  <span className="text-xl md:text-2xl font-black text-slate-900 dark:text-white"> ${formatPriceCOP(p.price)}</span>
                 )}
 
                 <div className={`px-2 py-0.5 rounded-md text-[8px] font-black ${p.stock > 0 ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400" : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"}`}>

@@ -118,6 +118,9 @@ export default function Home() {
   const [categoriaActiva, setCategoriaActiva] = useState("Todas");
   const [showPromoModal, setShowPromoModal] = useState(false);
   const location = useLocation();
+  const [paginaTiendas, setPaginaTiendas] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
+
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -126,9 +129,13 @@ export default function Home() {
 
       requestAnimationFrame(() => {
         window.scrollTo({ top: 0 });
-      });
+      }); 
     }
   }, [location.pathname]);
+  useEffect(() => {
+  setPaginaTiendas(0);
+  setHasNextPage(false);
+}, [categoriaActiva]);
 
 
   useEffect(() => {
@@ -293,12 +300,61 @@ export default function Home() {
             }
           >
             <Tienda
-              setVendedorSeleccionado={setVendedorSeleccionado}
-              filtroCategoria={categoriaActiva}
-              soloPremium={true}
-              esCarrusel={true}
-              limite={12}
-            />
+  setVendedorSeleccionado={setVendedorSeleccionado}
+  filtroCategoria={categoriaActiva}
+  soloPremium
+  limite={6}
+  pagina={paginaTiendas}
+  onHasNextPage={setHasNextPage}
+/>
+
+  <div className="flex justify-center items-center gap-4 mt-10">
+
+  {/* Anterior */}
+  <button
+    onClick={() => setPaginaTiendas(p => Math.max(p - 1, 0))}
+    disabled={paginaTiendas === 0}
+    className="
+      px-5 py-2 rounded-full text-sm font-bold
+      bg-gray-100 dark:bg-gray-800
+      text-gray-700 dark:text-gray-300
+      hover:bg-gray-200 dark:hover:bg-gray-700
+      disabled:opacity-40 disabled:cursor-not-allowed
+      transition
+    "
+  >
+    Anterior
+  </button>
+
+  {/* Página actual */}
+  <span className="
+    min-w-[80px] text-center text-sm font-bold
+    text-gray-600 dark:text-gray-400
+  ">
+    Página {paginaTiendas + 1}
+  </span>
+
+  {/* Siguiente */}
+  <button
+    onClick={() => setPaginaTiendas(p => p + 1)}
+    disabled={!hasNextPage}
+    className={`
+      px-5 py-2 rounded-full text-sm font-bold
+      transition
+      ${hasNextPage
+        ? "bg-blue-600 text-white hover:bg-blue-700"
+        : "bg-blue-600/40 text-white/70 cursor-not-allowed"
+      }
+    `}
+  >
+    Siguiente
+  </button>
+
+</div>
+
+
+
+
           </Suspense>
 
 
