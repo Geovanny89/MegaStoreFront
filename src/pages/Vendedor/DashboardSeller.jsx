@@ -353,7 +353,7 @@ export default function DashboardSeller() {
         </div>
       </div>
       <a
-        href="https://wa.me/message/IKDCAF5OJT6XI1"
+        href="https://wa.me/573125205513?text=Hola%20K-Dice%20👋%20tengo%20una%20duda%20y%20necesito%20soporte,%20¿me%20pueden%20ayudar?"
         target="_blank"
         rel="noopener noreferrer"
         className="

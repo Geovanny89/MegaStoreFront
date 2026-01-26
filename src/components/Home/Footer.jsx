@@ -149,7 +149,7 @@ export default function Footer() {
             <p className="text-gray-500 text-sm font-medium">¿Tienes dudas?</p>
             <p className="text-blue-600 font-bold text-lg">
               <a
-                href="https://wa.me/573003159976"
+                href="https://wa.me/573125205513?text=Hola%20K-dice%20👋%20Quiero%20saber%20más%20sobre%20sus%20servicios"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-green-500 hover:text-green-600 transition-colors"
@@ -157,8 +157,8 @@ export default function Footer() {
                 <MessageCircle size={24} />
                 <span className="text-sm font-semibold">¡Escríbenos por WhatsApp!</span>
               </a>
-
             </p>
+
 
           </div>
         </div>
